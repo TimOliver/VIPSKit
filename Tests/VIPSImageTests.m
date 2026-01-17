@@ -431,7 +431,224 @@ static BOOL sVIPSInitialized = NO;
     [self waitForExpectationsWithTimeout:30.0 handler:nil];
 }
 
+#pragma mark - Large Image Tests
+
+- (void)testLoadLargeImage {
+    NSString *path = [self pathForTestResource:@"superman.jpg"];
+    if (!path) {
+        XCTSkip(@"superman.jpg not found in test resources");
+        return;
+    }
+
+    NSError *error = nil;
+    VIPSImage *image = [VIPSImage imageWithContentsOfFile:path error:&error];
+
+    XCTAssertNotNil(image, @"Should load large image: %@", error);
+    XCTAssertNil(error, @"Should not have error");
+    XCTAssertGreaterThan(image.width, 0, @"Should have valid width");
+    XCTAssertGreaterThan(image.height, 0, @"Should have valid height");
+
+    NSLog(@"Large image dimensions: %ldx%ld", (long)image.width, (long)image.height);
+}
+
+- (void)testLargeImageInfo {
+    NSString *path = [self pathForTestResource:@"superman.jpg"];
+    if (!path) {
+        XCTSkip(@"superman.jpg not found in test resources");
+        return;
+    }
+
+    NSInteger width = 0, height = 0;
+    VIPSImageFormat format = VIPSImageFormatUnknown;
+    NSError *error = nil;
+
+    // getImageInfo should be fast and memory-efficient (reads header only)
+    BOOL success = [VIPSImage getImageInfoAtPath:path width:&width height:&height format:&format error:&error];
+
+    XCTAssertTrue(success, @"Should get image info: %@", error);
+    XCTAssertGreaterThan(width, 0, @"Should have valid width");
+    XCTAssertGreaterThan(height, 0, @"Should have valid height");
+    XCTAssertEqual(format, VIPSImageFormatJPEG, @"Should detect JPEG format");
+
+    NSLog(@"Image info: %ldx%ld, format=%ld", (long)width, (long)height, (long)format);
+}
+
+- (void)testThumbnailFromLargeFile {
+    // Tests shrink-on-load thumbnailing - most memory-efficient method
+    NSString *path = [self pathForTestResource:@"superman.jpg"];
+    if (!path) {
+        XCTSkip(@"superman.jpg not found in test resources");
+        return;
+    }
+
+    NSInteger memoryBefore = [VIPSImage memoryUsage];
+
+    NSError *error = nil;
+    VIPSImage *thumbnail = [VIPSImage thumbnailFromFile:path width:200 height:200 error:&error];
+
+    XCTAssertNotNil(thumbnail, @"Should create thumbnail: %@", error);
+    XCTAssertNil(error, @"Should not have error");
+
+    // Thumbnail should be smaller than or equal to requested size
+    XCTAssertLessThanOrEqual(thumbnail.width, 200, @"Width should fit within bounds");
+    XCTAssertLessThanOrEqual(thumbnail.height, 200, @"Height should fit within bounds");
+
+    // At least one dimension should be at target (aspect ratio preserved)
+    BOOL widthAtTarget = (thumbnail.width == 200);
+    BOOL heightAtTarget = (thumbnail.height == 200);
+    XCTAssertTrue(widthAtTarget || heightAtTarget, @"At least one dimension should be at target");
+
+    NSInteger memoryAfter = [VIPSImage memoryUsage];
+    NSInteger memoryUsed = memoryAfter - memoryBefore;
+
+    NSLog(@"Thumbnail: %ldx%ld, memory delta: %ld bytes",
+          (long)thumbnail.width, (long)thumbnail.height, (long)memoryUsed);
+}
+
+- (void)testMemoryEfficientThumbnailing {
+    // Compare memory usage: shrink-on-load vs full load then resize
+    NSString *path = [self pathForTestResource:@"superman.jpg"];
+    if (!path) {
+        XCTSkip(@"superman.jpg not found in test resources");
+        return;
+    }
+
+    NSError *error = nil;
+
+    // Method 1: Shrink-on-load (memory efficient)
+    NSInteger memBefore1 = [VIPSImage memoryUsage];
+
+    VIPSImage *thumb1 = [VIPSImage thumbnailFromFile:path width:200 height:200 error:&error];
+    XCTAssertNotNil(thumb1, @"Shrink-on-load failed: %@", error);
+
+    // Force evaluation by copying to memory
+    VIPSImage *copied1 = [thumb1 copyToMemoryWithError:&error];
+    XCTAssertNotNil(copied1, @"Copy failed: %@", error);
+
+    NSInteger memAfter1 = [VIPSImage memoryUsage];
+    NSInteger memUsed1 = memAfter1 - memBefore1;
+    NSInteger width1 = copied1.width;
+
+    // Release references
+    thumb1 = nil;
+    copied1 = nil;
+
+    // Method 2: Full load then resize (less efficient)
+    NSInteger memBefore2 = [VIPSImage memoryUsage];
+
+    VIPSImage *fullImage = [VIPSImage imageWithContentsOfFile:path error:&error];
+    XCTAssertNotNil(fullImage, @"Full load failed: %@", error);
+
+    VIPSImage *thumb2 = [fullImage resizeToFitWidth:200 height:200 error:&error];
+    XCTAssertNotNil(thumb2, @"Resize failed: %@", error);
+
+    // Force evaluation
+    VIPSImage *copied2 = [thumb2 copyToMemoryWithError:&error];
+    XCTAssertNotNil(copied2, @"Copy failed: %@", error);
+
+    NSInteger memAfter2 = [VIPSImage memoryUsage];
+    NSInteger memUsed2 = memAfter2 - memBefore2;
+    NSInteger width2 = copied2.width;
+
+    NSLog(@"Memory comparison:");
+    NSLog(@"  Shrink-on-load: %ld bytes", (long)memUsed1);
+    NSLog(@"  Full load then resize: %ld bytes", (long)memUsed2);
+
+    // Both should produce valid results with similar dimensions
+    XCTAssertEqual(width1, width2, @"Both methods should produce same width");
+}
+
+- (void)testCreateThumbnailCGImageFromLargeFile {
+    // Test the most memory-efficient path: decode directly to thumbnail CGImage
+    NSString *path = [self pathForTestResource:@"superman.jpg"];
+    if (!path) {
+        XCTSkip(@"superman.jpg not found in test resources");
+        return;
+    }
+
+    NSInteger memoryBefore = [VIPSImage memoryUsage];
+
+    NSError *error = nil;
+    CGImageRef cgImage = [VIPSImage createThumbnailFromFile:path width:200 height:200 error:&error];
+
+    XCTAssertTrue(cgImage != NULL, @"Should create thumbnail CGImage: %@", error);
+    XCTAssertNil(error, @"Should not have error");
+
+    if (cgImage) {
+        NSInteger width = CGImageGetWidth(cgImage);
+        NSInteger height = CGImageGetHeight(cgImage);
+
+        XCTAssertLessThanOrEqual(width, 200, @"Width should fit within bounds");
+        XCTAssertLessThanOrEqual(height, 200, @"Height should fit within bounds");
+
+        NSInteger memoryAfter = [VIPSImage memoryUsage];
+        NSLog(@"Thumbnail CGImage: %ldx%ld, memory delta: %ld bytes",
+              (long)width, (long)height, (long)(memoryAfter - memoryBefore));
+
+        CGImageRelease(cgImage);
+    }
+}
+
+- (void)testLargeImageProcessingChain {
+    // Test that a chain of operations on a large image works without excessive memory
+    NSString *path = [self pathForTestResource:@"superman.jpg"];
+    if (!path) {
+        XCTSkip(@"superman.jpg not found in test resources");
+        return;
+    }
+
+    NSInteger memoryBefore = [VIPSImage memoryUsage];
+
+    NSError *error = nil;
+
+    // Use shrink-on-load for initial load
+    VIPSImage *image = [VIPSImage thumbnailFromFile:path width:800 height:800 error:&error];
+    XCTAssertNotNil(image, @"Should load: %@", error);
+
+    // Apply a chain of operations
+    VIPSImage *result = [image adjustContrast:1.1 error:&error];
+    XCTAssertNotNil(result, @"Contrast failed: %@", error);
+
+    result = [result adjustSaturation:1.2 error:&error];
+    XCTAssertNotNil(result, @"Saturation failed: %@", error);
+
+    result = [result sharpenWithSigma:0.5 error:&error];
+    XCTAssertNotNil(result, @"Sharpen failed: %@", error);
+
+    // Export to JPEG
+    NSData *jpegData = [result dataWithFormat:VIPSImageFormatJPEG quality:85 error:&error];
+    XCTAssertNotNil(jpegData, @"Export failed: %@", error);
+    XCTAssertGreaterThan(jpegData.length, 0, @"Should have data");
+
+    NSInteger memoryAfter = [VIPSImage memoryUsage];
+
+    NSLog(@"Processing chain complete:");
+    NSLog(@"  Output: %ldx%ld", (long)result.width, (long)result.height);
+    NSLog(@"  JPEG size: %lu bytes", (unsigned long)jpegData.length);
+    NSLog(@"  Memory delta: %ld bytes", (long)(memoryAfter - memoryBefore));
+}
+
 #pragma mark - Helper Methods
+
+- (NSString *)pathForTestResource:(NSString *)filename {
+    // Try bundle resource path first (for running in Xcode)
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSString *path = [bundle pathForResource:[filename stringByDeletingPathExtension]
+                                      ofType:[filename pathExtension]];
+    if (path) {
+        return path;
+    }
+
+    // Fallback to hardcoded path for command-line testing
+    NSString *testResourcesPath = @"/Users/TiM/Developer/VIPSKit/Tests/TestResources";
+    path = [testResourcesPath stringByAppendingPathComponent:filename];
+
+    if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        return path;
+    }
+
+    return nil;
+}
 
 - (VIPSImage *)createTestImageWithWidth:(NSInteger)width height:(NSInteger)height {
     return [self createTestImageWithWidth:width height:height bands:3];
