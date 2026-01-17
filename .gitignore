@@ -45,3 +45,4 @@ fastlane/test_output
 
 /Vendor
 /build
+/VIPSKit.xcframework

@@ -52,7 +52,7 @@
 		A1000025 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A1000030 /* VIPSImageTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VIPSImageTests.m; sourceTree = "<group>"; };
 		A1000031 /* TestResources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = TestResources; sourceTree = "<group>"; };
-		A1000051 /* TestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1000051 /* VIPSTests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VIPSTests.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1000061 /* VIPSKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VIPSKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2000001 /* VIPSImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VIPSImage.h; sourceTree = "<group>"; };
 		A2000002 /* VIPSImage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VIPSImage.m; sourceTree = "<group>"; };
@@ -99,6 +99,38 @@
 			);
 			sourceTree = "<group>";
 		};
+		A1000071 /* TestHost */ = {
+			isa = PBXGroup;
+			children = (
+				A1000024 /* AppDelegate.h */,
+				A1000020 /* AppDelegate.m */,
+				A1000021 /* main.m */,
+				A1000022 /* Assets.xcassets */,
+				A1000023 /* LaunchScreen.storyboard */,
+				A1000025 /* Info.plist */,
+			);
+			path = TestHost;
+			sourceTree = "<group>";
+		};
+		A1000072 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				A1000071 /* TestHost */,
+				A1000030 /* VIPSImageTests.m */,
+				A1000031 /* TestResources */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		A1000073 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A1000051 /* VIPSTests.app */,
+				A1000061 /* VIPSKitTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		A2000000 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -119,44 +151,12 @@
 			path = Sources;
 			sourceTree = "<group>";
 		};
-		A1000072 /* Tests */ = {
-			isa = PBXGroup;
-			children = (
-				A1000071 /* TestHost */,
-				A1000030 /* VIPSImageTests.m */,
-				A1000031 /* TestResources */,
-			);
-			path = Tests;
-			sourceTree = "<group>";
-		};
-		A1000071 /* TestHost */ = {
-			isa = PBXGroup;
-			children = (
-				A1000024 /* AppDelegate.h */,
-				A1000020 /* AppDelegate.m */,
-				A1000021 /* main.m */,
-				A1000022 /* Assets.xcassets */,
-				A1000023 /* LaunchScreen.storyboard */,
-				A1000025 /* Info.plist */,
-			);
-			path = TestHost;
-			sourceTree = "<group>";
-		};
-		A1000073 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				A1000051 /* TestHost.app */,
-				A1000061 /* VIPSKitTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A1000050 /* TestHost */ = {
+		A1000050 /* VIPSTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A1000080 /* Build configuration list for PBXNativeTarget "TestHost" */;
+			buildConfigurationList = A1000080 /* Build configuration list for PBXNativeTarget "VIPSTests" */;
 			buildPhases = (
 				A1000053 /* Rebuild Framework */,
 				A1000054 /* Sources */,
@@ -168,9 +168,9 @@
 			);
 			dependencies = (
 			);
-			name = TestHost;
+			name = VIPSTests;
 			productName = TestHost;
-			productReference = A1000051 /* TestHost.app */;
+			productReference = A1000051 /* VIPSTests.app */;
 			productType = "com.apple.product-type.application";
 		};
 		A1000060 /* VIPSKitTests */ = {
@@ -198,7 +198,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 2620;
 				TargetAttributes = {
 					A1000050 = {
 						CreatedOnToolsVersion = 15.0;
@@ -222,7 +222,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A1000050 /* TestHost */,
+				A1000050 /* VIPSTests */,
 				A1000060 /* VIPSKitTests */,
 			);
 		};
@@ -266,7 +266,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# Rebuild xcframework if source files changed\ncd \"${PROJECT_DIR}\"\n./build.sh -f\n";
+			shellScript = "# Add Homebrew to PATH (Xcode doesn't inherit shell environment)\nexport PATH=\"/opt/homebrew/bin:/usr/local/bin:$PATH\"\n\n# Rebuild xcframework if source files changed\ncd \"${PROJECT_DIR}\"\n./build.sh -f\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -293,7 +293,7 @@
 /* Begin PBXTargetDependency section */
 		A1000042 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A1000050 /* TestHost */;
+			target = A1000050 /* VIPSTests */;
 			targetProxy = A1000040 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -303,16 +303,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/build/staging/libvips/ios-sim-arm64/include",
-					"$(PROJECT_DIR)/build/staging/glib/ios-sim-arm64/include/glib-2.0",
-					"$(PROJECT_DIR)/build/staging/glib/ios-sim-arm64/lib/glib-2.0/include",
-				);
-				USER_HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/build/staging/libvips/ios-sim-arm64/include",
-					"$(PROJECT_DIR)/build/staging/glib/ios-sim-arm64/include/glib-2.0",
-					"$(PROJECT_DIR)/build/staging/glib/ios-sim-arm64/lib/glib-2.0/include",
-				);
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -361,12 +351,23 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/build/staging/libvips/ios-sim-arm64/include",
+					"$(PROJECT_DIR)/build/staging/glib/ios-sim-arm64/include/glib-2.0",
+					"$(PROJECT_DIR)/build/staging/glib/ios-sim-arm64/lib/glib-2.0/include",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				USER_HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/build/staging/libvips/ios-sim-arm64/include",
+					"$(PROJECT_DIR)/build/staging/glib/ios-sim-arm64/include/glib-2.0",
+					"$(PROJECT_DIR)/build/staging/glib/ios-sim-arm64/lib/glib-2.0/include",
+				);
 			};
 			name = Debug;
 		};
@@ -374,16 +375,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/build/staging/libvips/ios-sim-arm64/include",
-					"$(PROJECT_DIR)/build/staging/glib/ios-sim-arm64/include/glib-2.0",
-					"$(PROJECT_DIR)/build/staging/glib/ios-sim-arm64/lib/glib-2.0/include",
-				);
-				USER_HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/build/staging/libvips/ios-sim-arm64/include",
-					"$(PROJECT_DIR)/build/staging/glib/ios-sim-arm64/include/glib-2.0",
-					"$(PROJECT_DIR)/build/staging/glib/ios-sim-arm64/lib/glib-2.0/include",
-				);
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -426,11 +417,22 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/build/staging/libvips/ios-sim-arm64/include",
+					"$(PROJECT_DIR)/build/staging/glib/ios-sim-arm64/include/glib-2.0",
+					"$(PROJECT_DIR)/build/staging/glib/ios-sim-arm64/lib/glib-2.0/include",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				USER_HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/build/staging/libvips/ios-sim-arm64/include",
+					"$(PROJECT_DIR)/build/staging/glib/ios-sim-arm64/include/glib-2.0",
+					"$(PROJECT_DIR)/build/staging/glib/ios-sim-arm64/lib/glib-2.0/include",
+				);
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -441,6 +443,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6LF3GMKZAB;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tests/TestHost/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -452,7 +455,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.libvips.VIPSKitTestHost;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.tim.vipskit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -464,6 +467,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6LF3GMKZAB;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tests/TestHost/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -475,7 +479,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.libvips.VIPSKitTestHost;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.tim.vipskit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -487,12 +491,13 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6LF3GMKZAB;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.libvips.VIPSKitTests;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.tim.vipstests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TestHost.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TestHost";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VIPSTests.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VIPSTests";
 			};
 			name = Debug;
 		};
@@ -502,19 +507,20 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6LF3GMKZAB;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.libvips.VIPSKitTests;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.tim.vipstests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TestHost.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TestHost";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VIPSTests.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VIPSTests";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A1000080 /* Build configuration list for PBXNativeTarget "TestHost" */ = {
+		A1000080 /* Build configuration list for PBXNativeTarget "VIPSTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A1000120 /* Debug */,

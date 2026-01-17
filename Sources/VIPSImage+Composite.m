@@ -17,18 +17,9 @@
     VipsImage *out = NULL;
     int vipsMode = (int)mode;
 
-    // Create position arrays (vips_composite2 expects arrays for x/y)
-    int xArr[] = {(int)x};
-    int yArr[] = {(int)y};
-    VipsArrayInt *xArray = vips_array_int_new(xArr, 1);
-    VipsArrayInt *yArray = vips_array_int_new(yArr, 1);
-
-    // vips_composite2 composites overlay onto base with positioning
+    // vips_composite2 takes simple int values for x/y positioning
     int result = vips_composite2(self.image, overlay.image, &out, vipsMode,
-                                  "x", xArray, "y", yArray, NULL);
-
-    vips_area_unref(VIPS_AREA(xArray));
-    vips_area_unref(VIPS_AREA(yArray));
+                                  "x", (int)x, "y", (int)y, NULL);
 
     if (result != 0) {
         if (error) {

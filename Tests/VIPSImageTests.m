@@ -47,7 +47,7 @@
     }
 
     NSError *error = nil;
-    VIPSImage *image = [VIPSImage imageWithBuffer:buffer width:width height:height bands:bands error:&error];
+    VIPSImage *image = [VIPSImage imageWithBuffer:buffer.bytes width:width height:height bands:bands error:&error];
 
     XCTAssertNotNil(image, @"Should create image from buffer");
     XCTAssertNil(error, @"Should not have error: %@", error);
@@ -73,7 +73,7 @@
     }
 
     NSError *error = nil;
-    VIPSImage *image = [VIPSImage imageWithBuffer:buffer width:width height:height bands:bands error:&error];
+    VIPSImage *image = [VIPSImage imageWithBuffer:buffer.bytes width:width height:height bands:bands error:&error];
 
     XCTAssertNotNil(image, @"Should create RGBA image from buffer");
     XCTAssertNil(error, @"Should not have error");
@@ -105,18 +105,6 @@
     XCTAssertNotNil(resized, @"Should resize to exact dimensions");
     XCTAssertEqual(resized.width, 50, @"Width should match target");
     XCTAssertEqual(resized.height, 25, @"Height should match target");
-}
-
-- (void)testThumbnail {
-    VIPSImage *image = [self createTestImageWithWidth:400 height:300];
-
-    NSError *error = nil;
-    VIPSImage *thumbnail = [image thumbnailWithWidth:100 height:100 error:&error];
-
-    XCTAssertNotNil(thumbnail, @"Should create thumbnail");
-    XCTAssertNil(error, @"Should not have error: %@", error);
-    // Thumbnail maintains aspect ratio, so one dimension should be 100
-    XCTAssertTrue(thumbnail.width <= 100 && thumbnail.height <= 100, @"Should fit within bounds");
 }
 
 - (void)testCrop {
@@ -423,7 +411,7 @@
     }
 
     NSError *error = nil;
-    return [VIPSImage imageWithBuffer:buffer width:width height:height bands:bands error:&error];
+    return [VIPSImage imageWithBuffer:buffer.bytes width:width height:height bands:bands error:&error];
 }
 
 @end

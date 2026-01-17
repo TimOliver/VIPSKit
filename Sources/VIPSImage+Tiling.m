@@ -7,6 +7,11 @@
 
 #import "VIPSImage+Private.h"
 
+// Helper to create NSValue from CGRect in a cross-platform way
+static inline NSValue *VIPSValueWithCGRect(CGRect rect) {
+    return [NSValue valueWithBytes:&rect objCType:@encode(CGRect)];
+}
+
 @implementation VIPSImage (Tiling)
 
 - (NSArray<NSValue *> *)tileRectsWithTileWidth:(NSInteger)tileWidth
@@ -33,7 +38,7 @@
             NSInteger h = MIN(tileHeight, imageHeight - y);
 
             CGRect rect = CGRectMake(x, y, w, h);
-            [rects addObject:[NSValue valueWithCGRect:rect]];
+            [rects addObject:VIPSValueWithCGRect(rect)];
         }
     }
 

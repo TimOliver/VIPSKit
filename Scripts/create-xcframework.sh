@@ -117,6 +117,7 @@ build_dylib_for_target() {
 
         "$cc" $cflags $include_paths \
             -fobjc-arc \
+            -Wno-objc-protocol-method-implementation \
             -c "${WRAPPER_DIR}/${src}" \
             -o "$obj_path"
 
