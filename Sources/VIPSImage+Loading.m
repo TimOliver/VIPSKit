@@ -115,7 +115,8 @@
     VipsImage *out = NULL;
 
     // vips_thumbnail_buffer uses shrink-on-load internally - decodes at reduced resolution
-    if (vips_thumbnail_buffer(data.bytes, data.length, &out, (int)width, "height", (int)height, NULL) != 0) {
+    // Cast away const - vips doesn't modify the buffer
+    if (vips_thumbnail_buffer((void *)data.bytes, data.length, &out, (int)width, "height", (int)height, NULL) != 0) {
         if (error) {
             *error = [self errorFromVips];
         }

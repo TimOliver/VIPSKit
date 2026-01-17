@@ -156,8 +156,10 @@ build_dylib_for_target() {
     local dylib="${output_dir}/VIPSKit_${arch}.dylib"
 
     # Link everything into a dylib
+    # -Wl,-w suppresses linker warnings (e.g., libffi alignment warning on x86_64)
     "$cc" $cflags \
         -dynamiclib \
+        -Wl,-w \
         -install_name "@rpath/VIPSKit.framework/VIPSKit" \
         -o "$dylib" \
         $object_files \
