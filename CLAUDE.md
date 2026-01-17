@@ -232,6 +232,26 @@ if let cgImage = try VIPSImage.createThumbnail(fromFile: path, width: 200, heigh
     // Decode buffers already released - only thumbnail pixels in memory
 }
 
+// Process very large images (e.g., 500x30000) in strips
+let stripHeight = 1000
+let numStrips = image.numberOfStrips(withHeight: stripHeight)
+for i in 0..<numStrips {
+    let strip = try image.strip(atIndex: i, height: stripHeight)
+    // Process each strip independently...
+}
+
+// Or extract a region directly from file (most memory efficient)
+let region = try VIPSImage.extractRegion(fromFile: path, x: 0, y: 5000, width: 500, height: 1000)
+
+// Get tile coordinates for splitting image into grid
+let tiles = image.tileRects(withTileWidth: 256, tileHeight: 256)
+for tileRect in tiles {
+    let rect = tileRect.cgRectValue
+    let tile = try image.crop(x: Int(rect.origin.x), y: Int(rect.origin.y),
+                               width: Int(rect.width), height: Int(rect.height))
+    // Process tile...
+}
+
 // Memory management - break reference chain after resizing
 let resized = try image.resizeToFit(width: 200, height: 200)
 let copied = try resized.copyToMemory()  // Allows source to be freed
@@ -331,6 +351,10 @@ if (thumbCG) {
 | `-blurWithSigma:error:` | Gaussian blur |
 | `-sharpenWithSigma:error:` | Sharpen |
 | `-copyToMemoryWithError:` | Copy pixels to memory, breaking lazy chain |
+| `-tileRectsWithTileWidth:tileHeight:` | Calculate tile rects for dividing image |
+| `-numberOfStripsWithHeight:` | Number of horizontal strips for given height |
+| `-stripAtIndex:height:error:` | Extract horizontal strip by index |
+| `+extractRegionFromFile:x:y:width:height:error:` | Extract region from file (memory efficient) |
 
 ### Memory Management (Class Methods)
 
