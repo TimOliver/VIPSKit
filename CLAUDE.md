@@ -194,6 +194,29 @@ let flippedV = try image.flipVertical()
 // Auto-rotate based on EXIF
 let oriented = try image.autoRotate()
 
+// Smart crop - content-aware cropping that finds interesting regions
+let smartCropped = try image.smartCrop(toWidth: 400, height: 400, interesting: .attention)
+// Strategies: .attention (edges/skin/colors), .entropy, .centre, .low, .high
+
+// Composite images (watermarks, overlays)
+let watermarked = try baseImage.composite(withOverlay: watermark, mode: .over, x: 10, y: 10)
+let centered = try baseImage.composite(withOverlay: logo, mode: .over)  // Centers overlay
+// Blend modes: .over, .multiply, .screen, .overlay, .darken, .lighten, .add, etc.
+
+// Color adjustments
+let brighter = try image.adjustBrightness(0.2)       // -1.0 to 1.0
+let highContrast = try image.adjustContrast(1.5)    // 0.5 to 2.0
+let saturated = try image.adjustSaturation(1.3)     // 0 = grayscale, 1.0 = normal
+let gammaCorrected = try image.adjustGamma(2.2)     // < 1 lightens, > 1 darkens
+let inverted = try image.invert()
+
+// Combined color adjustment (more efficient)
+let adjusted = try image.adjust(brightness: 0.1, contrast: 1.2, saturation: 1.1)
+
+// Edge detection
+let edges = try image.sobel()                        // Fast edge detection
+let cannyEdges = try image.canny(sigma: 1.4)        // Sophisticated edge detection
+
 // Convert to grayscale
 let gray = try image.grayscale()
 
@@ -304,6 +327,24 @@ NSLog(@"Size: %ldx%ld", image.width, image.height);
 VIPSImage *resized = [image resizeToFitWidth:200 height:200 error:&error];
 VIPSImage *rotated = [image rotateByDegrees:90 error:&error];
 
+// Smart crop - content-aware
+VIPSImage *smartCropped = [image smartCropToWidth:400 height:400
+                                      interesting:VIPSInterestingAttention error:&error];
+
+// Composite (watermarks, overlays)
+VIPSImage *watermarked = [baseImage compositeWithOverlay:watermark
+                                                    mode:VIPSBlendModeOver
+                                                       x:10 y:10 error:&error];
+
+// Color adjustments
+VIPSImage *brighter = [image adjustBrightness:0.2 error:&error];
+VIPSImage *adjusted = [image adjustBrightness:0.1 contrast:1.2 saturation:1.1 error:&error];
+VIPSImage *inverted = [image invertWithError:&error];
+
+// Edge detection
+VIPSImage *edges = [image sobelWithError:&error];
+VIPSImage *cannyEdges = [image cannyWithSigma:1.4 error:&error];
+
 // Export
 NSData *jpegData = [image dataWithFormat:VIPSImageFormatJPEG quality:85 error:&error];
 [image writeToFile:@"/path/to/output.jpg" error:&error];
@@ -369,10 +410,21 @@ NSData *jxlData = [image cacheDataWithFormat:VIPSImageFormatJXL quality:0 lossle
 | `-flipHorizontalWithError:` | Mirror horizontally |
 | `-flipVerticalWithError:` | Mirror vertically |
 | `-autoRotateWithError:` | Apply EXIF orientation |
+| `-smartCropToWidth:height:interesting:error:` | Content-aware smart crop |
+| `-compositeWithOverlay:mode:x:y:error:` | Composite with blend mode at position |
+| `-compositeWithOverlay:mode:error:` | Composite centered with blend mode |
 | `-grayscaleWithError:` | Convert to grayscale |
 | `-flattenWithRed:green:blue:error:` | Flatten alpha to background |
+| `-invertWithError:` | Invert colors (negative) |
+| `-adjustBrightness:error:` | Adjust brightness (-1.0 to 1.0) |
+| `-adjustContrast:error:` | Adjust contrast (0.5 to 2.0) |
+| `-adjustSaturation:error:` | Adjust saturation (0 to 2.0) |
+| `-adjustGamma:error:` | Adjust gamma curve |
+| `-adjustBrightness:contrast:saturation:error:` | Combined adjustment (efficient) |
 | `-blurWithSigma:error:` | Gaussian blur |
 | `-sharpenWithSigma:error:` | Sharpen |
+| `-sobelWithError:` | Sobel edge detection |
+| `-cannyWithSigma:error:` | Canny edge detection |
 | `-copyToMemoryWithError:` | Copy pixels to memory, breaking lazy chain |
 | `-tileRectsWithTileWidth:tileHeight:` | Calculate tile rects for dividing image |
 | `-numberOfStripsWithHeight:` | Number of horizontal strips for given height |
@@ -420,6 +472,33 @@ NSData *jxlData = [image cacheDataWithFormat:VIPSImageFormatJXL quality:0 lossle
 | Cubic | `VIPSResizeKernelCubic` | Good quality |
 | Lanczos2 | `VIPSResizeKernelLanczos2` | High quality |
 | Lanczos3 | `VIPSResizeKernelLanczos3` | Best quality (default) |
+
+### Smart Crop Strategies
+
+| Strategy | Constant | Description |
+|----------|----------|-------------|
+| None | `VIPSInterestingNone` | Don't look for interesting areas |
+| Centre | `VIPSInterestingCentre` | Crop from center |
+| Entropy | `VIPSInterestingEntropy` | Maximize entropy (detail) |
+| Attention | `VIPSInterestingAttention` | Detect edges, skin tones, saturated colors |
+| Low | `VIPSInterestingLow` | Crop from low coordinate |
+| High | `VIPSInterestingHigh` | Crop from high coordinate |
+
+### Blend Modes
+
+| Mode | Constant | Description |
+|------|----------|-------------|
+| Over | `VIPSBlendModeOver` | Standard alpha compositing (most common) |
+| Multiply | `VIPSBlendModeMultiply` | Darken by multiplying colors |
+| Screen | `VIPSBlendModeScreen` | Lighten (inverse of multiply) |
+| Overlay | `VIPSBlendModeOverlay` | Multiply or screen based on base |
+| Add | `VIPSBlendModeAdd` | Add colors together |
+| Darken | `VIPSBlendModeDarken` | Keep darker pixels |
+| Lighten | `VIPSBlendModeLighten` | Keep lighter pixels |
+| Soft Light | `VIPSBlendModeSoftLight` | Subtle contrast adjustment |
+| Hard Light | `VIPSBlendModeHardLight` | Strong contrast adjustment |
+| Difference | `VIPSBlendModeDifference` | Absolute difference |
+| Exclusion | `VIPSBlendModeExclusion` | Similar to difference, lower contrast |
 
 ## Architecture Notes
 

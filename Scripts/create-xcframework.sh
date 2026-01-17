@@ -100,6 +100,7 @@ build_dylib_for_target() {
         "VIPSImage+Saving.m"
         "VIPSImage+Resize.m"
         "VIPSImage+Transform.m"
+        "VIPSImage+Composite.m"
         "VIPSImage+Color.m"
         "VIPSImage+Filter.m"
         "VIPSImage+Tiling.m"

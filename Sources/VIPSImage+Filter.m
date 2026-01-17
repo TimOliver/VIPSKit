@@ -39,4 +39,36 @@
     return result;
 }
 
+#pragma mark - Edge Detection
+
+- (VIPSImage *)sobelWithError:(NSError **)error {
+    VipsImage *out = NULL;
+
+    if (vips_sobel(self.image, &out, NULL) != 0) {
+        if (error) {
+            *error = [self.class errorFromVips];
+        }
+        return nil;
+    }
+
+    VIPSImage *result = [[VIPSImage alloc] init];
+    result.image = out;
+    return result;
+}
+
+- (VIPSImage *)cannyWithSigma:(double)sigma error:(NSError **)error {
+    VipsImage *out = NULL;
+
+    if (vips_canny(self.image, &out, "sigma", sigma, NULL) != 0) {
+        if (error) {
+            *error = [self.class errorFromVips];
+        }
+        return nil;
+    }
+
+    VIPSImage *result = [[VIPSImage alloc] init];
+    result.image = out;
+    return result;
+}
+
 @end

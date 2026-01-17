@@ -31,6 +31,45 @@ typedef NS_ENUM(NSInteger, VIPSResizeKernel) {
     VIPSResizeKernelLanczos3
 };
 
+/// Smart crop strategy for finding interesting regions
+typedef NS_ENUM(NSInteger, VIPSInteresting) {
+    VIPSInterestingNone,       ///< Don't look for interesting areas
+    VIPSInterestingCentre,     ///< Crop from center
+    VIPSInterestingEntropy,    ///< Crop to maximize entropy
+    VIPSInterestingAttention,  ///< Crop using attention strategy (edges, skin tones, saturated colors)
+    VIPSInterestingLow,        ///< Crop from low coordinate
+    VIPSInterestingHigh        ///< Crop from high coordinate
+};
+
+/// Blend modes for image compositing
+typedef NS_ENUM(NSInteger, VIPSBlendMode) {
+    VIPSBlendModeClear,
+    VIPSBlendModeSource,
+    VIPSBlendModeOver,         ///< Standard alpha compositing (most common)
+    VIPSBlendModeIn,
+    VIPSBlendModeOut,
+    VIPSBlendModeAtop,
+    VIPSBlendModeDest,
+    VIPSBlendModeDestOver,
+    VIPSBlendModeDestIn,
+    VIPSBlendModeDestOut,
+    VIPSBlendModeDestAtop,
+    VIPSBlendModeXor,
+    VIPSBlendModeAdd,
+    VIPSBlendModeSaturate,
+    VIPSBlendModeMultiply,     ///< Darken by multiplying
+    VIPSBlendModeScreen,       ///< Lighten (inverse of multiply)
+    VIPSBlendModeOverlay,      ///< Multiply or screen depending on base
+    VIPSBlendModeDarken,
+    VIPSBlendModeLighten,
+    VIPSBlendModeColourDodge,
+    VIPSBlendModeColourBurn,
+    VIPSBlendModeHardLight,
+    VIPSBlendModeSoftLight,
+    VIPSBlendModeDifference,
+    VIPSBlendModeExclusion
+};
+
 /// Image processing wrapper for libvips
 @interface VIPSImage : NSObject
 
@@ -216,6 +255,42 @@ typedef NS_ENUM(NSInteger, VIPSResizeKernel) {
 /// Auto-rotate based on EXIF orientation
 - (nullable VIPSImage *)autoRotateWithError:(NSError *_Nullable *_Nullable)error;
 
+/// Smart crop to target dimensions using content-aware cropping.
+/// Analyzes image to find interesting regions before cropping.
+/// @param width Target width
+/// @param height Target height
+/// @param interesting Strategy for finding interesting regions
+/// @param error On return, contains error if method returns nil
+/// @return Cropped image, or nil on error
+- (nullable VIPSImage *)smartCropToWidth:(NSInteger)width
+                                  height:(NSInteger)height
+                             interesting:(VIPSInteresting)interesting
+                                   error:(NSError *_Nullable *_Nullable)error;
+
+#pragma mark - Compositing
+
+/// Composite an overlay image onto this image using the specified blend mode.
+/// @param overlay The image to composite on top
+/// @param mode The blend mode to use
+/// @param x X position of overlay on base image
+/// @param y Y position of overlay on base image
+/// @param error On return, contains error if method returns nil
+/// @return Composited image, or nil on error
+- (nullable VIPSImage *)compositeWithOverlay:(VIPSImage *)overlay
+                                        mode:(VIPSBlendMode)mode
+                                           x:(NSInteger)x
+                                           y:(NSInteger)y
+                                       error:(NSError *_Nullable *_Nullable)error;
+
+/// Composite an overlay image centered on this image.
+/// @param overlay The image to composite on top
+/// @param mode The blend mode to use
+/// @param error On return, contains error if method returns nil
+/// @return Composited image, or nil on error
+- (nullable VIPSImage *)compositeWithOverlay:(VIPSImage *)overlay
+                                        mode:(VIPSBlendMode)mode
+                                       error:(NSError *_Nullable *_Nullable)error;
+
 #pragma mark - Color Operations
 
 /// Convert to grayscale
@@ -227,6 +302,49 @@ typedef NS_ENUM(NSInteger, VIPSResizeKernel) {
                                   blue:(NSInteger)blue
                                  error:(NSError *_Nullable *_Nullable)error;
 
+/// Invert colors (negative)
+- (nullable VIPSImage *)invertWithError:(NSError *_Nullable *_Nullable)error;
+
+/// Adjust brightness.
+/// @param brightness Brightness adjustment (-1.0 to 1.0, 0 = no change)
+/// @param error On return, contains error if method returns nil
+/// @return Adjusted image, or nil on error
+- (nullable VIPSImage *)adjustBrightness:(double)brightness
+                                   error:(NSError *_Nullable *_Nullable)error;
+
+/// Adjust contrast.
+/// @param contrast Contrast multiplier (0.5 to 2.0, 1.0 = no change)
+/// @param error On return, contains error if method returns nil
+/// @return Adjusted image, or nil on error
+- (nullable VIPSImage *)adjustContrast:(double)contrast
+                                 error:(NSError *_Nullable *_Nullable)error;
+
+/// Adjust saturation.
+/// @param saturation Saturation multiplier (0 = grayscale, 1.0 = no change, 2.0 = double)
+/// @param error On return, contains error if method returns nil
+/// @return Adjusted image, or nil on error
+- (nullable VIPSImage *)adjustSaturation:(double)saturation
+                                   error:(NSError *_Nullable *_Nullable)error;
+
+/// Adjust gamma (brightness curve).
+/// @param gamma Gamma value (< 1.0 lightens midtones, > 1.0 darkens midtones)
+/// @param error On return, contains error if method returns nil
+/// @return Adjusted image, or nil on error
+- (nullable VIPSImage *)adjustGamma:(double)gamma
+                              error:(NSError *_Nullable *_Nullable)error;
+
+/// Adjust brightness, contrast, and saturation in one operation.
+/// More efficient than calling each method separately.
+/// @param brightness Brightness adjustment (-1.0 to 1.0, 0 = no change)
+/// @param contrast Contrast multiplier (0.5 to 2.0, 1.0 = no change)
+/// @param saturation Saturation multiplier (0 = grayscale, 1.0 = no change)
+/// @param error On return, contains error if method returns nil
+/// @return Adjusted image, or nil on error
+- (nullable VIPSImage *)adjustBrightness:(double)brightness
+                                contrast:(double)contrast
+                              saturation:(double)saturation
+                                   error:(NSError *_Nullable *_Nullable)error;
+
 #pragma mark - Filters
 
 /// Apply Gaussian blur
@@ -236,6 +354,22 @@ typedef NS_ENUM(NSInteger, VIPSResizeKernel) {
 /// Sharpen image
 - (nullable VIPSImage *)sharpenWithSigma:(double)sigma
                                    error:(NSError *_Nullable *_Nullable)error;
+
+#pragma mark - Edge Detection
+
+/// Detect edges using Sobel operator.
+/// Fast edge detection, returns grayscale edge magnitude image.
+/// @param error On return, contains error if method returns nil
+/// @return Edge-detected image, or nil on error
+- (nullable VIPSImage *)sobelWithError:(NSError *_Nullable *_Nullable)error;
+
+/// Detect edges using Canny algorithm.
+/// More sophisticated edge detection with Gaussian smoothing.
+/// @param sigma Standard deviation of Gaussian (1.4 is typical)
+/// @param error On return, contains error if method returns nil
+/// @return Edge-detected image, or nil on error
+- (nullable VIPSImage *)cannyWithSigma:(double)sigma
+                                 error:(NSError *_Nullable *_Nullable)error;
 
 #pragma mark - Tiling
 

@@ -107,4 +107,48 @@
     return result;
 }
 
+- (VIPSImage *)smartCropToWidth:(NSInteger)width
+                         height:(NSInteger)height
+                    interesting:(VIPSInteresting)interesting
+                          error:(NSError **)error {
+    VipsImage *out = NULL;
+    VipsInteresting vipsInteresting;
+
+    switch (interesting) {
+        case VIPSInterestingNone:
+            vipsInteresting = VIPS_INTERESTING_NONE;
+            break;
+        case VIPSInterestingCentre:
+            vipsInteresting = VIPS_INTERESTING_CENTRE;
+            break;
+        case VIPSInterestingEntropy:
+            vipsInteresting = VIPS_INTERESTING_ENTROPY;
+            break;
+        case VIPSInterestingAttention:
+            vipsInteresting = VIPS_INTERESTING_ATTENTION;
+            break;
+        case VIPSInterestingLow:
+            vipsInteresting = VIPS_INTERESTING_LOW;
+            break;
+        case VIPSInterestingHigh:
+            vipsInteresting = VIPS_INTERESTING_HIGH;
+            break;
+        default:
+            vipsInteresting = VIPS_INTERESTING_ATTENTION;
+            break;
+    }
+
+    if (vips_smartcrop(self.image, &out, (int)width, (int)height,
+                       "interesting", vipsInteresting, NULL) != 0) {
+        if (error) {
+            *error = [self.class errorFromVips];
+        }
+        return nil;
+    }
+
+    VIPSImage *result = [[VIPSImage alloc] init];
+    result.image = out;
+    return result;
+}
+
 @end
