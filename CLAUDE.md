@@ -294,14 +294,12 @@ let resized = try image.resizeToFit(width: 200, height: 200)
 let copied = try resized.copyToMemory()  // Allows source to be freed
 // Now 'image' can be released without keeping pixel data in memory
 
-// Clear operation cache to free memory
-VIPSImage.clearCache()
-
 // Monitor memory usage
 print("VIPS memory: \(VIPSImage.memoryUsage()) bytes")
 
-// Disable caching entirely for memory-constrained environments
-VIPSImage.setCacheMaxOperations(0)
+// Adjust cache for memory-constrained environments
+VIPSImage.setCacheMaxOperations(50)  // Reduce from default 100
+VIPSImage.setCacheMaxMemory(25 * 1024 * 1024)  // Reduce to 25MB
 
 // Cleanup at app termination (optional)
 VIPSImage.shutdown()
@@ -440,7 +438,6 @@ NSData *jxlData = [image cacheDataWithFormat:VIPSImageFormatJXL quality:0 lossle
 
 | Method | Description |
 |--------|-------------|
-| `+clearCache` | Clear operation cache, free memory |
 | `+setCacheMaxOperations:` | Set max cached operations (0 to disable) |
 | `+setCacheMaxMemory:` | Set max cache memory in bytes |
 | `+setCacheMaxFiles:` | Set max open files in cache |
@@ -522,18 +519,13 @@ let copied = try thumb.copyToMemory()  // Forces evaluation, breaks chain
 source = nil  // Now source can be fully freed
 ```
 
-2. **Clear cache** after processing batches:
-```swift
-VIPSImage.clearCache()  // Frees cached operations
-```
-
-3. **Disable caching** for memory-constrained environments:
+2. **Adjust cache limits** for memory-constrained environments:
 ```swift
 VIPSImage.setCacheMaxOperations(0)  // Disable operation cache
 VIPSImage.setCacheMaxMemory(50 * 1024 * 1024)  // Or limit to 50MB
 ```
 
-4. **Monitor memory**:
+3. **Monitor memory**:
 ```swift
 print("VIPS using: \(VIPSImage.memoryUsage() / 1024 / 1024)MB")
 ```
@@ -542,7 +534,7 @@ print("VIPS using: \(VIPSImage.memoryUsage() / 1024 / 1024)MB")
 
 **Defaults are optimized for batch processing (set on initialize):**
 - VIPS concurrency: 1 thread
-- Operation cache: disabled (no memory held between operations)
+- Operation cache: enabled (100 ops, 50MB, 10 files) - auto-evicts based on limits
 
 ```swift
 // Just initialize - defaults are already optimal for batch processing
@@ -661,6 +653,20 @@ Check that all dependencies built successfully for the failing target. The build
 
 ### Framework not loading at runtime
 Ensure "Embed & Sign" is selected in Xcode's "Frameworks, Libraries, and Embedded Content" section.
+
+### glib / vips cache crash (g_hash_table_lookup)
+
+**Symptom:** Crash in `g_hash_table_lookup()` called from `vips_cache_operation_buildp()`.
+
+**Root cause:** When glib is statically linked into the framework, `vips_cache_drop_all()` corrupts glib's internal hash table state. Normal cache operations (lookup, insert, auto-eviction) work fine - only the explicit "drop all" function is affected.
+
+**Solution:** The `clearCache` method has been removed from VIPSKit. The cache auto-manages itself based on configured limits (100 operations, 50MB memory, 10 files by default). You can adjust these limits with `setCacheMaxOperations:`, `setCacheMaxMemory:`, and `setCacheMaxFiles:`.
+
+**Technical details:**
+- glib is linked with `-force_load` to ensure `__attribute__((constructor))` initialization functions are included
+- The vips operation cache uses glib hash tables internally
+- `vips_cache_drop_all()` iterates and removes all entries, which triggers a bug in statically-linked glib
+- Cache eviction via the LRU mechanism (when limits are exceeded) works correctly
 
 ## Cleaning
 
