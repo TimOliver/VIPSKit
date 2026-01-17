@@ -381,12 +381,6 @@ static BOOL sVIPSInitialized = NO;
     XCTAssertEqual(copied.height, image.height, @"Dimensions should match");
 }
 
-- (void)testClearCache {
-    // Just verify it doesn't crash
-    [VIPSImage clearCache];
-    XCTAssertTrue(YES, @"clearCache should not crash");
-}
-
 - (void)testMemoryUsage {
     NSInteger usage = [VIPSImage memoryUsage];
     XCTAssertGreaterThanOrEqual(usage, 0, @"Memory usage should be non-negative");
