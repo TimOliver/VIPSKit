@@ -36,11 +36,11 @@ NSString *const VIPSErrorDomain = @"org.libvips.VIPSKit";
     // (parallelize across images, not within single image)
     vips_concurrency_set(1);
 
-    // Disable operation cache to minimize memory usage
-    // (each operation result would otherwise be cached)
-    vips_cache_set_max(0);
-    vips_cache_set_max_mem(0);
-    vips_cache_set_max_files(0);
+    // Set minimal cache to avoid memory bloat while keeping cache functional
+    // Setting to 0 can cause issues with cache infrastructure
+    vips_cache_set_max(100);
+    vips_cache_set_max_mem(50 * 1024 * 1024);  // 50MB
+    vips_cache_set_max_files(10);
 
     return YES;
 }
