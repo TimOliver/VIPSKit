@@ -6,6 +6,8 @@
 //
 
 #import "VIPSImage+Private.h"
+#import <objc/runtime.h>
+#import <objc/message.h>
 
 NSString *const VIPSErrorDomain = @"org.libvips.VIPSKit";
 
@@ -168,6 +170,36 @@ NSString *const VIPSErrorDomain = @"org.libvips.VIPSKit";
     VIPSImage *result = [[VIPSImage alloc] init];
     result.image = out;
     return result;
+}
+
+#pragma mark - Debug Support
+
+- (id)debugQuickLookObject {
+    // Xcode calls this method to show image previews in the debugger
+    CGImageRef cgImage = [self createCGImageWithError:nil];
+    if (!cgImage) {
+        return [NSString stringWithFormat:@"VIPSImage %ldx%ld (%ld bands)",
+                (long)self.width, (long)self.height, (long)self.bands];
+    }
+
+    // Use runtime lookup for UIImage to avoid compile-time UIKit dependency
+    // UIKit is linked at runtime but headers may not be available during build
+    Class UIImageClass = NSClassFromString(@"UIImage");
+    if (UIImageClass) {
+        // Use objc_msgSend to call +[UIImage imageWithCGImage:]
+        SEL selector = NSSelectorFromString(@"imageWithCGImage:");
+        if ([UIImageClass respondsToSelector:selector]) {
+            // Cast objc_msgSend to the correct function signature
+            id (*msgSend)(Class, SEL, CGImageRef) = (id (*)(Class, SEL, CGImageRef))objc_msgSend;
+            id image = msgSend(UIImageClass, selector, cgImage);
+            CGImageRelease(cgImage);
+            return image;
+        }
+    }
+
+    CGImageRelease(cgImage);
+    return [NSString stringWithFormat:@"VIPSImage %ldx%ld (%ld bands)",
+            (long)self.width, (long)self.height, (long)self.bands];
 }
 
 @end
