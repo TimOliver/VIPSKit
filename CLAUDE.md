@@ -252,6 +252,20 @@ for tileRect in tiles {
     // Process tile...
 }
 
+// Cache processed images (default: lossless WebP, ~30% smaller than PNG)
+let cacheData = try thumbnail.cacheData()  // Lossless WebP
+try thumbnail.writeToCache(file: "/path/to/cache/thumb")  // Auto-adds .webp
+
+// Cache with explicit format control
+let webpLossless = try thumbnail.cacheData(format: .webP, quality: 0, lossless: true)
+let webpLossy = try thumbnail.cacheData(format: .webP, quality: 85, lossless: false)
+let jxlLossless = try thumbnail.cacheData(format: .jxl, quality: 0, lossless: true)
+let png = try thumbnail.cacheData(format: .png, quality: 0, lossless: true)  // PNG always lossless
+
+// Write cache files with format control (auto-appends correct extension)
+try thumbnail.writeToCache(file: "/path/to/cache/thumb", format: .webP, quality: 80, lossless: false)
+try thumbnail.writeToCache(file: "/path/to/cache/thumb", format: .jxl, quality: 0, lossless: true)
+
 // Memory management - break reference chain after resizing
 let resized = try image.resizeToFit(width: 200, height: 200)
 let copied = try resized.copyToMemory()  // Allows source to be freed
@@ -311,6 +325,15 @@ if (thumbCG) {
     CGImageRelease(thumbCG);
 }
 
+// Cache processed images (default: lossless WebP)
+NSData *cacheData = [image cacheDataWithError:&error];
+[image writeToCacheFile:@"/path/to/cache/thumb" error:&error];  // Auto-adds .webp
+
+// Cache with explicit format control
+NSData *webpData = [image cacheDataWithFormat:VIPSImageFormatWebP quality:85 lossless:NO error:&error];
+NSData *jxlData = [image cacheDataWithFormat:VIPSImageFormatJXL quality:0 lossless:YES error:&error];
+[image writeToCacheFile:@"/path/to/cache/thumb" format:VIPSImageFormatWebP quality:80 lossless:NO error:&error];
+
 // Shutdown
 [VIPSImage shutdown];
 ```
@@ -355,6 +378,11 @@ if (thumbCG) {
 | `-numberOfStripsWithHeight:` | Number of horizontal strips for given height |
 | `-stripAtIndex:height:error:` | Extract horizontal strip by index |
 | `+extractRegionFromFile:x:y:width:height:error:` | Extract region from file (memory efficient) |
+| `+extractRegionFromData:x:y:width:height:error:` | Extract region from NSData (memory efficient) |
+| `-cacheDataWithError:` | Export as lossless WebP for caching |
+| `-cacheDataWithFormat:quality:lossless:error:` | Export with explicit format control |
+| `-writeToCacheFile:error:` | Write lossless WebP cache file |
+| `-writeToCacheFile:format:quality:lossless:error:` | Write cache file with format control |
 
 ### Memory Management (Class Methods)
 
@@ -435,7 +463,6 @@ print("VIPS using: \(VIPSImage.memoryUsage() / 1024 / 1024)MB")
 
 **Defaults are optimized for batch processing (set on initialize):**
 - VIPS concurrency: 1 thread
-- AVIF/dav1d: 1 thread
 - Operation cache: disabled (no memory held between operations)
 
 ```swift
@@ -456,7 +483,6 @@ DispatchQueue.concurrentPerform(iterations: images.count) { i in
 **For single-image processing** (maximum speed for one large image):
 ```swift
 VIPSImage.setConcurrency(0)  // Auto-detect (all cores)
-VIPSImage.setAVIFDecodingThreads(0)  // Auto-detect
 ```
 
 **Memory optimization tips:**
@@ -485,7 +511,7 @@ Different formats have different memory profiles when thumbnailing:
 - Using `createThumbnailFromFile:` to release decode buffers immediately after CGImage creation
 - Storing source images in JPEG format if memory is critical
 
-**AVIF Memory:** AVIF uses the dav1d AV1 decoder which allocates frame buffers. The build defaults dav1d to single-threaded mode to minimize per-decode memory. For a 4K AVIF, expect ~100-150MB peak during decode.
+**AVIF Memory:** AVIF uses the dav1d AV1 decoder which allocates frame buffers. For a 4K AVIF, expect ~100-150MB peak during decode.
 
 ### CGImage Export (Zero-Copy Display)
 

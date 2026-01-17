@@ -104,6 +104,7 @@ build_dylib_for_target() {
         "VIPSImage+Filter.m"
         "VIPSImage+Tiling.m"
         "VIPSImage+CGImage.m"
+        "VIPSImage+Caching.m"
     )
 
     local object_files=""
