@@ -139,4 +139,64 @@
     return wrapper;
 }
 
++ (instancetype)extractRegionFromData:(NSData *)data
+                                    x:(NSInteger)x
+                                    y:(NSInteger)y
+                                width:(NSInteger)width
+                               height:(NSInteger)height
+                                error:(NSError **)error {
+    // Load from buffer with sequential access for memory efficiency
+    VipsImage *source = vips_image_new_from_buffer(data.bytes, data.length, "",
+                                                    "access", VIPS_ACCESS_SEQUENTIAL,
+                                                    NULL);
+    if (!source) {
+        if (error) {
+            *error = [self errorFromVips];
+        }
+        return nil;
+    }
+
+    // Validate region bounds
+    int sourceWidth = vips_image_get_width(source);
+    int sourceHeight = vips_image_get_height(source);
+
+    if (x < 0 || y < 0 || x + width > sourceWidth || y + height > sourceHeight) {
+        g_object_unref(source);
+        if (error) {
+            *error = [NSError errorWithDomain:VIPSErrorDomain
+                                         code:-1
+                                     userInfo:@{NSLocalizedDescriptionKey:
+                                         [NSString stringWithFormat:@"Region (%ld,%ld,%ld,%ld) exceeds image bounds (%d,%d)",
+                                          (long)x, (long)y, (long)width, (long)height, sourceWidth, sourceHeight]}];
+        }
+        return nil;
+    }
+
+    // Extract the region
+    VipsImage *region = NULL;
+    if (vips_extract_area(source, &region, (int)x, (int)y, (int)width, (int)height, NULL) != 0) {
+        g_object_unref(source);
+        if (error) {
+            *error = [self errorFromVips];
+        }
+        return nil;
+    }
+
+    // Copy to memory to break the reference to source
+    VipsImage *copied = vips_image_copy_memory(region);
+    g_object_unref(region);
+    g_object_unref(source);
+
+    if (!copied) {
+        if (error) {
+            *error = [self errorFromVips];
+        }
+        return nil;
+    }
+
+    VIPSImage *wrapper = [[VIPSImage alloc] init];
+    wrapper.image = copied;
+    return wrapper;
+}
+
 @end
