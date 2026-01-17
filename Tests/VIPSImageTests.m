@@ -386,6 +386,51 @@ static BOOL sVIPSInitialized = NO;
     XCTAssertGreaterThanOrEqual(usage, 0, @"Memory usage should be non-negative");
 }
 
+#pragma mark - Concurrency Tests
+
+- (void)testConcurrentImageProcessing {
+    // Test that multiple images can be processed concurrently without crashes
+    // libvips uses mutexes to protect shared state (cache, etc.)
+
+    NSInteger iterations = 20;
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Concurrent processing"];
+    expectation.expectedFulfillmentCount = iterations;
+
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+
+    for (NSInteger i = 0; i < iterations; i++) {
+        dispatch_async(queue, ^{
+            @autoreleasepool {
+                // Each iteration creates its own image and processes it
+                NSInteger size = 100 + (i % 50);  // Vary sizes
+                VIPSImage *image = [self createTestImageWithWidth:size height:size];
+                XCTAssertNotNil(image);
+
+                NSError *error = nil;
+
+                // Chain multiple operations
+                VIPSImage *result = [image resizeWithScale:0.5 error:&error];
+                XCTAssertNotNil(result, @"Resize failed: %@", error);
+
+                result = [result adjustContrast:1.2 error:&error];
+                XCTAssertNotNil(result, @"Contrast failed: %@", error);
+
+                result = [result blurWithSigma:1.0 error:&error];
+                XCTAssertNotNil(result, @"Blur failed: %@", error);
+
+                // Export to verify the pipeline completed
+                NSData *data = [result dataWithFormat:VIPSImageFormatJPEG quality:80 error:&error];
+                XCTAssertNotNil(data, @"Export failed: %@", error);
+                XCTAssertGreaterThan(data.length, 0);
+
+                [expectation fulfill];
+            }
+        });
+    }
+
+    [self waitForExpectationsWithTimeout:30.0 handler:nil];
+}
+
 #pragma mark - Helper Methods
 
 - (VIPSImage *)createTestImageWithWidth:(NSInteger)width height:(NSInteger)height {
