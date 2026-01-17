@@ -599,6 +599,33 @@ VIPSImage → JPEG/PNG encode → NSData → UIImage decode → CGImage (slower)
 
 The pixel data is transferred directly from libvips memory to CoreGraphics with a single copy. The `CGDataProvider` release callback automatically frees the vips memory when the CGImage is deallocated.
 
+### Xcode Debugger Quick Look
+
+VIPSImage supports Xcode's Quick Look feature via `debugQuickLookObject`. When debugging:
+
+1. Set a breakpoint after creating/processing a VIPSImage
+2. Hover over the variable and click the eye icon (or press spacebar)
+3. Xcode displays a visual preview of the image
+
+This uses runtime lookup for UIImage to avoid compile-time UIKit dependencies while still providing visual debugging. If CGImage creation fails, it falls back to showing dimensions and band count as text.
+
+### Thread Safety
+
+VIPSImage is safe to use from multiple threads concurrently, with each thread processing different images:
+
+```swift
+// Safe: parallel processing of different images
+DispatchQueue.concurrentPerform(iterations: images.count) { i in
+    let image = try? VIPSImage(contentsOfFile: images[i])
+    let thumb = try? image?.resizeToFit(width: 200, height: 200)
+    // process...
+}
+```
+
+The vips operation cache uses mutexes to protect concurrent access. Each VIPSImage instance is independent.
+
+**Note:** `vips_concurrency_set(1)` means each individual vips operation runs single-threaded internally, but multiple operations on different images can run in parallel from your app's threads.
+
 ### Why a Dynamic Framework with Wrapper?
 
 1. **License compliance**: libvips is LGPL, requiring dynamic linking for proprietary apps
