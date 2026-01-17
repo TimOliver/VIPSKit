@@ -6,6 +6,7 @@
 //
 
 #import "VIPSImage+Private.h"
+#import <math.h>
 
 @implementation VIPSImage (Color)
 
