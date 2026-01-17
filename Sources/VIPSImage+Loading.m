@@ -183,6 +183,29 @@
         return nil;
     }
 
+    // Set the color interpretation so vips knows how to handle the image
+    // Without this, the image is "multiband" and color operations fail
+    VipsInterpretation interp;
+    if (bands == 1) {
+        interp = VIPS_INTERPRETATION_B_W;
+    } else if (bands == 2) {
+        interp = VIPS_INTERPRETATION_B_W;  // Grayscale + alpha
+    } else {
+        interp = VIPS_INTERPRETATION_sRGB;  // RGB or RGBA
+    }
+
+    // Use vips_copy to set the interpretation
+    VipsImage *interpreted = NULL;
+    if (vips_copy(wrapper.image, &interpreted, "interpretation", interp, NULL) != 0) {
+        g_object_unref(wrapper.image);
+        if (error) {
+            *error = [self.class errorFromVips];
+        }
+        return nil;
+    }
+    g_object_unref(wrapper.image);
+    wrapper.image = interpreted;
+
     return wrapper;
 }
 

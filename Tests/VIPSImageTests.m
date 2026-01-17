@@ -13,20 +13,23 @@
 
 @implementation VIPSImageTests
 
-+ (void)setUp {
+static BOOL sVIPSInitialized = NO;
+
+- (void)setUp {
     [super setUp];
-    NSError *error = nil;
-    if (![VIPSImage initializeWithError:&error]) {
-        NSLog(@"Failed to initialize VIPSKit: %@", error);
+    if (!sVIPSInitialized) {
+        NSError *error = nil;
+        BOOL success = [VIPSImage initializeWithError:&error];
+        XCTAssertTrue(success, @"Failed to initialize VIPSKit: %@", error);
+        sVIPSInitialized = success;
     }
+    XCTAssertTrue(sVIPSInitialized, @"VIPSKit not initialized");
 }
 
 #pragma mark - Initialization Tests
 
 - (void)testInitialization {
-    // VIPSKit should already be initialized from +setUp
-    // If we got here without crashing, initialization succeeded
-    XCTAssertTrue(YES, @"VIPSKit initialized successfully");
+    XCTAssertTrue(sVIPSInitialized, @"VIPSKit should be initialized");
 }
 
 #pragma mark - Image Creation Tests
@@ -404,14 +407,16 @@
         for (NSInteger x = 0; x < width; x++) {
             NSInteger idx = (y * width + x) * bands;
             bytes[idx + 0] = (unsigned char)(x * 255 / width);     // R
-            bytes[idx + 1] = (unsigned char)(y * 255 / height);    // G
+            if (bands >= 2) bytes[idx + 1] = (unsigned char)(y * 255 / height);    // G
             if (bands >= 3) bytes[idx + 2] = 128;                  // B
             if (bands >= 4) bytes[idx + 3] = 200;                  // A
         }
     }
 
     NSError *error = nil;
-    return [VIPSImage imageWithBuffer:buffer.bytes width:width height:height bands:bands error:&error];
+    VIPSImage *image = [VIPSImage imageWithBuffer:buffer.bytes width:width height:height bands:bands error:&error];
+    XCTAssertNotNil(image, @"Failed to create test image: %@", error);
+    return image;
 }
 
 @end
