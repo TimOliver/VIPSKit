@@ -43,6 +43,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2241FC272F1B59B000B80F22 /* VIPSTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = VIPSTests.xctestplan; path = Tests/VIPSTests.xctestplan; sourceTree = "<group>"; };
 		A1000010 /* VIPSKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = VIPSKit.xcframework; sourceTree = "<group>"; };
 		A1000020 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		A1000021 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -92,6 +93,7 @@
 		A1000070 = {
 			isa = PBXGroup;
 			children = (
+				2241FC272F1B59B000B80F22 /* VIPSTests.xctestplan */,
 				A2000000 /* Sources */,
 				A1000072 /* Tests */,
 				A1000010 /* VIPSKit.xcframework */,

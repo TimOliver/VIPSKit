@@ -25,6 +25,16 @@ NSString *const VIPSErrorDomain = @"org.libvips.VIPSKit";
 #pragma mark - Lifecycle
 
 + (BOOL)initializeWithError:(NSError **)error {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        // Disable glib's slice allocator which can cause issues when statically linked.
+        // This must be set BEFORE any glib functions are called.
+        setenv("G_SLICE", "always-malloc", 1);
+
+        // Also disable glib's debug flags that might interfere
+        setenv("G_DEBUG", "gc-friendly", 1);
+    });
+
     if (VIPS_INIT("VIPSKit") != 0) {
         if (error) {
             *error = [self errorFromVips];
@@ -32,15 +42,16 @@ NSString *const VIPSErrorDomain = @"org.libvips.VIPSKit";
         return NO;
     }
 
+    // CRITICAL: Disable operation cache IMMEDIATELY after init.
+    // The cache uses glib hash tables which can crash when statically linked.
+    // This must happen before ANY vips operations use the cache.
+    vips_cache_set_max(0);
+    vips_cache_set_max_mem(0);
+    vips_cache_set_max_files(0);
+
     // Default to single-threaded for batch processing
     // (parallelize across images, not within single image)
     vips_concurrency_set(1);
-
-    // Set minimal cache to avoid memory bloat while keeping cache functional
-    // Setting to 0 can cause issues with cache infrastructure
-    vips_cache_set_max(100);
-    vips_cache_set_max_mem(50 * 1024 * 1024);  // 50MB
-    vips_cache_set_max_files(10);
 
     return YES;
 }
@@ -123,10 +134,15 @@ NSString *const VIPSErrorDomain = @"org.libvips.VIPSKit";
 #pragma mark - Class Memory Management
 
 + (void)clearCache {
-    vips_cache_drop_all();
+    // Note: vips_cache_drop_all() can corrupt glib hash table state when
+    // statically linked. Since we disable the cache at init (vips_cache_set_max(0)),
+    // this is effectively a no-op anyway. We skip the call to avoid crashes.
+    // If caching is re-enabled in the future, this will need to be revisited.
 }
 
 + (void)setCacheMaxOperations:(NSInteger)max {
+    // WARNING: Enabling cache (max > 0) may cause crashes due to glib hash table
+    // issues when statically linked. Use with caution.
     vips_cache_set_max((int)max);
 }
 

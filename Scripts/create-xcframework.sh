@@ -136,9 +136,12 @@ build_dylib_for_target() {
     static_libs+=" ${STAGING_DIR}/brotli/${target}/lib/libbrotlienc.a"
     static_libs+=" ${STAGING_DIR}/highway/${target}/lib/libhwy.a"
     static_libs+=" ${STAGING_DIR}/glib/${target}/lib/libintl.a"
-    static_libs+=" ${STAGING_DIR}/glib/${target}/lib/libglib-2.0.a"
+    # CRITICAL: Use -force_load for glib to ensure __attribute__((constructor))
+    # initialization functions are included. Without this, glib's hash table
+    # infrastructure is not properly initialized, causing crashes.
+    static_libs+=" -force_load ${STAGING_DIR}/glib/${target}/lib/libglib-2.0.a"
     static_libs+=" ${STAGING_DIR}/glib/${target}/lib/libgmodule-2.0.a"
-    static_libs+=" ${STAGING_DIR}/glib/${target}/lib/libgobject-2.0.a"
+    static_libs+=" -force_load ${STAGING_DIR}/glib/${target}/lib/libgobject-2.0.a"
     static_libs+=" ${STAGING_DIR}/glib/${target}/lib/libgio-2.0.a"
     static_libs+=" ${STAGING_DIR}/libjpeg-turbo/${target}/lib/libjpeg.a"
     static_libs+=" ${STAGING_DIR}/libpng/${target}/lib/libpng16.a"

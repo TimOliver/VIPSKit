@@ -167,28 +167,30 @@
                          height:(NSInteger)height
                           bands:(NSInteger)bands
                           error:(NSError **)error {
-    VIPSImage *wrapper = [[VIPSImage alloc] init];
-
     // Create image from memory - assumes 8-bit unsigned data
-    wrapper.image = vips_image_new_from_memory_copy(buffer,
-                                                     width * height * bands,
-                                                     (int)width,
-                                                     (int)height,
-                                                     (int)bands,
-                                                     VIPS_FORMAT_UCHAR);
+    VipsImage *image = vips_image_new_from_memory_copy(buffer,
+                                                        width * height * bands,
+                                                        (int)width,
+                                                        (int)height,
+                                                        (int)bands,
+                                                        VIPS_FORMAT_UCHAR);
 
-    if (!wrapper.image) {
+    if (!image) {
         if (error) {
             *error = [self.class errorFromVips];
         }
         return nil;
     }
 
-    // Set the color interpretation so vips knows how to handle the image
-    // Without this, the image is "multiband" and color operations fail
-    VipsInterpretation interp = (bands <= 2) ? VIPS_INTERPRETATION_B_W : VIPS_INTERPRETATION_sRGB;
-    vips_image_set_int(wrapper.image, "interpretation", interp);
+    // Set the color interpretation directly on the struct.
+    // Images from memory default to VIPS_INTERPRETATION_MULTIBAND which causes
+    // color operations to fail. We set the Type field directly to avoid using
+    // vips_copy() which goes through the operation cache (which has issues with
+    // statically linked glib).
+    image->Type = (bands <= 2) ? VIPS_INTERPRETATION_B_W : VIPS_INTERPRETATION_sRGB;
 
+    VIPSImage *wrapper = [[VIPSImage alloc] init];
+    wrapper.image = image;
     return wrapper;
 }
 
