@@ -70,6 +70,14 @@ typedef NS_ENUM(NSInteger, VIPSBlendMode) {
     VIPSBlendModeExclusion
 };
 
+/// Image statistics (min, max, mean, standard deviation)
+@interface VIPSImageStatistics : NSObject
+@property (nonatomic, readonly) double min;
+@property (nonatomic, readonly) double max;
+@property (nonatomic, readonly) double mean;
+@property (nonatomic, readonly) double standardDeviation;
+@end
+
 /// Image processing wrapper for libvips
 @interface VIPSImage : NSObject
 
@@ -476,6 +484,27 @@ typedef NS_ENUM(NSInteger, VIPSBlendMode) {
 - (CGRect)findTrimWithThreshold:(double)threshold
                      background:(nullable NSArray<NSNumber *> *)background
                           error:(NSError *_Nullable *_Nullable)error;
+
+/// Get image statistics (min, max, mean, standard deviation) across all pixels.
+/// For multi-band images, computes statistics across all bands combined.
+/// @param error On return, contains error if method returns nil
+/// @return Statistics object, or nil on error
+- (nullable VIPSImageStatistics *)statisticsWithError:(NSError *_Nullable *_Nullable)error;
+
+#pragma mark - Arithmetic
+
+/// Subtract another image from this image (pixel-wise: self - other).
+/// Images should have the same dimensions. Result may contain negative values.
+/// @param image The image to subtract
+/// @param error On return, contains error if method returns nil
+/// @return Result image, or nil on error
+- (nullable VIPSImage *)subtract:(VIPSImage *)image error:(NSError *_Nullable *_Nullable)error;
+
+/// Compute absolute value of each pixel.
+/// Useful after subtraction to get absolute differences.
+/// @param error On return, contains error if method returns nil
+/// @return Result image, or nil on error
+- (nullable VIPSImage *)absoluteWithError:(NSError *_Nullable *_Nullable)error;
 
 #pragma mark - CoreGraphics Integration
 

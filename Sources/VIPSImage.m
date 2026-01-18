@@ -11,6 +11,20 @@
 
 NSString *const VIPSErrorDomain = @"org.libvips.VIPSKit";
 
+#pragma mark - VIPSImageStatistics
+
+@interface VIPSImageStatistics ()
+@property (nonatomic, readwrite) double min;
+@property (nonatomic, readwrite) double max;
+@property (nonatomic, readwrite) double mean;
+@property (nonatomic, readwrite) double standardDeviation;
+@end
+
+@implementation VIPSImageStatistics
+@end
+
+#pragma mark - VIPSImage
+
 @implementation VIPSImage
 
 #pragma mark - Error Handling
@@ -299,6 +313,77 @@ NSString *const VIPSErrorDomain = @"org.libvips.VIPSKit";
     }
 
     return CGRectMake(left, top, width, height);
+}
+
+- (VIPSImageStatistics *)statisticsWithError:(NSError **)error {
+    double min = 0, max = 0, mean = 0, stddev = 0;
+
+    if (vips_min(self.image, &min, NULL) != 0) {
+        if (error) {
+            *error = [self.class errorFromVips];
+        }
+        return nil;
+    }
+
+    if (vips_max(self.image, &max, NULL) != 0) {
+        if (error) {
+            *error = [self.class errorFromVips];
+        }
+        return nil;
+    }
+
+    if (vips_avg(self.image, &mean, NULL) != 0) {
+        if (error) {
+            *error = [self.class errorFromVips];
+        }
+        return nil;
+    }
+
+    if (vips_deviate(self.image, &stddev, NULL) != 0) {
+        if (error) {
+            *error = [self.class errorFromVips];
+        }
+        return nil;
+    }
+
+    VIPSImageStatistics *stats = [[VIPSImageStatistics alloc] init];
+    stats.min = min;
+    stats.max = max;
+    stats.mean = mean;
+    stats.standardDeviation = stddev;
+    return stats;
+}
+
+#pragma mark - Arithmetic
+
+- (VIPSImage *)subtract:(VIPSImage *)image error:(NSError **)error {
+    VipsImage *out = NULL;
+
+    if (vips_subtract(self.image, image.image, &out, NULL) != 0) {
+        if (error) {
+            *error = [self.class errorFromVips];
+        }
+        return nil;
+    }
+
+    VIPSImage *result = [[VIPSImage alloc] init];
+    result.image = out;
+    return result;
+}
+
+- (VIPSImage *)absoluteWithError:(NSError **)error {
+    VipsImage *out = NULL;
+
+    if (vips_abs(self.image, &out, NULL) != 0) {
+        if (error) {
+            *error = [self.class errorFromVips];
+        }
+        return nil;
+    }
+
+    VIPSImage *result = [[VIPSImage alloc] init];
+    result.image = out;
+    return result;
 }
 
 #pragma mark - Debug Support

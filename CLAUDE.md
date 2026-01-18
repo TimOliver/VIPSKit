@@ -428,6 +428,19 @@ let bounds = try image.findTrim(threshold: 10.0, background: [255, 255, 255])
 let content = try image.crop(x: Int(bounds.origin.x), y: Int(bounds.origin.y),
                               width: Int(bounds.width), height: Int(bounds.height))
 
+// Image arithmetic - compare two images
+let diff = try image1.subtract(image2)      // Pixel-wise subtraction
+let absDiff = try diff.absolute()           // Absolute value of differences
+let stats = try absDiff.statistics()        // Get mean, min, max, stddev
+print("Mean difference: \(stats.mean)")     // Low mean = similar images
+
+// Example: compare edge strips for similarity
+let strip1 = try img1.crop(x: img1.width - 10, y: 0, width: 10, height: img1.height)
+let strip2 = try img2.crop(x: 0, y: 0, width: 10, height: img2.height)
+let diff = try strip1.grayscale().subtract(strip2.grayscale())
+let stats = try diff.absolute().statistics()
+let similarity = 1.0 - (stats.mean / 128.0)  // 0-1 score
+
 // Cleanup at app termination (optional)
 VIPSImage.shutdown()
 ```
@@ -529,6 +542,12 @@ CGRect bounds = [image findTrimWithThreshold:10.0
                                   background:@[@255, @255, @255]
                                        error:&error];
 
+// Image arithmetic - compare two images
+VIPSImage *diff = [image1 subtract:image2 error:&error];
+VIPSImage *absDiff = [diff absoluteWithError:&error];
+VIPSImageStatistics *stats = [absDiff statisticsWithError:&error];
+NSLog(@"Mean difference: %f", stats.mean);
+
 // Shutdown
 [VIPSImage shutdown];
 ```
@@ -584,6 +603,9 @@ CGRect bounds = [image findTrimWithThreshold:10.0
 | `-findTrimWithError:` | Find bounding box of content (auto-detect background) |
 | `-findTrimWithThreshold:error:` | Find content bounds with custom threshold |
 | `-findTrimWithThreshold:background:error:` | Find content bounds with explicit background color |
+| `-statisticsWithError:` | Get image statistics (min, max, mean, stddev) |
+| `-subtract:error:` | Pixel-wise subtraction (self - other) |
+| `-absoluteWithError:` | Absolute value of each pixel |
 | `-tileRectsWithTileWidth:tileHeight:` | Calculate tile rects for dividing image |
 | `-numberOfStripsWithHeight:` | Number of horizontal strips for given height |
 | `-stripAtIndex:height:error:` | Extract horizontal strip by index |
@@ -607,6 +629,15 @@ CGRect bounds = [image findTrimWithThreshold:10.0
 | `+resetMemoryHighWater` | Reset peak memory tracking |
 | `+setConcurrency:` | Set vips thread pool size (affects JXL, etc.) |
 | `+concurrency` | Get current vips thread pool size |
+
+### VIPSImageStatistics
+
+| Property | Description |
+|----------|-------------|
+| `min` | Minimum pixel value across all bands |
+| `max` | Maximum pixel value across all bands |
+| `mean` | Mean pixel value across all bands |
+| `standardDeviation` | Standard deviation across all bands |
 
 ### Image Formats
 
