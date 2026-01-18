@@ -43,6 +43,11 @@ fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
 
-/Vendor
+# VIPSKit build artifacts
 /build
 /VIPSKit.xcframework
+vipskit-prebuilt-*.tar.gz
+
+# Downloaded vendor sources (but keep libvips-generated/)
+/Vendor/*
+!/Vendor/libvips-generated/

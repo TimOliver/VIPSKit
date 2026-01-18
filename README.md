@@ -82,9 +82,30 @@ NSData *jpegData = [thumbnail dataWithFormat:VIPSImageFormatJPEG quality:85 erro
 
 *Coming soon*
 
+# Development
+
+Want to contribute, debug, or just explore the code? VIPSKit includes full source-level debugging support.
+
+### Quick Start
+
+```bash
+git clone https://github.com/anthropics/VIPSKit.git
+cd VIPSKit
+./Scripts/bootstrap.sh   # Downloads pre-built libraries + libvips source
+open VIPSKit.xcodeproj   # Open in Xcode
+```
+
+Press ⌘U to run tests. You can set breakpoints in both the Objective-C wrapper (`Sources/`) and the libvips C code (`Vendor/vips-*/libvips/`).
+
+### Requirements
+
+```bash
+gem install xcodeproj     # For Xcode project configuration
+```
+
 # Building from Source
 
-`VIPSKit` includes a complete build system for compiling libvips and all 12 of its dependencies from source.
+To build the XCFramework from source (instead of using pre-built libraries):
 
 ### Prerequisites
 
@@ -107,6 +128,15 @@ This will download all sources, cross-compile for all target platforms, and prod
 ./build.sh --skip-download  # Skip downloading sources
 ./build.sh --jobs 8         # Set parallel job count
 ./build.sh -f               # Rebuild framework only (fast)
+```
+
+### Creating a Pre-built Release
+
+After building, create a tarball for GitHub releases:
+
+```bash
+./Scripts/package-prebuilt.sh 1.0.0
+# Creates vipskit-prebuilt-1.0.0.tar.gz
 ```
 
 # Supported Image Formats

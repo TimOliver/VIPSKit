@@ -128,25 +128,42 @@ The project includes an Xcode workspace for development, debugging, and testing.
 - Set breakpoints in both the Objective-C wrapper and libvips C source code
 - Run unit tests that build everything from source (not the xcframework)
 
-### Initial Setup
+### Quick Start (Pre-built Dependencies)
 
-After cloning the repo, run the setup script to configure Xcode targets:
+For most users, just clone and build:
 
 ```bash
-# First, run a full build to generate required files
-./build.sh
-
-# Then configure Xcode project
-ruby Scripts/add-libvips-target.rb
+git clone https://github.com/anthropics/VIPSKit.git
+cd VIPSKit
+./Scripts/bootstrap.sh   # Downloads pre-built libraries + libvips source
+open VIPSKit.xcodeproj   # Open in Xcode, press ⌘U to run tests
 ```
 
-The Ruby script creates:
+The bootstrap script downloads:
+- Pre-built static libraries from GitHub releases (~100MB)
+- libvips source code for debugging (~20MB)
+
+Xcode will also run bootstrap automatically on first build if dependencies are missing.
+
+### Building from Source (Optional)
+
+If you need to modify dependencies or build for different architectures:
+
+```bash
+./build.sh               # Build all dependencies from source
+ruby Scripts/add-libvips-target.rb  # Configure Xcode project
+```
+
+### Project Structure
+
+The Ruby script (`Scripts/add-libvips-target.rb`) creates:
 - **VIPSKit** - Static library target containing:
   - All libvips C/C++ source files (~350 files)
   - All VIPSImage Objective-C wrapper files (~11 files)
 - **VIPSTests** - Unit test target configured to:
   - Depend on and link against VIPSKit
   - Link against all pre-built static library dependencies
+  - Run bootstrap automatically if dependencies are missing
 
 ### Running Tests
 

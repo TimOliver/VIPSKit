@@ -213,6 +213,33 @@ if vips_tests
   # Add dependency
   vips_tests.add_dependency(target)
 
+  # Add or update bootstrap run script phase
+  bootstrap_phase_name = 'Bootstrap Dependencies'
+  existing_bootstrap = vips_tests.shell_script_build_phases.find { |p| p.name == bootstrap_phase_name }
+
+  if existing_bootstrap
+    puts "Updating existing Bootstrap Dependencies phase..."
+    bootstrap_phase = existing_bootstrap
+  else
+    puts "Adding Bootstrap Dependencies run script phase..."
+    bootstrap_phase = vips_tests.new_shell_script_build_phase(bootstrap_phase_name)
+    # Move to beginning of build phases (after dependencies)
+    vips_tests.build_phases.move(bootstrap_phase, 0)
+  end
+
+  bootstrap_phase.shell_script = <<~SCRIPT
+    # Bootstrap VIPSKit dependencies if missing
+    if [ ! -d "${SRCROOT}/build/staging/glib" ] || [ ! -d "${SRCROOT}/Vendor/vips-8.18.0/libvips" ]; then
+        echo "note: Running VIPSKit bootstrap to download dependencies..."
+        "${SRCROOT}/Scripts/bootstrap.sh"
+
+        if [ $? -ne 0 ]; then
+            echo "error: Bootstrap failed. Please run ./Scripts/bootstrap.sh manually."
+            exit 1
+        fi
+    fi
+  SCRIPT
+
   # Find and remove VIPSKit.xcframework from link phase
   frameworks_phase = vips_tests.frameworks_build_phase
   xcframework_ref = frameworks_phase.files.find { |f| f.display_name&.include?('VIPSKit.xcframework') }
