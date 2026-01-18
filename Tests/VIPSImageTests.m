@@ -394,12 +394,16 @@ static BOOL sVIPSInitialized = NO;
         XCTAssertNotNil(data);
     }
 
-    // This previously crashed due to glib hash table corruption
-    // Set a breakpoint here to debug!
+    // clearCache uses safe LRU eviction instead of vips_cache_drop_all()
+    // which would destroy the hash table and cause crashes
     [VIPSImage clearCache];
 
-    // If we get here, the crash is fixed
-    XCTAssertTrue(YES, @"clearCache completed without crash");
+    // Verify we can still perform operations after clearing cache
+    VIPSImage *afterClear = [self createTestImageWithWidth:50 height:50];
+    NSError *afterError = nil;
+    VIPSImage *afterProcessed = [afterClear blurWithSigma:1.0 error:&afterError];
+    XCTAssertNotNil(afterProcessed, @"Should work after clearCache");
+    XCTAssertNil(afterError);
 }
 
 #pragma mark - Concurrency Tests
