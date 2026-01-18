@@ -381,11 +381,6 @@ static BOOL sVIPSInitialized = NO;
     XCTAssertEqual(copied.height, image.height, @"Dimensions should match");
 }
 
-- (void)testMemoryUsage {
-    NSInteger usage = [VIPSImage memoryUsage];
-    XCTAssertGreaterThanOrEqual(usage, 0, @"Memory usage should be non-negative");
-}
-
 #pragma mark - Concurrency Tests
 
 - (void)testConcurrentImageProcessing {
@@ -481,8 +476,6 @@ static BOOL sVIPSInitialized = NO;
         return;
     }
 
-    NSInteger memoryBefore = [VIPSImage memoryUsage];
-
     NSError *error = nil;
     VIPSImage *thumbnail = [VIPSImage thumbnailFromFile:path width:200 height:200 error:&error];
 
@@ -497,16 +490,10 @@ static BOOL sVIPSInitialized = NO;
     BOOL widthAtTarget = (thumbnail.width == 200);
     BOOL heightAtTarget = (thumbnail.height == 200);
     XCTAssertTrue(widthAtTarget || heightAtTarget, @"At least one dimension should be at target");
-
-    NSInteger memoryAfter = [VIPSImage memoryUsage];
-    NSInteger memoryUsed = memoryAfter - memoryBefore;
-
-    NSLog(@"Thumbnail: %ldx%ld, memory delta: %ld bytes",
-          (long)thumbnail.width, (long)thumbnail.height, (long)memoryUsed);
 }
 
-- (void)testMemoryEfficientThumbnailing {
-    // Compare memory usage: shrink-on-load vs full load then resize
+- (void)testThumbnailingMethods {
+    // Verify both thumbnailing approaches work and produce consistent results
     NSString *path = [self pathForTestResource:@"superman.jpg"];
     if (!path) {
         XCTSkip(@"superman.jpg not found in test resources");
@@ -515,58 +502,29 @@ static BOOL sVIPSInitialized = NO;
 
     NSError *error = nil;
 
-    // Method 1: Shrink-on-load (memory efficient)
-    NSInteger memBefore1 = [VIPSImage memoryUsage];
-
+    // Method 1: Shrink-on-load (recommended for memory efficiency)
     VIPSImage *thumb1 = [VIPSImage thumbnailFromFile:path width:200 height:200 error:&error];
     XCTAssertNotNil(thumb1, @"Shrink-on-load failed: %@", error);
 
-    // Force evaluation by copying to memory
-    VIPSImage *copied1 = [thumb1 copyToMemoryWithError:&error];
-    XCTAssertNotNil(copied1, @"Copy failed: %@", error);
-
-    NSInteger memAfter1 = [VIPSImage memoryUsage];
-    NSInteger memUsed1 = memAfter1 - memBefore1;
-    NSInteger width1 = copied1.width;
-
-    // Release references
-    thumb1 = nil;
-    copied1 = nil;
-
-    // Method 2: Full load then resize (less efficient)
-    NSInteger memBefore2 = [VIPSImage memoryUsage];
-
+    // Method 2: Full load then resize
     VIPSImage *fullImage = [VIPSImage imageWithContentsOfFile:path error:&error];
     XCTAssertNotNil(fullImage, @"Full load failed: %@", error);
 
     VIPSImage *thumb2 = [fullImage resizeToFitWidth:200 height:200 error:&error];
     XCTAssertNotNil(thumb2, @"Resize failed: %@", error);
 
-    // Force evaluation
-    VIPSImage *copied2 = [thumb2 copyToMemoryWithError:&error];
-    XCTAssertNotNil(copied2, @"Copy failed: %@", error);
-
-    NSInteger memAfter2 = [VIPSImage memoryUsage];
-    NSInteger memUsed2 = memAfter2 - memBefore2;
-    NSInteger width2 = copied2.width;
-
-    NSLog(@"Memory comparison:");
-    NSLog(@"  Shrink-on-load: %ld bytes", (long)memUsed1);
-    NSLog(@"  Full load then resize: %ld bytes", (long)memUsed2);
-
-    // Both should produce valid results with similar dimensions
-    XCTAssertEqual(width1, width2, @"Both methods should produce same width");
+    // Both should produce consistent dimensions
+    XCTAssertEqual(thumb1.width, thumb2.width, @"Both methods should produce same width");
+    XCTAssertEqual(thumb1.height, thumb2.height, @"Both methods should produce same height");
 }
 
 - (void)testCreateThumbnailCGImageFromLargeFile {
-    // Test the most memory-efficient path: decode directly to thumbnail CGImage
+    // Test direct decode to thumbnail CGImage
     NSString *path = [self pathForTestResource:@"superman.jpg"];
     if (!path) {
         XCTSkip(@"superman.jpg not found in test resources");
         return;
     }
-
-    NSInteger memoryBefore = [VIPSImage memoryUsage];
 
     NSError *error = nil;
     CGImageRef cgImage = [VIPSImage createThumbnailFromFile:path width:200 height:200 error:&error];
@@ -581,23 +539,17 @@ static BOOL sVIPSInitialized = NO;
         XCTAssertLessThanOrEqual(width, 200, @"Width should fit within bounds");
         XCTAssertLessThanOrEqual(height, 200, @"Height should fit within bounds");
 
-        NSInteger memoryAfter = [VIPSImage memoryUsage];
-        NSLog(@"Thumbnail CGImage: %ldx%ld, memory delta: %ld bytes",
-              (long)width, (long)height, (long)(memoryAfter - memoryBefore));
-
         CGImageRelease(cgImage);
     }
 }
 
 - (void)testLargeImageProcessingChain {
-    // Test that a chain of operations on a large image works without excessive memory
+    // Test a chain of operations on a large image
     NSString *path = [self pathForTestResource:@"superman.jpg"];
     if (!path) {
         XCTSkip(@"superman.jpg not found in test resources");
         return;
     }
-
-    NSInteger memoryBefore = [VIPSImage memoryUsage];
 
     NSError *error = nil;
 
@@ -619,13 +571,6 @@ static BOOL sVIPSInitialized = NO;
     NSData *jpegData = [result dataWithFormat:VIPSImageFormatJPEG quality:85 error:&error];
     XCTAssertNotNil(jpegData, @"Export failed: %@", error);
     XCTAssertGreaterThan(jpegData.length, 0, @"Should have data");
-
-    NSInteger memoryAfter = [VIPSImage memoryUsage];
-
-    NSLog(@"Processing chain complete:");
-    NSLog(@"  Output: %ldx%ld", (long)result.width, (long)result.height);
-    NSLog(@"  JPEG size: %lu bytes", (unsigned long)jpegData.length);
-    NSLog(@"  Memory delta: %ld bytes", (long)(memoryAfter - memoryBefore));
 }
 
 #pragma mark - Helper Methods

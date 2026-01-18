@@ -5,6 +5,7 @@
 //  Image compositing and blending methods
 //
 
+#import <Foundation/Foundation.h>
 #import "VIPSImage+Private.h"
 
 @implementation VIPSImage (Composite)

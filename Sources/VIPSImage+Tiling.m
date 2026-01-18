@@ -5,6 +5,7 @@
 //  Tiling and region extraction for large images
 //
 
+#import <Foundation/Foundation.h>
 #import "VIPSImage+Private.h"
 
 // Helper to create NSValue from CGRect in a cross-platform way
