@@ -135,6 +135,17 @@ NSString *const VIPSErrorDomain = @"org.libvips.VIPSKit";
     vips_cache_set_max_files((int)max);
 }
 
++ (void)clearCache {
+    // Don't use vips_cache_drop_all() - it destroys the hash table entirely
+    // and sets vips_cache_table to NULL, causing crashes on subsequent operations.
+    //
+    // Instead, use the safe approach: temporarily set max to 0 to evict all
+    // cached operations via the normal LRU mechanism, then restore the limit.
+    int originalMax = vips_cache_get_max();
+    vips_cache_set_max(0);  // Triggers vips_cache_trim() which evicts everything
+    vips_cache_set_max(originalMax);  // Restore
+}
+
 + (NSInteger)memoryUsage {
     return (NSInteger)vips_tracked_get_mem();
 }

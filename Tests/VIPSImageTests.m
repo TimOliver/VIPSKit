@@ -381,6 +381,27 @@ static BOOL sVIPSInitialized = NO;
     XCTAssertEqual(copied.height, image.height, @"Dimensions should match");
 }
 
+- (void)testClearCache {
+    // Create some images to populate the cache
+    for (int i = 0; i < 5; i++) {
+        VIPSImage *image = [self createTestImageWithWidth:100 height:100];
+        NSError *error = nil;
+        VIPSImage *processed = [image blurWithSigma:1.0 error:&error];
+        XCTAssertNotNil(processed);
+
+        // Force evaluation by exporting
+        NSData *data = [processed dataWithFormat:VIPSImageFormatJPEG quality:80 error:&error];
+        XCTAssertNotNil(data);
+    }
+
+    // This previously crashed due to glib hash table corruption
+    // Set a breakpoint here to debug!
+    [VIPSImage clearCache];
+
+    // If we get here, the crash is fixed
+    XCTAssertTrue(YES, @"clearCache completed without crash");
+}
+
 #pragma mark - Concurrency Tests
 
 - (void)testConcurrentImageProcessing {
