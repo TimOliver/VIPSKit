@@ -436,6 +436,47 @@ typedef NS_ENUM(NSInteger, VIPSBlendMode) {
 /// Returns a new VIPSImage that doesn't reference the original.
 - (nullable VIPSImage *)copyToMemoryWithError:(NSError *_Nullable *_Nullable)error;
 
+#pragma mark - Pixel Access
+
+/// Access raw pixel data with zero-copy block-based API.
+/// The pixel data is only valid within the block scope - do not store the pointer.
+/// Data is 8-bit per channel, in RGB or RGBA format (check bands for alpha).
+/// @param block Block called with pixel data and image dimensions
+/// @param error On return, contains error if method returns NO
+/// @return YES if successful, NO on error
+- (BOOL)withPixelData:(void (NS_NOESCAPE ^)(const uint8_t *data,
+                                            NSInteger width,
+                                            NSInteger height,
+                                            NSInteger bytesPerRow,
+                                            NSInteger bands))block
+                error:(NSError *_Nullable *_Nullable)error;
+
+#pragma mark - Analysis
+
+/// Find the bounding box of non-background pixels (trim margins).
+/// Automatically detects the background color from image edges.
+/// Uses a default threshold of 10.0 for pixel difference detection.
+/// @param error On return, contains error if method returns CGRectNull
+/// @return Bounding box of content, or CGRectNull on error
+- (CGRect)findTrimWithError:(NSError *_Nullable *_Nullable)error;
+
+/// Find the bounding box of non-background pixels with custom threshold.
+/// Automatically detects the background color from image edges.
+/// @param threshold How different a pixel must be from background to count as content (default 10.0)
+/// @param error On return, contains error if method returns CGRectNull
+/// @return Bounding box of content, or CGRectNull on error
+- (CGRect)findTrimWithThreshold:(double)threshold
+                          error:(NSError *_Nullable *_Nullable)error;
+
+/// Find the bounding box of non-background pixels with custom threshold and background.
+/// @param threshold How different a pixel must be from background to count as content
+/// @param background Background color as array of doubles (e.g., @[@255, @255, @255] for white), or nil to auto-detect
+/// @param error On return, contains error if method returns CGRectNull
+/// @return Bounding box of content, or CGRectNull on error
+- (CGRect)findTrimWithThreshold:(double)threshold
+                     background:(nullable NSArray<NSNumber *> *)background
+                          error:(NSError *_Nullable *_Nullable)error;
+
 #pragma mark - CoreGraphics Integration
 
 /// Create a CGImage from the vips image (caller must release with CGImageRelease)

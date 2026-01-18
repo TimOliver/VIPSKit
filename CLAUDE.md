@@ -394,6 +394,40 @@ print("VIPS memory: \(VIPSImage.memoryUsage()) bytes")
 VIPSImage.setCacheMaxOperations(50)  // Reduce from default 100
 VIPSImage.setCacheMaxMemory(25 * 1024 * 1024)  // Reduce to 25MB
 
+// Access raw pixel data (zero-copy block-based API)
+// Useful for custom analysis like histogram computation, etc.
+let thumb = try VIPSImage.thumbnail(fromFile: path, width: 64, height: 64)
+try thumb.withPixelData { data, width, height, bytesPerRow, bands in
+    // data is UInt8 pointer, valid only within this block
+    // bands is 3 (RGB) or 4 (RGBA)
+    for y in 0..<height {
+        let row = data + y * bytesPerRow
+        for x in 0..<width {
+            let pixel = row + x * bands
+            let r = pixel[0], g = pixel[1], b = pixel[2]
+            // Analyze pixels...
+        }
+    }
+}
+// Memory automatically freed after block returns
+
+// Find content bounds (trim whitespace/margins)
+let bounds = try image.findTrim()  // Auto-detects background, returns CGRect
+let contentWidth = bounds.width
+let contentHeight = bounds.height
+let marginLeft = bounds.origin.x
+let marginTop = bounds.origin.y
+
+// With custom threshold (how different from background to count as content)
+let bounds = try image.findTrim(threshold: 20.0)
+
+// With explicit background color (RGB values 0-255)
+let bounds = try image.findTrim(threshold: 10.0, background: [255, 255, 255])
+
+// Use case: zoom to content by cropping margins
+let content = try image.crop(x: Int(bounds.origin.x), y: Int(bounds.origin.y),
+                              width: Int(bounds.width), height: Int(bounds.height))
+
 // Cleanup at app termination (optional)
 VIPSImage.shutdown()
 ```
@@ -466,6 +500,35 @@ NSData *webpData = [image cacheDataWithFormat:VIPSImageFormatWebP quality:85 los
 NSData *jxlData = [image cacheDataWithFormat:VIPSImageFormatJXL quality:0 lossless:YES error:&error];
 [image writeToCacheFile:@"/path/to/cache/thumb" format:VIPSImageFormatWebP quality:80 lossless:NO error:&error];
 
+// Access raw pixel data (zero-copy block-based API)
+VIPSImage *thumb = [VIPSImage thumbnailFromFile:path width:64 height:64 error:&error];
+[thumb withPixelData:^(const uint8_t *data, NSInteger width, NSInteger height,
+                       NSInteger bytesPerRow, NSInteger bands) {
+    // data is valid only within this block
+    for (NSInteger y = 0; y < height; y++) {
+        const uint8_t *row = data + y * bytesPerRow;
+        for (NSInteger x = 0; x < width; x++) {
+            const uint8_t *pixel = row + x * bands;
+            uint8_t r = pixel[0], g = pixel[1], b = pixel[2];
+            // Analyze pixels...
+        }
+    }
+} error:&error];
+// Memory automatically freed after block returns
+
+// Find content bounds (trim whitespace/margins)
+CGRect bounds = [image findTrimWithError:&error];  // Auto-detects background
+CGFloat contentWidth = bounds.size.width;
+CGFloat marginLeft = bounds.origin.x;
+
+// With custom threshold
+CGRect bounds = [image findTrimWithThreshold:20.0 error:&error];
+
+// With explicit background color
+CGRect bounds = [image findTrimWithThreshold:10.0
+                                  background:@[@255, @255, @255]
+                                       error:&error];
+
 // Shutdown
 [VIPSImage shutdown];
 ```
@@ -517,6 +580,10 @@ NSData *jxlData = [image cacheDataWithFormat:VIPSImageFormatJXL quality:0 lossle
 | `-sobelWithError:` | Sobel edge detection |
 | `-cannyWithSigma:error:` | Canny edge detection |
 | `-copyToMemoryWithError:` | Copy pixels to memory, breaking lazy chain |
+| `-withPixelData:error:` | Zero-copy block-based access to raw 8-bit pixel data |
+| `-findTrimWithError:` | Find bounding box of content (auto-detect background) |
+| `-findTrimWithThreshold:error:` | Find content bounds with custom threshold |
+| `-findTrimWithThreshold:background:error:` | Find content bounds with explicit background color |
 | `-tileRectsWithTileWidth:tileHeight:` | Calculate tile rects for dividing image |
 | `-numberOfStripsWithHeight:` | Number of horizontal strips for given height |
 | `-stripAtIndex:height:error:` | Extract horizontal strip by index |

@@ -183,6 +183,124 @@ NSString *const VIPSErrorDomain = @"org.libvips.VIPSKit";
     return result;
 }
 
+#pragma mark - Pixel Access
+
+- (BOOL)withPixelData:(void (NS_NOESCAPE ^)(const uint8_t *data,
+                                            NSInteger width,
+                                            NSInteger height,
+                                            NSInteger bytesPerRow,
+                                            NSInteger bands))block
+                error:(NSError **)error {
+    if (!block) {
+        return YES;
+    }
+
+    VipsImage *prepared = NULL;
+
+    // Convert to sRGB if needed
+    VipsInterpretation interpretation = vips_image_get_interpretation(self.image);
+    if (interpretation != VIPS_INTERPRETATION_sRGB &&
+        interpretation != VIPS_INTERPRETATION_RGB &&
+        interpretation != VIPS_INTERPRETATION_B_W) {
+        if (vips_colourspace(self.image, &prepared, VIPS_INTERPRETATION_sRGB, NULL) != 0) {
+            if (error) {
+                *error = [self.class errorFromVips];
+            }
+            return NO;
+        }
+    } else {
+        prepared = self.image;
+        g_object_ref(prepared);
+    }
+
+    // Ensure 8-bit format
+    if (vips_image_get_format(prepared) != VIPS_FORMAT_UCHAR) {
+        VipsImage *cast = NULL;
+        if (vips_cast_uchar(prepared, &cast, NULL) != 0) {
+            g_object_unref(prepared);
+            if (error) {
+                *error = [self.class errorFromVips];
+            }
+            return NO;
+        }
+        g_object_unref(prepared);
+        prepared = cast;
+    }
+
+    // Get dimensions
+    int width = vips_image_get_width(prepared);
+    int height = vips_image_get_height(prepared);
+    int bands = vips_image_get_bands(prepared);
+    size_t bytesPerRow = (size_t)width * (size_t)bands;
+
+    // Write to contiguous memory buffer (single copy from vips pipeline)
+    size_t dataSize = 0;
+    void *data = vips_image_write_to_memory(prepared, &dataSize);
+    g_object_unref(prepared);
+
+    if (!data) {
+        if (error) {
+            *error = [self.class errorFromVips];
+        }
+        return NO;
+    }
+
+    // Call block with pixel data
+    block((const uint8_t *)data, width, height, (NSInteger)bytesPerRow, bands);
+
+    // Free the pixel data
+    g_free(data);
+
+    return YES;
+}
+
+#pragma mark - Analysis
+
+- (CGRect)findTrimWithError:(NSError **)error {
+    return [self findTrimWithThreshold:10.0 background:nil error:error];
+}
+
+- (CGRect)findTrimWithThreshold:(double)threshold error:(NSError **)error {
+    return [self findTrimWithThreshold:threshold background:nil error:error];
+}
+
+- (CGRect)findTrimWithThreshold:(double)threshold
+                     background:(NSArray<NSNumber *> *)background
+                          error:(NSError **)error {
+    int left = 0, top = 0, width = 0, height = 0;
+    int result;
+
+    if (background && background.count > 0) {
+        // Build VipsArrayDouble from the background array
+        double *bgValues = g_malloc(sizeof(double) * background.count);
+        for (NSUInteger i = 0; i < background.count; i++) {
+            bgValues[i] = background[i].doubleValue;
+        }
+        VipsArrayDouble *bgArray = vips_array_double_new(bgValues, (int)background.count);
+        g_free(bgValues);
+
+        result = vips_find_trim(self.image, &left, &top, &width, &height,
+                                "threshold", threshold,
+                                "background", bgArray,
+                                NULL);
+        vips_area_unref(VIPS_AREA(bgArray));
+    } else {
+        // Auto-detect background
+        result = vips_find_trim(self.image, &left, &top, &width, &height,
+                                "threshold", threshold,
+                                NULL);
+    }
+
+    if (result != 0) {
+        if (error) {
+            *error = [self.class errorFromVips];
+        }
+        return CGRectNull;
+    }
+
+    return CGRectMake(left, top, width, height);
+}
+
 #pragma mark - Debug Support
 
 - (id)debugQuickLookObject {
