@@ -6,7 +6,7 @@
 //
 
 #import <XCTest/XCTest.h>
-@import VIPSKit;
+#import "VIPSImage.h"
 
 @interface VIPSImageTests : XCTestCase
 @end

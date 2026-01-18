@@ -6,7 +6,7 @@
 //
 
 #import "AppDelegate.h"
-@import VIPSKit;
+#import "VIPSImage.h"
 
 @implementation AppDelegate
 
