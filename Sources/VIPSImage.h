@@ -491,6 +491,27 @@ typedef NS_ENUM(NSInteger, VIPSBlendMode) {
 /// @return Statistics object, or nil on error
 - (nullable VIPSImageStatistics *)statisticsWithError:(NSError *_Nullable *_Nullable)error;
 
+/// Get the average color of the image as per-band mean values.
+/// Returns an array of doubles representing mean value for each band (e.g., [R, G, B] or [R, G, B, A]).
+/// Values are in the range 0-255 for 8-bit images.
+/// @param error On return, contains error if method returns nil
+/// @return Array of per-band mean values, or nil on error
+- (nullable NSArray<NSNumber *> *)averageColorWithError:(NSError *_Nullable *_Nullable)error;
+
+/// Detect the background color by sampling the edges of the image.
+/// Samples a thin strip around all four edges and returns the average color.
+/// Useful for setting a matching background color in an image viewer.
+/// @param error On return, contains error if method returns nil
+/// @return Array of per-band mean values from edge pixels, or nil on error
+- (nullable NSArray<NSNumber *> *)detectBackgroundColorWithError:(NSError *_Nullable *_Nullable)error;
+
+/// Detect the background color by sampling edges with custom strip width.
+/// @param stripWidth Width of edge strip to sample (default 10 pixels)
+/// @param error On return, contains error if method returns nil
+/// @return Array of per-band mean values from edge pixels, or nil on error
+- (nullable NSArray<NSNumber *> *)detectBackgroundColorWithStripWidth:(NSInteger)stripWidth
+                                                                error:(NSError *_Nullable *_Nullable)error;
+
 #pragma mark - Arithmetic
 
 /// Subtract another image from this image (pixel-wise: self - other).

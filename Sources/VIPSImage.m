@@ -354,6 +354,137 @@ NSString *const VIPSErrorDomain = @"org.libvips.VIPSKit";
     return stats;
 }
 
+- (NSArray<NSNumber *> *)averageColorWithError:(NSError **)error {
+    VipsImage *stats = NULL;
+
+    // vips_stats returns a (bands+1) x 10 image:
+    // - Columns: 0=all bands combined, 1-n=individual bands
+    // - Rows: 0=min, 1=max, 2=sum, 3=sum², 4=mean, 5=stddev, 6-9=position info
+    if (vips_stats(self.image, &stats, NULL) != 0) {
+        if (error) {
+            *error = [self.class errorFromVips];
+        }
+        return nil;
+    }
+
+    int bands = vips_image_get_bands(self.image);
+    NSMutableArray<NSNumber *> *result = [NSMutableArray arrayWithCapacity:bands];
+
+    // Read mean values (row 4) for each band (columns 1 through bands)
+    for (int band = 1; band <= bands; band++) {
+        double *pixel = (double *)vips_image_get_data(stats);
+        if (!pixel) {
+            g_object_unref(stats);
+            if (error) {
+                *error = [NSError errorWithDomain:VIPSErrorDomain
+                                             code:-1
+                                         userInfo:@{NSLocalizedDescriptionKey: @"Failed to read stats data"}];
+            }
+            return nil;
+        }
+        // Stats image is (bands+1) columns wide, row 4 is the mean
+        int statsWidth = bands + 1;
+        double mean = pixel[4 * statsWidth + band];
+        [result addObject:@(mean)];
+    }
+
+    g_object_unref(stats);
+    return [result copy];
+}
+
+- (NSArray<NSNumber *> *)detectBackgroundColorWithError:(NSError **)error {
+    return [self detectBackgroundColorWithStripWidth:10 error:error];
+}
+
+- (NSArray<NSNumber *> *)detectBackgroundColorWithStripWidth:(NSInteger)stripWidth error:(NSError **)error {
+    if (stripWidth <= 0) {
+        stripWidth = 10;
+    }
+
+    NSInteger w = self.width;
+    NSInteger h = self.height;
+
+    // Handle very small images
+    if (w <= stripWidth * 2 || h <= stripWidth * 2) {
+        // Image is too small, just return average of whole image
+        return [self averageColorWithError:error];
+    }
+
+    // Extract edge strips and combine them
+    // We'll create a composite of all edge pixels
+    VipsImage *top = NULL, *bottom = NULL, *left = NULL, *right = NULL;
+    VipsImage *horizontal = NULL, *vertical = NULL, *combined = NULL;
+
+    // Top strip (full width)
+    if (vips_crop(self.image, &top, 0, 0, (int)w, (int)stripWidth, NULL) != 0) {
+        if (error) *error = [self.class errorFromVips];
+        return nil;
+    }
+
+    // Bottom strip (full width)
+    if (vips_crop(self.image, &bottom, 0, (int)(h - stripWidth), (int)w, (int)stripWidth, NULL) != 0) {
+        g_object_unref(top);
+        if (error) *error = [self.class errorFromVips];
+        return nil;
+    }
+
+    // Left strip (excluding corners already covered by top/bottom)
+    if (vips_crop(self.image, &left, 0, (int)stripWidth, (int)stripWidth, (int)(h - 2 * stripWidth), NULL) != 0) {
+        g_object_unref(top);
+        g_object_unref(bottom);
+        if (error) *error = [self.class errorFromVips];
+        return nil;
+    }
+
+    // Right strip (excluding corners)
+    if (vips_crop(self.image, &right, (int)(w - stripWidth), (int)stripWidth, (int)stripWidth, (int)(h - 2 * stripWidth), NULL) != 0) {
+        g_object_unref(top);
+        g_object_unref(bottom);
+        g_object_unref(left);
+        if (error) *error = [self.class errorFromVips];
+        return nil;
+    }
+
+    // Join top and bottom vertically
+    if (vips_join(top, bottom, &horizontal, VIPS_DIRECTION_VERTICAL, NULL) != 0) {
+        g_object_unref(top);
+        g_object_unref(bottom);
+        g_object_unref(left);
+        g_object_unref(right);
+        if (error) *error = [self.class errorFromVips];
+        return nil;
+    }
+    g_object_unref(top);
+    g_object_unref(bottom);
+
+    // Join left and right vertically
+    if (vips_join(left, right, &vertical, VIPS_DIRECTION_VERTICAL, NULL) != 0) {
+        g_object_unref(horizontal);
+        g_object_unref(left);
+        g_object_unref(right);
+        if (error) *error = [self.class errorFromVips];
+        return nil;
+    }
+    g_object_unref(left);
+    g_object_unref(right);
+
+    // Join horizontal and vertical strips
+    if (vips_join(horizontal, vertical, &combined, VIPS_DIRECTION_VERTICAL, NULL) != 0) {
+        g_object_unref(horizontal);
+        g_object_unref(vertical);
+        if (error) *error = [self.class errorFromVips];
+        return nil;
+    }
+    g_object_unref(horizontal);
+    g_object_unref(vertical);
+
+    // Create a temporary VIPSImage wrapper and get its average color
+    VIPSImage *combinedWrapper = [[VIPSImage alloc] init];
+    combinedWrapper.image = combined;  // Takes ownership
+
+    return [combinedWrapper averageColorWithError:error];
+}
+
 #pragma mark - Arithmetic
 
 - (VIPSImage *)subtract:(VIPSImage *)image error:(NSError **)error {
