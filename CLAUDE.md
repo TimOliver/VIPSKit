@@ -428,6 +428,22 @@ let bounds = try image.findTrim(threshold: 10.0, background: [255, 255, 255])
 let content = try image.crop(x: Int(bounds.origin.x), y: Int(bounds.origin.y),
                               width: Int(bounds.width), height: Int(bounds.height))
 
+// Get average color of an image (per-band means)
+let avgColor = try image.averageColor()  // Returns [R, G, B] or [R, G, B, A]
+print("Average color: R=\(avgColor[0]), G=\(avgColor[1]), B=\(avgColor[2])")
+
+// Detect background color by sampling image edges
+// Perfect for setting image viewer background to match image margins
+let bgColor = try image.detectBackgroundColor()  // Samples 10px edge strip
+let bgColorWide = try image.detectBackgroundColor(stripWidth: 20)  // Custom width
+
+// Use case: set viewer background to match image margins
+let bounds = try image.findTrim()
+if bounds.origin.x > 0 || bounds.origin.y > 0 {  // Has margins
+    let bgColor = try image.detectBackgroundColor()
+    // Convert to UIColor: UIColor(red: bgColor[0]/255, green: bgColor[1]/255, blue: bgColor[2]/255, alpha: 1)
+}
+
 // Image arithmetic - compare two images
 let diff = try image1.subtract(image2)      // Pixel-wise subtraction
 let absDiff = try diff.absolute()           // Absolute value of differences
@@ -542,6 +558,25 @@ CGRect bounds = [image findTrimWithThreshold:10.0
                                   background:@[@255, @255, @255]
                                        error:&error];
 
+// Get average color of an image (per-band means)
+NSArray<NSNumber *> *avgColor = [image averageColorWithError:&error];
+NSLog(@"Average color: R=%@, G=%@, B=%@", avgColor[0], avgColor[1], avgColor[2]);
+
+// Detect background color by sampling image edges
+NSArray<NSNumber *> *bgColor = [image detectBackgroundColorWithError:&error];
+NSArray<NSNumber *> *bgColorWide = [image detectBackgroundColorWithStripWidth:20 error:&error];
+
+// Use case: set viewer background to match image margins
+CGRect bounds = [image findTrimWithError:&error];
+if (bounds.origin.x > 0 || bounds.origin.y > 0) {  // Has margins
+    NSArray<NSNumber *> *bgColor = [image detectBackgroundColorWithError:&error];
+    // Convert to UIColor
+    UIColor *backgroundColor = [UIColor colorWithRed:bgColor[0].doubleValue/255.0
+                                               green:bgColor[1].doubleValue/255.0
+                                                blue:bgColor[2].doubleValue/255.0
+                                               alpha:1.0];
+}
+
 // Image arithmetic - compare two images
 VIPSImage *diff = [image1 subtract:image2 error:&error];
 VIPSImage *absDiff = [diff absoluteWithError:&error];
@@ -604,6 +639,9 @@ NSLog(@"Mean difference: %f", stats.mean);
 | `-findTrimWithThreshold:error:` | Find content bounds with custom threshold |
 | `-findTrimWithThreshold:background:error:` | Find content bounds with explicit background color |
 | `-statisticsWithError:` | Get image statistics (min, max, mean, stddev) |
+| `-averageColorWithError:` | Get per-band mean values [R, G, B] or [R, G, B, A] |
+| `-detectBackgroundColorWithError:` | Detect background color by sampling 10px edge strip |
+| `-detectBackgroundColorWithStripWidth:error:` | Detect background with custom edge strip width |
 | `-subtract:error:` | Pixel-wise subtraction (self - other) |
 | `-absoluteWithError:` | Absolute value of each pixel |
 | `-tileRectsWithTileWidth:tileHeight:` | Calculate tile rects for dividing image |
