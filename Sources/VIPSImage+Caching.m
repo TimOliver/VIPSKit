@@ -5,7 +5,7 @@
 //  Caching methods with explicit format control
 //
 
-#import <Foundation/Foundation.h>
+#import "VIPSImage+Caching.h"
 #import "VIPSImage+Private.h"
 
 @implementation VIPSImage (Caching)

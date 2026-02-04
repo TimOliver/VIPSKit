@@ -5,6 +5,7 @@
 //  Image resizing and thumbnail methods
 //
 
+#import "VIPSImage+Resize.h"
 #import "VIPSImage+Private.h"
 
 @implementation VIPSImage (Resize)

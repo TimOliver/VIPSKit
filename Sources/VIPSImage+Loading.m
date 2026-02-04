@@ -5,6 +5,7 @@
 //  Image loading and creation methods
 //
 
+#import "VIPSImage+Loading.h"
 #import "VIPSImage+Private.h"
 
 @implementation VIPSImage (Loading)

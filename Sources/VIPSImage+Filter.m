@@ -5,7 +5,7 @@
 //  Image filter methods (blur, sharpen)
 //
 
-#import <Foundation/Foundation.h>
+#import "VIPSImage+Filter.h"
 #import "VIPSImage+Private.h"
 
 @implementation VIPSImage (Filter)

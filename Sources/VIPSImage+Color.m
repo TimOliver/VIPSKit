@@ -5,8 +5,9 @@
 //  Color space and color manipulation methods
 //
 
-#import <Foundation/Foundation.h>
+#import "VIPSImage+Color.h"
 #import "VIPSImage+Private.h"
+#import <math.h>
 #import <math.h>
 
 @implementation VIPSImage (Color)

@@ -51,3 +51,4 @@ vipskit-prebuilt-*.tar.gz
 # Downloaded vendor sources (but keep libvips-generated/)
 /Vendor/*
 !/Vendor/libvips-generated/
+/.claude

@@ -5,6 +5,7 @@
 //  Image saving and export methods
 //
 
+#import "VIPSImage+Saving.h"
 #import "VIPSImage+Private.h"
 
 @implementation VIPSImage (Saving)

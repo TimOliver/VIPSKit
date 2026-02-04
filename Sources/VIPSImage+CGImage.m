@@ -5,6 +5,7 @@
 //  CoreGraphics integration methods
 //
 
+#import "VIPSImage+CGImage.h"
 #import "VIPSImage+Private.h"
 
 // Callback to free vips memory when CGDataProvider is released

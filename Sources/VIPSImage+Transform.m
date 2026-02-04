@@ -5,6 +5,7 @@
 //  Image transformation methods (crop, rotate, flip)
 //
 
+#import "VIPSImage+Transform.h"
 #import "VIPSImage+Private.h"
 
 @implementation VIPSImage (Transform)
