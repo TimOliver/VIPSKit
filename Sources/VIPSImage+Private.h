@@ -6,7 +6,12 @@
 //
 
 #import "VIPSImage.h"
+
+// Suppress documentation warnings from libvips headers
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdocumentation"
 #import "vips/vips.h"
+#pragma clang diagnostic pop
 
 NS_ASSUME_NONNULL_BEGIN
 
