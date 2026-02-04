@@ -35,19 +35,19 @@ typedef NS_ENUM(NSInteger, VIPSResizeKernel) {
 
 /// Smart crop strategy for finding interesting regions
 typedef NS_ENUM(NSInteger, VIPSInteresting) {
-    VIPSInterestingNone,       ///< Don't look for interesting areas
-    VIPSInterestingCentre,     ///< Crop from center
-    VIPSInterestingEntropy,    ///< Crop to maximize entropy
-    VIPSInterestingAttention,  ///< Crop using attention strategy (edges, skin tones, saturated colors)
-    VIPSInterestingLow,        ///< Crop from low coordinate
-    VIPSInterestingHigh        ///< Crop from high coordinate
+    VIPSInterestingNone,       // Don't look for interesting areas
+    VIPSInterestingCentre,     // Crop from center
+    VIPSInterestingEntropy,    // Crop to maximize entropy
+    VIPSInterestingAttention,  // Crop using attention strategy (edges, skin tones, saturated colors)
+    VIPSInterestingLow,        // Crop from low coordinate
+    VIPSInterestingHigh        // Crop from high coordinate
 };
 
 /// Blend modes for image compositing
 typedef NS_ENUM(NSInteger, VIPSBlendMode) {
     VIPSBlendModeClear,
     VIPSBlendModeSource,
-    VIPSBlendModeOver,         ///< Standard alpha compositing (most common)
+    VIPSBlendModeOver,         // Standard alpha compositing (most common)
     VIPSBlendModeIn,
     VIPSBlendModeOut,
     VIPSBlendModeAtop,
@@ -59,9 +59,9 @@ typedef NS_ENUM(NSInteger, VIPSBlendMode) {
     VIPSBlendModeXor,
     VIPSBlendModeAdd,
     VIPSBlendModeSaturate,
-    VIPSBlendModeMultiply,     ///< Darken by multiplying
-    VIPSBlendModeScreen,       ///< Lighten (inverse of multiply)
-    VIPSBlendModeOverlay,      ///< Multiply or screen depending on base
+    VIPSBlendModeMultiply,     // Darken by multiplying
+    VIPSBlendModeScreen,       // Lighten (inverse of multiply)
+    VIPSBlendModeOverlay,      // Multiply or screen depending on base
     VIPSBlendModeDarken,
     VIPSBlendModeLighten,
     VIPSBlendModeColourDodge,
