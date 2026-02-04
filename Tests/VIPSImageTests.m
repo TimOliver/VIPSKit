@@ -284,6 +284,63 @@ static BOOL sVIPSInitialized = NO;
     XCTAssertNil(error, @"Should not have error: %@", error);
 }
 
+- (void)testCannyCGImage {
+    // Test creating CGImage from Canny edge detection result
+    VIPSImage *image = [self createTestImageWithWidth:100 height:100];
+
+    NSError *error = nil;
+    VIPSImage *edges = [image cannyWithSigma:1.4 error:&error];
+    XCTAssertNotNil(edges, @"Should detect edges with Canny");
+    XCTAssertNil(error, @"Should not have error: %@", error);
+
+    // Log image properties for debugging
+    NSLog(@"Canny output: %ldx%ld, %ld bands", (long)edges.width, (long)edges.height, (long)edges.bands);
+
+    // Create CGImage from Canny result
+    error = nil;
+    CGImageRef cgImage = [edges createCGImageWithError:&error];
+    XCTAssertNotNil((__bridge id)cgImage, @"Should create CGImage from Canny result, error: %@", error);
+
+    if (cgImage) {
+        NSLog(@"CGImage: %zux%zu", CGImageGetWidth(cgImage), CGImageGetHeight(cgImage));
+        CGImageRelease(cgImage);
+    }
+}
+
+- (void)testCannyCGImageFromThumbnail {
+    // Test creating CGImage from Canny of a thumbnail (user's reported issue)
+    NSString *path = [self pathForTestResource:@"superman.jpg"];
+    if (!path) {
+        XCTSkip(@"superman.jpg not found in test resources");
+        return;
+    }
+
+    NSError *error = nil;
+    VIPSImage *thumbnail = [VIPSImage thumbnailFromFile:path width:200 height:200 error:&error];
+    XCTAssertNotNil(thumbnail, @"Should create thumbnail");
+    XCTAssertNil(error, @"Should not have error: %@", error);
+
+    NSLog(@"Thumbnail: %ldx%ld, %ld bands", (long)thumbnail.width, (long)thumbnail.height, (long)thumbnail.bands);
+
+    // Run Canny on thumbnail
+    error = nil;
+    VIPSImage *edges = [thumbnail cannyWithSigma:1.4 error:&error];
+    XCTAssertNotNil(edges, @"Should detect edges with Canny");
+    XCTAssertNil(error, @"Canny error: %@", error);
+
+    NSLog(@"Canny output: %ldx%ld, %ld bands", (long)edges.width, (long)edges.height, (long)edges.bands);
+
+    // Create CGImage from Canny result
+    error = nil;
+    CGImageRef cgImage = [edges createCGImageWithError:&error];
+    XCTAssertNotNil((__bridge id)cgImage, @"Should create CGImage from Canny result, error: %@", error);
+
+    if (cgImage) {
+        NSLog(@"CGImage: %zux%zu", CGImageGetWidth(cgImage), CGImageGetHeight(cgImage));
+        CGImageRelease(cgImage);
+    }
+}
+
 #pragma mark - Composite Tests
 
 - (void)testCompositeOver {
@@ -503,7 +560,6 @@ static BOOL sVIPSInitialized = NO;
 
     NSError *error = nil;
     VIPSImage *thumbnail = [VIPSImage thumbnailFromFile:path width:200 height:200 error:&error];
-
     XCTAssertNotNil(thumbnail, @"Should create thumbnail: %@", error);
     XCTAssertNil(error, @"Should not have error");
 
