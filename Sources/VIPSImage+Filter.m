@@ -58,14 +58,25 @@
 }
 
 - (VIPSImage *)cannyWithSigma:(double)sigma error:(NSError **)error {
+    VipsImage *canny = NULL;
     VipsImage *out = NULL;
 
-    if (vips_canny(self.image, &out, "sigma", sigma, NULL) != 0) {
+    if (vips_canny(self.image, &canny, "sigma", sigma, NULL) != 0) {
         if (error) {
             *error = [self.class errorFromVips];
         }
         return nil;
     }
+
+    // vips_canny outputs a float image - cast to uchar for display/export
+    if (vips_cast_uchar(canny, &out, NULL) != 0) {
+        g_object_unref(canny);
+        if (error) {
+            *error = [self.class errorFromVips];
+        }
+        return nil;
+    }
+    g_object_unref(canny);
 
     VIPSImage *result = [[VIPSImage alloc] init];
     result.image = out;
