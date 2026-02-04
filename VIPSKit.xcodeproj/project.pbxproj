@@ -103,6 +103,7 @@
 		3052FC0406E6137816BB8A5E /* invert.c in Sources */ = {isa = PBXBuildFile; fileRef = 80D36D8A8000BD65DAA75FB9 /* invert.c */; };
 		305534EC2BA1CD074CCEB1C2 /* jpeg2vips.c in Sources */ = {isa = PBXBuildFile; fileRef = A3029BBC5D580473414778BE /* jpeg2vips.c */; };
 		317199E0B409EC2933216ECF /* match.c in Sources */ = {isa = PBXBuildFile; fileRef = AC23BE2668AD49E66162B3FC /* match.c */; };
+		32AF5B05136A4D4012D5749B /* VIPSImageSavingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E894E377DD83CDA46ADFA3B6 /* VIPSImageSavingTests.m */; };
 		339521AFDE735568A119FC6D /* XYZ2Yxy.c in Sources */ = {isa = PBXBuildFile; fileRef = 0201BB92E42A7D2BA0D73B65 /* XYZ2Yxy.c */; };
 		341D9D2F5D801304FEF5808E /* exif.c in Sources */ = {isa = PBXBuildFile; fileRef = 0E35AF70EB919DE743BED149 /* exif.c */; };
 		34CC4734C9106FBBDFD89ECB /* matrixinvert.c in Sources */ = {isa = PBXBuildFile; fileRef = 6BBFF9EED7BE7DC75488181B /* matrixinvert.c */; };
@@ -141,13 +142,16 @@
 		47156441C506567EF2948D44 /* Oklch2Oklab.c in Sources */ = {isa = PBXBuildFile; fileRef = A279FC459AEE7719AFD880BF /* Oklch2Oklab.c */; };
 		476B46B94FC215C4FC474F83 /* mask_ideal_band.c in Sources */ = {isa = PBXBuildFile; fileRef = 184161F49C7895B060249428 /* mask_ideal_band.c */; };
 		47BF5AEDABF46F962C996194 /* csvload.c in Sources */ = {isa = PBXBuildFile; fileRef = A82E8D946DD94B45BAE3FA66 /* csvload.c */; };
+		480F422831DE11EB83441B88 /* VIPSImageColorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C0A0E1CEC7FF1569895E353A /* VIPSImageColorTests.m */; };
 		48E63B74A900EB7FFB719932 /* correlation.c in Sources */ = {isa = PBXBuildFile; fileRef = 7DD784CEE969C189032B086D /* correlation.c */; };
 		4992AA73A4CFFBD18120C4D1 /* convsep.c in Sources */ = {isa = PBXBuildFile; fileRef = 734EBAABEDB8C771AC5E3C80 /* convsep.c */; };
 		49F02F6F9939B405EF0A68CC /* statistic.c in Sources */ = {isa = PBXBuildFile; fileRef = F02F72A2B174A900F6732A00 /* statistic.c */; };
+		4A3ADC4BAB217388BBD5CF0A /* VIPSImageCoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3969AF5F922FFDB710D73DC5 /* VIPSImageCoreTests.m */; };
 		4A7E32BFA8B6F3803D8FA349 /* dECMC.c in Sources */ = {isa = PBXBuildFile; fileRef = E1E495C18C375003C4996DD3 /* dECMC.c */; };
 		4AF548E655AD1B74847D625C /* header.c in Sources */ = {isa = PBXBuildFile; fileRef = 8AE554064F2FDC26952C35A4 /* header.c */; };
 		4BAB0EE4B7F81E5DC1585D56 /* resample.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CA549D00FDE000AAF2AA6E1 /* resample.c */; };
 		4BF535B80E7BD428FCD23B38 /* remainder.c in Sources */ = {isa = PBXBuildFile; fileRef = 63A897B40161A5C4D0D20ADC /* remainder.c */; };
+		4C852AB7D2ADB834A897C2EE /* VIPSImageCGImageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CC88F42E5D9F999C24C52356 /* VIPSImageCGImageTests.m */; };
 		4D8DF4239B9498E56A7EE459 /* draw_circle.c in Sources */ = {isa = PBXBuildFile; fileRef = 8FF4150C36CEAECCD1988237 /* draw_circle.c */; };
 		4DC8A3B5049C0AE2DEEF146B /* text.c in Sources */ = {isa = PBXBuildFile; fileRef = 525B980FD3F6FD9CA77ADEC6 /* text.c */; };
 		4DF09A617B4442A7DE52E979 /* conv.c in Sources */ = {isa = PBXBuildFile; fileRef = BEA4F04DC3C7BC252A5DD2F7 /* conv.c */; };
@@ -183,12 +187,14 @@
 		5FB8AABA9EF3132DEE7AD588 /* addalpha.c in Sources */ = {isa = PBXBuildFile; fileRef = E71CE375A6095BA02D34E465 /* addalpha.c */; };
 		60B68CACF4A8FB9AC265CDB5 /* linear.c in Sources */ = {isa = PBXBuildFile; fileRef = 409476147F53B6DD73CDA8CA /* linear.c */; };
 		6169451F8A9147CA8C2DDFB5 /* binary.c in Sources */ = {isa = PBXBuildFile; fileRef = BA2C7D4F3522A489D91EB905 /* binary.c */; };
+		616D9A3A7E7B5D61A20DC091 /* VIPSImageTransformTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C4468FB1B2E6D217749289DC /* VIPSImageTransformTests.m */; };
 		616E8AC51CD51B473EB51CC4 /* extract.c in Sources */ = {isa = PBXBuildFile; fileRef = DBD34F0A0809D03C9D7ABDB8 /* extract.c */; };
 		61881F8363693AE02307880F /* target.c in Sources */ = {isa = PBXBuildFile; fileRef = B73D9A9C1D6608FED6CD76FE /* target.c */; };
 		61CD5B2CFFFBD5CC8D975F87 /* create.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A12A1231EB06C0B6813D884 /* create.c */; };
 		62842B2AD8D186A6B4066EE8 /* semaphore.c in Sources */ = {isa = PBXBuildFile; fileRef = 425347E801045DCB420DB2E6 /* semaphore.c */; };
 		667C288016FEC2C9EE4C8CF1 /* gaussblur.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F9AD52758576290F9509735 /* gaussblur.c */; };
 		671FBA7A843A288F28858072 /* bandary.c in Sources */ = {isa = PBXBuildFile; fileRef = 00AC6CE7EE84E66DC822C674 /* bandary.c */; };
+		683329BE1812C18BA694D9EC /* VIPSImageFilterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D50AD4883E1F96FAE1B3C44 /* VIPSImageFilterTests.m */; };
 		688F87596AF1CA8E9DD48ED3 /* buffer.c in Sources */ = {isa = PBXBuildFile; fileRef = EF63D3426B97BBC548E2C9E7 /* buffer.c */; };
 		68D1CC7AE9CB144229E2F34E /* worley.c in Sources */ = {isa = PBXBuildFile; fileRef = BF99462B3334FA581F077443 /* worley.c */; };
 		69BDB91C245CA0CE11548CA1 /* LCh2Lab.c in Sources */ = {isa = PBXBuildFile; fileRef = CC6A359C036D61AB42F96709 /* LCh2Lab.c */; };
@@ -218,6 +224,7 @@
 		7ED7CBB3B3F865A082CD82BA /* identity.c in Sources */ = {isa = PBXBuildFile; fileRef = 13CD3F31B97C1B39B5D05677 /* identity.c */; };
 		802398DC82256310C8828E8B /* popplerload.c in Sources */ = {isa = PBXBuildFile; fileRef = 3F4CAA4BD5A51C2CA56BC68A /* popplerload.c */; };
 		808236E484D31F52F4E71FC1 /* tiffsave.c in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A6D803BEAA78D1933A8F8 /* tiffsave.c */; };
+		80A49E961821F5EE421C9C10 /* VIPSImageTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = DBAFEDD6D8B20F842359D6CA /* VIPSImageTestCase.m */; };
 		80C9EF5F917C748DB01E0863 /* type.c in Sources */ = {isa = PBXBuildFile; fileRef = 3CF74A710D74203343261841 /* type.c */; };
 		811389D2F0DB2EE3F917F52F /* sRGB2HSV.c in Sources */ = {isa = PBXBuildFile; fileRef = 3ABBCC02D51237408A1EF9F1 /* sRGB2HSV.c */; };
 		811C985EC6AD1E32F0CCB719 /* zoom.c in Sources */ = {isa = PBXBuildFile; fileRef = 656CD87B9CE85C6F7563ED97 /* zoom.c */; };
@@ -233,6 +240,7 @@
 		8B757C2D0B4597E2FB1EB247 /* magickload.c in Sources */ = {isa = PBXBuildFile; fileRef = 89B626A9E2387FDFB2AF141E /* magickload.c */; };
 		8B7E9A4D37304973C6D25321 /* math.c in Sources */ = {isa = PBXBuildFile; fileRef = 289BFC9D7A37498B47037994 /* math.c */; };
 		8BC03679E63F166E8F0576C8 /* sRGB2scRGB.c in Sources */ = {isa = PBXBuildFile; fileRef = 6C753598A919021A713D99B0 /* sRGB2scRGB.c */; };
+		8C4C8EFEBB98253C7F601A21 /* VIPSImageCompositeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7751DB7F6A1B5603A7F0E961 /* VIPSImageCompositeTests.m */; };
 		8D205B2EFE95E6608CB83123 /* convi.c in Sources */ = {isa = PBXBuildFile; fileRef = EBA6A4803E98D82E2440B8CE /* convi.c */; };
 		8EEE056B0F309A733D3C73D3 /* magick6load.c in Sources */ = {isa = PBXBuildFile; fileRef = F8B249FFF97AC761BF34DD8D /* magick6load.c */; };
 		8FDD3FEFDE20F294810D6316 /* Yxy2XYZ.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FAC21CC06650A9D448A9929 /* Yxy2XYZ.c */; };
@@ -264,7 +272,6 @@
 		A1000004 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A1000021 /* main.m */; };
 		A1000005 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000022 /* Assets.xcassets */; };
 		A1000006 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A1000023 /* LaunchScreen.storyboard */; };
-		A1000007 /* VIPSImageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A1000030 /* VIPSImageTests.m */; };
 		A1000009 /* TestResources in Resources */ = {isa = PBXBuildFile; fileRef = A1000031 /* TestResources */; };
 		A12E7433D16C5C72C56D9A78 /* logmat.c in Sources */ = {isa = PBXBuildFile; fileRef = 17964A5FC5478ED44B6B2B8E /* logmat.c */; };
 		A17D9843164ED6BED83408D8 /* bandmean.c in Sources */ = {isa = PBXBuildFile; fileRef = 363A68CE7AFD1C990AE4A844 /* bandmean.c */; };
@@ -289,6 +296,7 @@
 		ADCAED00B782A47AA02AC35D /* cache.c in Sources */ = {isa = PBXBuildFile; fileRef = A544F902CDFC354600AC8AF4 /* cache.c */; };
 		AE420396BE1DA3126C251B29 /* conversion.c in Sources */ = {isa = PBXBuildFile; fileRef = 55090235366289270E4679C5 /* conversion.c */; };
 		AE823DA423B7D262884F061D /* magick.c in Sources */ = {isa = PBXBuildFile; fileRef = EA9264B5208572B72A8B74B6 /* magick.c */; };
+		AEB7813098EB175074E7A3A0 /* VIPSImageTilingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A93ED9F4A631A9D3FA03BB07 /* VIPSImageTilingTests.m */; };
 		AECE1B398AFCA99AFC2AE239 /* convf.c in Sources */ = {isa = PBXBuildFile; fileRef = 5643E5C877B8BECB7C072D26 /* convf.c */; };
 		AFB981945E98DA8C8CE7FEA3 /* point.c in Sources */ = {isa = PBXBuildFile; fileRef = 59AE4E0B3BB01356AB1AE53F /* point.c */; };
 		B0439224D77BA400F89905F4 /* wrap.c in Sources */ = {isa = PBXBuildFile; fileRef = 20FD935C37E80A2D488538EF /* wrap.c */; };
@@ -299,6 +307,7 @@
 		B22EC6003415F2A1A4F0C1C9 /* vipssave.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BF30E5E1DE1C61014288D16 /* vipssave.c */; };
 		B25970F7E256A5666830AC67 /* gate.c in Sources */ = {isa = PBXBuildFile; fileRef = 8096045EA5017099A337D46E /* gate.c */; };
 		B3E7431BAA5F44DAF89727B0 /* scale.c in Sources */ = {isa = PBXBuildFile; fileRef = 35D39EE3E3759543A2C5A892 /* scale.c */; };
+		B3F83BC72BD8151155D19C12 /* VIPSImageCachingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F830451FC26A365A83C4515F /* VIPSImageCachingTests.m */; };
 		B855434B94E1BBC9D3A7B408 /* replicate.c in Sources */ = {isa = PBXBuildFile; fileRef = C6314EC254DCD5C4364D7C6D /* replicate.c */; };
 		B94D20DA02CA987A1A2F77E1 /* quantise.c in Sources */ = {isa = PBXBuildFile; fileRef = EEF0EB96748FD14FB9BCF969 /* quantise.c */; };
 		B9B11D80E7CE0B9328C811E1 /* embed.c in Sources */ = {isa = PBXBuildFile; fileRef = 92FCEC928844C34510F832CD /* embed.c */; };
@@ -342,6 +351,7 @@
 		DB5429FBC4E260FE19937139 /* ginputsource.c in Sources */ = {isa = PBXBuildFile; fileRef = 2098D9C4D3254CBA79D5C3C1 /* ginputsource.c */; };
 		DC6ED5E195D8968BFED0CCA3 /* transform.c in Sources */ = {isa = PBXBuildFile; fileRef = 9137948F56BB7FEC92FC59EE /* transform.c */; };
 		DD956E12514405996BED70DB /* XYZ2Lab.c in Sources */ = {isa = PBXBuildFile; fileRef = 48C4AE5F45B8D16EAC0B01CF /* XYZ2Lab.c */; };
+		DE0E21BCDC7A4DA1AB19436B /* VIPSImageResizeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 01CA48DE9443FD22B1B2A17D /* VIPSImageResizeTests.m */; };
 		DE9FAF502C6015BB4EC5F3F3 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = 3906E9550B7A71902E829AC5 /* init.c */; };
 		DF380E18506C1EFD1428875D /* reduce.c in Sources */ = {isa = PBXBuildFile; fileRef = B7C880ADE494B2FC20E9DB6E /* reduce.c */; };
 		DFE2D8FD12270368307BB043 /* zone.c in Sources */ = {isa = PBXBuildFile; fileRef = 177C3AFB3A07EE7997AA54BB /* zone.c */; };
@@ -360,6 +370,7 @@
 		E9DAF7118951BAC7D37DF3A2 /* LabQ2Lab.c in Sources */ = {isa = PBXBuildFile; fileRef = 4F2EDAE9E0FF11079F8155E8 /* LabQ2Lab.c */; };
 		EB1DE59A3A0EF8E3511200F4 /* boolean.c in Sources */ = {isa = PBXBuildFile; fileRef = 21674A3BF91FF1AA6BCE3474 /* boolean.c */; };
 		EBBB1E3913BD50EBF80E6C1D /* conva.c in Sources */ = {isa = PBXBuildFile; fileRef = 123E2685F684CA923546F307 /* conva.c */; };
+		ECA718053B063CFAADCC067C /* VIPSImageLoadingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A60C822B2A5150A4CB4905F9 /* VIPSImageLoadingTests.m */; };
 		ED294F3AD8495D783CC62212 /* scRGB2BW.c in Sources */ = {isa = PBXBuildFile; fileRef = 829A5F7A3E2C8546CDCC8321 /* scRGB2BW.c */; };
 		ED49B693E30F27446BF2CFDC /* morph.c in Sources */ = {isa = PBXBuildFile; fileRef = 09B6CC3930FCA9EC43151456 /* morph.c */; };
 		ED63B9716BE1380AA8BF64FB /* mask_ideal.c in Sources */ = {isa = PBXBuildFile; fileRef = D66FE3B36A8BA2255C9EDE22 /* mask_ideal.c */; };
@@ -429,6 +440,7 @@
 		001107210D71D2A5FFE23806 /* morphology.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = morphology.h; path = "Vendor/vips-8.18.0/libvips/include/vips/morphology.h"; sourceTree = "<group>"; };
 		00AC6CE7EE84E66DC822C674 /* bandary.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = bandary.c; path = "Vendor/vips-8.18.0/libvips/conversion/bandary.c"; sourceTree = "<group>"; };
 		01AD2FCEFE28DD2F040DB285 /* source.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = source.c; path = "Vendor/vips-8.18.0/libvips/iofuncs/source.c"; sourceTree = "<group>"; };
+		01CA48DE9443FD22B1B2A17D /* VIPSImageResizeTests.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = VIPSImageResizeTests.m; sourceTree = "<group>"; };
 		0201BB92E42A7D2BA0D73B65 /* XYZ2Yxy.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = XYZ2Yxy.c; path = "Vendor/vips-8.18.0/libvips/colour/XYZ2Yxy.c"; sourceTree = "<group>"; };
 		0218A6616C2F6005C1882C42 /* cgifsave.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = cgifsave.c; path = "Vendor/vips-8.18.0/libvips/foreign/cgifsave.c"; sourceTree = "<group>"; };
 		047D1DE3D808B29C6C10431D /* vipsload.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = vipsload.c; path = "Vendor/vips-8.18.0/libvips/foreign/vipsload.c"; sourceTree = "<group>"; };
@@ -547,6 +559,7 @@
 		3881DE22EE1207E5D529CA88 /* deviate.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = deviate.c; path = "Vendor/vips-8.18.0/libvips/arithmetic/deviate.c"; sourceTree = "<group>"; };
 		3906E9550B7A71902E829AC5 /* init.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = init.c; path = "Vendor/vips-8.18.0/libvips/iofuncs/init.c"; sourceTree = "<group>"; };
 		392ADB10F491DE808D5C6228 /* generate.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = generate.c; path = "Vendor/vips-8.18.0/libvips/iofuncs/generate.c"; sourceTree = "<group>"; };
+		3969AF5F922FFDB710D73DC5 /* VIPSImageCoreTests.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = VIPSImageCoreTests.m; sourceTree = "<group>"; };
 		3982CECA17D8FA1A098F6D88 /* openslideload.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = openslideload.c; path = "Vendor/vips-8.18.0/libvips/foreign/openslideload.c"; sourceTree = "<group>"; };
 		3A9E0097BA8DEEEE30B15C7C /* gaussmat.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = gaussmat.c; path = "Vendor/vips-8.18.0/libvips/create/gaussmat.c"; sourceTree = "<group>"; };
 		3ABBCC02D51237408A1EF9F1 /* sRGB2HSV.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = sRGB2HSV.c; path = "Vendor/vips-8.18.0/libvips/colour/sRGB2HSV.c"; sourceTree = "<group>"; };
@@ -644,6 +657,7 @@
 		765C6AC7DAFA58AAA1ACCC47 /* thumbnail.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = thumbnail.c; path = "Vendor/vips-8.18.0/libvips/resample/thumbnail.c"; sourceTree = "<group>"; };
 		7687799EA08D0E1B30AD0787 /* image.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = image.h; path = "Vendor/vips-8.18.0/libvips/include/vips/image.h"; sourceTree = "<group>"; };
 		76B0FB2C10B52D0986CD7F12 /* jpegload.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = jpegload.c; path = "Vendor/vips-8.18.0/libvips/foreign/jpegload.c"; sourceTree = "<group>"; };
+		7751DB7F6A1B5603A7F0E961 /* VIPSImageCompositeTests.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = VIPSImageCompositeTests.m; sourceTree = "<group>"; };
 		77520EA261E5E62943DBAB10 /* draw_image.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = draw_image.c; path = "Vendor/vips-8.18.0/libvips/draw/draw_image.c"; sourceTree = "<group>"; };
 		775300D79B944B408DEAC126 /* sines.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = sines.c; path = "Vendor/vips-8.18.0/libvips/create/sines.c"; sourceTree = "<group>"; };
 		77A76ED2B8AFB0BAA84029F2 /* XYZ2Oklab.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = XYZ2Oklab.c; path = "Vendor/vips-8.18.0/libvips/colour/XYZ2Oklab.c"; sourceTree = "<group>"; };
@@ -685,6 +699,8 @@
 		8B216685D652819BDEFD2693 /* vipspng.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = vipspng.c; path = "Vendor/vips-8.18.0/libvips/foreign/vipspng.c"; sourceTree = "<group>"; };
 		8C26548A29DD48895AC056B3 /* region.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = region.h; path = "Vendor/vips-8.18.0/libvips/include/vips/region.h"; sourceTree = "<group>"; };
 		8CA26E62C722E41A12E24D48 /* complex.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = complex.c; path = "Vendor/vips-8.18.0/libvips/arithmetic/complex.c"; sourceTree = "<group>"; };
+		8D1293A12DAC7FFC2EC56187 /* VIPSImageTestCase.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = VIPSImageTestCase.h; sourceTree = "<group>"; };
+		8D50AD4883E1F96FAE1B3C44 /* VIPSImageFilterTests.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = VIPSImageFilterTests.m; sourceTree = "<group>"; };
 		8D7A6D803BEAA78D1933A8F8 /* tiffsave.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = tiffsave.c; path = "Vendor/vips-8.18.0/libvips/foreign/tiffsave.c"; sourceTree = "<group>"; };
 		8DF1C675D875C19AA106F5E1 /* arithmetic.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = arithmetic.c; path = "Vendor/vips-8.18.0/libvips/arithmetic/arithmetic.c"; sourceTree = "<group>"; };
 		8E88FE05A4A365B67F5128F1 /* almostdeprecated.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = almostdeprecated.h; path = "Vendor/vips-8.18.0/libvips/include/vips/almostdeprecated.h"; sourceTree = "<group>"; };
@@ -723,7 +739,6 @@
 		A1000023 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A1000024 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		A1000025 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A1000030 /* VIPSImageTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VIPSImageTests.m; sourceTree = "<group>"; };
 		A1000031 /* TestResources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = TestResources; sourceTree = "<group>"; };
 		A1000051 /* VIPSTests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VIPSTests.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1000061 /* VIPSKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VIPSKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -736,12 +751,14 @@
 		A4BBF678764A0604E70DD7A4 /* heif.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = heif.c; path = "Vendor/vips-8.18.0/libvips/module/heif.c"; sourceTree = "<group>"; };
 		A544F902CDFC354600AC8AF4 /* cache.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = cache.c; path = "Vendor/vips-8.18.0/libvips/iofuncs/cache.c"; sourceTree = "<group>"; };
 		A582B9D1B42890FF3B0EA069 /* libVIPSKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVIPSKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A60C822B2A5150A4CB4905F9 /* VIPSImageLoadingTests.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = VIPSImageLoadingTests.m; sourceTree = "<group>"; };
 		A6C4B26091AF9DD9D76F7349 /* vipsmarshal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = vipsmarshal.h; path = "Vendor/libvips-generated/vipsmarshal.h"; sourceTree = "<group>"; };
 		A75CBA6F0C5D6A3F7F34ABE8 /* bandbool.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = bandbool.c; path = "Vendor/vips-8.18.0/libvips/conversion/bandbool.c"; sourceTree = "<group>"; };
 		A7D69FA1D6B1763C7C8FCADE /* connection.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = connection.h; path = "Vendor/vips-8.18.0/libvips/include/vips/connection.h"; sourceTree = "<group>"; };
 		A81C494643F562287DFAA83A /* libVIPSKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVIPSKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A82E8D946DD94B45BAE3FA66 /* csvload.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = csvload.c; path = "Vendor/vips-8.18.0/libvips/foreign/csvload.c"; sourceTree = "<group>"; };
 		A8309E7C10882F6531CC6861 /* msb.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = msb.c; path = "Vendor/vips-8.18.0/libvips/conversion/msb.c"; sourceTree = "<group>"; };
+		A93ED9F4A631A9D3FA03BB07 /* VIPSImageTilingTests.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = VIPSImageTilingTests.m; sourceTree = "<group>"; };
 		A94474BBCF8B08182FCB7512 /* dbuf.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dbuf.h; path = "Vendor/vips-8.18.0/libvips/include/vips/dbuf.h"; sourceTree = "<group>"; };
 		A991B4167BECF0DCB5B70F98 /* global_balance.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = global_balance.c; path = "Vendor/vips-8.18.0/libvips/mosaicing/global_balance.c"; sourceTree = "<group>"; };
 		A99A08088BEBAB0C56A511DB /* libVIPSWrapper.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVIPSWrapper.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -781,11 +798,13 @@
 		BEF19747ADFC1C2E43D8E09A /* spcor.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = spcor.c; path = "Vendor/vips-8.18.0/libvips/convolution/spcor.c"; sourceTree = "<group>"; };
 		BF051ED73772131991A818DD /* libVIPSKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVIPSKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF99462B3334FA581F077443 /* worley.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = worley.c; path = "Vendor/vips-8.18.0/libvips/create/worley.c"; sourceTree = "<group>"; };
+		C0A0E1CEC7FF1569895E353A /* VIPSImageColorTests.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = VIPSImageColorTests.m; sourceTree = "<group>"; };
 		C0CC7F023AA1E2D91D47C91B /* hist_find_indexed.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = hist_find_indexed.c; path = "Vendor/vips-8.18.0/libvips/arithmetic/hist_find_indexed.c"; sourceTree = "<group>"; };
 		C383320EBC4973A683A40790 /* freqmult.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = freqmult.c; path = "Vendor/vips-8.18.0/libvips/freqfilt/freqmult.c"; sourceTree = "<group>"; };
 		C3F203157E135F80EBC46FF9 /* matlab.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = matlab.c; path = "Vendor/vips-8.18.0/libvips/foreign/matlab.c"; sourceTree = "<group>"; };
 		C403F402E6B93B155079F81C /* canny.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = canny.c; path = "Vendor/vips-8.18.0/libvips/convolution/canny.c"; sourceTree = "<group>"; };
 		C434141DE951D9232952D47D /* sum.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = sum.c; path = "Vendor/vips-8.18.0/libvips/arithmetic/sum.c"; sourceTree = "<group>"; };
+		C4468FB1B2E6D217749289DC /* VIPSImageTransformTests.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = VIPSImageTransformTests.m; sourceTree = "<group>"; };
 		C57F51F857C710D3ABB915D4 /* dE00.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = dE00.c; path = "Vendor/vips-8.18.0/libvips/colour/dE00.c"; sourceTree = "<group>"; };
 		C60BF9BA896A469FC81AE756 /* invfft.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = invfft.c; path = "Vendor/vips-8.18.0/libvips/freqfilt/invfft.c"; sourceTree = "<group>"; };
 		C6314EC254DCD5C4364D7C6D /* replicate.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = replicate.c; path = "Vendor/vips-8.18.0/libvips/conversion/replicate.c"; sourceTree = "<group>"; };
@@ -803,6 +822,7 @@
 		CC24ECB57A84052FE993867D /* quadratic.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = quadratic.c; path = "Vendor/vips-8.18.0/libvips/resample/quadratic.c"; sourceTree = "<group>"; };
 		CC6A359C036D61AB42F96709 /* LCh2Lab.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = LCh2Lab.c; path = "Vendor/vips-8.18.0/libvips/colour/LCh2Lab.c"; sourceTree = "<group>"; };
 		CC7379263A1087979B6DB32F /* mosaic.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = mosaic.c; path = "Vendor/vips-8.18.0/libvips/mosaicing/mosaic.c"; sourceTree = "<group>"; };
+		CC88F42E5D9F999C24C52356 /* VIPSImageCGImageTests.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = VIPSImageCGImageTests.m; sourceTree = "<group>"; };
 		CCF122F0597671F07CC3E439 /* jxl.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = jxl.c; path = "Vendor/vips-8.18.0/libvips/module/jxl.c"; sourceTree = "<group>"; };
 		CDE4311F27FCA9673104B4C0 /* insert.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = insert.c; path = "Vendor/vips-8.18.0/libvips/conversion/insert.c"; sourceTree = "<group>"; };
 		CE286FCFA51838A4F35B8BDC /* matrixload.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = matrixload.c; path = "Vendor/vips-8.18.0/libvips/foreign/matrixload.c"; sourceTree = "<group>"; };
@@ -829,6 +849,7 @@
 		DAA82E902786F7F2D10B038D /* convolution.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = convolution.c; path = "Vendor/vips-8.18.0/libvips/convolution/convolution.c"; sourceTree = "<group>"; };
 		DAE2BC0A39FCFA5534263187 /* transform.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = transform.h; path = "Vendor/vips-8.18.0/libvips/include/vips/transform.h"; sourceTree = "<group>"; };
 		DB326A8D032E0C470C1EB8CB /* threadpool.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = threadpool.h; path = "Vendor/vips-8.18.0/libvips/include/vips/threadpool.h"; sourceTree = "<group>"; };
+		DBAFEDD6D8B20F842359D6CA /* VIPSImageTestCase.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = VIPSImageTestCase.m; sourceTree = "<group>"; };
 		DBD34F0A0809D03C9D7ABDB8 /* extract.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = extract.c; path = "Vendor/vips-8.18.0/libvips/conversion/extract.c"; sourceTree = "<group>"; };
 		DCFEE948C15799E9424B005F /* im_tbcalcon.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = im_tbcalcon.c; path = "Vendor/vips-8.18.0/libvips/mosaicing/im_tbcalcon.c"; sourceTree = "<group>"; };
 		DDBB58136B02B009189302D1 /* matrixmultiply.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = matrixmultiply.c; path = "Vendor/vips-8.18.0/libvips/mosaicing/matrixmultiply.c"; sourceTree = "<group>"; };
@@ -850,6 +871,7 @@
 		E71CE375A6095BA02D34E465 /* addalpha.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = addalpha.c; path = "Vendor/vips-8.18.0/libvips/conversion/addalpha.c"; sourceTree = "<group>"; };
 		E7C04D5DB86C088D0754195A /* mask_gaussian_band.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = mask_gaussian_band.c; path = "Vendor/vips-8.18.0/libvips/create/mask_gaussian_band.c"; sourceTree = "<group>"; };
 		E81DC5FBB2624FFB3AECD74C /* sinkdisc.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = sinkdisc.c; path = "Vendor/vips-8.18.0/libvips/iofuncs/sinkdisc.c"; sourceTree = "<group>"; };
+		E894E377DD83CDA46ADFA3B6 /* VIPSImageSavingTests.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = VIPSImageSavingTests.m; sourceTree = "<group>"; };
 		E92FDD60D8249EFE48D0A044 /* create.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = create.h; path = "Vendor/vips-8.18.0/libvips/include/vips/create.h"; sourceTree = "<group>"; };
 		EA9264B5208572B72A8B74B6 /* magick.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = magick.c; path = "Vendor/vips-8.18.0/libvips/foreign/magick.c"; sourceTree = "<group>"; };
 		EA9CB4D32942C42C28FA9678 /* header.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = header.h; path = "Vendor/vips-8.18.0/libvips/include/vips/header.h"; sourceTree = "<group>"; };
@@ -880,6 +902,7 @@
 		F4E11404259BB6D9DAC32C2D /* similarity.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = similarity.c; path = "Vendor/vips-8.18.0/libvips/resample/similarity.c"; sourceTree = "<group>"; };
 		F712DBCAAC267B03E6177609 /* liblibvips.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = liblibvips.a; path = libvips.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F74E02CA60A6AC657DD57E72 /* tiff.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = tiff.c; path = "Vendor/vips-8.18.0/libvips/foreign/tiff.c"; sourceTree = "<group>"; };
+		F830451FC26A365A83C4515F /* VIPSImageCachingTests.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = VIPSImageCachingTests.m; sourceTree = "<group>"; };
 		F8B249FFF97AC761BF34DD8D /* magick6load.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = magick6load.c; path = "Vendor/vips-8.18.0/libvips/foreign/magick6load.c"; sourceTree = "<group>"; };
 		F987D03BB61CCD4E834643EE /* reorder.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = reorder.c; path = "Vendor/vips-8.18.0/libvips/iofuncs/reorder.c"; sourceTree = "<group>"; };
 		F98B902A14AF57DF00565292 /* draw.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = draw.h; path = "Vendor/vips-8.18.0/libvips/include/vips/draw.h"; sourceTree = "<group>"; };
@@ -1375,9 +1398,21 @@
 			isa = PBXGroup;
 			children = (
 				A1000071 /* TestHost */,
-				A1000030 /* VIPSImageTests.m */,
 				A1000031 /* TestResources */,
 				2241FC272F1B59B000B80F22 /* VIPSTests.xctestplan */,
+				8D1293A12DAC7FFC2EC56187 /* VIPSImageTestCase.h */,
+				DBAFEDD6D8B20F842359D6CA /* VIPSImageTestCase.m */,
+				3969AF5F922FFDB710D73DC5 /* VIPSImageCoreTests.m */,
+				A60C822B2A5150A4CB4905F9 /* VIPSImageLoadingTests.m */,
+				E894E377DD83CDA46ADFA3B6 /* VIPSImageSavingTests.m */,
+				01CA48DE9443FD22B1B2A17D /* VIPSImageResizeTests.m */,
+				C4468FB1B2E6D217749289DC /* VIPSImageTransformTests.m */,
+				C0A0E1CEC7FF1569895E353A /* VIPSImageColorTests.m */,
+				8D50AD4883E1F96FAE1B3C44 /* VIPSImageFilterTests.m */,
+				CC88F42E5D9F999C24C52356 /* VIPSImageCGImageTests.m */,
+				7751DB7F6A1B5603A7F0E961 /* VIPSImageCompositeTests.m */,
+				A93ED9F4A631A9D3FA03BB07 /* VIPSImageTilingTests.m */,
+				F830451FC26A365A83C4515F /* VIPSImageCachingTests.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -2022,7 +2057,18 @@
 				226D45C62F33415900365705 /* VIPSImage+Caching.m in Sources */,
 				226D45C72F33415900365705 /* VIPSImage+Transform.m in Sources */,
 				226D45C82F33415900365705 /* VIPSImage+Composite.m in Sources */,
-				A1000007 /* VIPSImageTests.m in Sources */,
+				80A49E961821F5EE421C9C10 /* VIPSImageTestCase.m in Sources */,
+				4A3ADC4BAB217388BBD5CF0A /* VIPSImageCoreTests.m in Sources */,
+				ECA718053B063CFAADCC067C /* VIPSImageLoadingTests.m in Sources */,
+				32AF5B05136A4D4012D5749B /* VIPSImageSavingTests.m in Sources */,
+				DE0E21BCDC7A4DA1AB19436B /* VIPSImageResizeTests.m in Sources */,
+				616D9A3A7E7B5D61A20DC091 /* VIPSImageTransformTests.m in Sources */,
+				480F422831DE11EB83441B88 /* VIPSImageColorTests.m in Sources */,
+				683329BE1812C18BA694D9EC /* VIPSImageFilterTests.m in Sources */,
+				4C852AB7D2ADB834A897C2EE /* VIPSImageCGImageTests.m in Sources */,
+				8C4C8EFEBB98253C7F601A21 /* VIPSImageCompositeTests.m in Sources */,
+				AEB7813098EB175074E7A3A0 /* VIPSImageTilingTests.m in Sources */,
+				B3F83BC72BD8151155D19C12 /* VIPSImageCachingTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
