@@ -1584,6 +1584,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		3A684FB92534054E2886A1A3 /* Bootstrap Dependencies */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
