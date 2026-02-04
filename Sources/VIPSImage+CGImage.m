@@ -152,11 +152,17 @@ static void VIPSDataProviderReleaseCallback(void *info, const void *data, size_t
     int bands = vips_image_get_bands(self.image);
     VipsInterpretation interpretation = vips_image_get_interpretation(self.image);
 
-    // Convert to sRGB if needed (unless already RGB/sRGB or grayscale)
+    // Handle based on number of bands first
     VipsImage *srgbImage = NULL;
-    if (interpretation != VIPS_INTERPRETATION_sRGB &&
-        interpretation != VIPS_INTERPRETATION_RGB &&
-        interpretation != VIPS_INTERPRETATION_B_W) {
+
+    if (bands == 1) {
+        // Single band (grayscale) - use directly, no colorspace conversion needed
+        srgbImage = self.image;
+        g_object_ref(srgbImage);
+    } else if (interpretation != VIPS_INTERPRETATION_sRGB &&
+               interpretation != VIPS_INTERPRETATION_RGB &&
+               interpretation != VIPS_INTERPRETATION_B_W) {
+        // Multi-band non-RGB - convert to sRGB
         if (vips_colourspace(self.image, &srgbImage, VIPS_INTERPRETATION_sRGB, NULL) != 0) {
             if (error) {
                 *error = [self.class errorFromVips];
