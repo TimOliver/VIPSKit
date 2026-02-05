@@ -67,6 +67,61 @@
     XCTAssertGreaterThanOrEqual(highWater, 0, @"High water mark should be non-negative");
 }
 
+- (void)testResetMemoryHighWater {
+    // Do some operations to increase high water mark
+    for (int i = 0; i < 3; i++) {
+        VIPSImage *image = [self createTestImageWithWidth:200 height:200];
+        NSError *error = nil;
+        NSData *data = [image dataWithFormat:VIPSImageFormatPNG quality:0 error:&error];
+        XCTAssertNotNil(data);
+    }
+
+    NSInteger highWaterBefore = [VIPSImage memoryHighWater];
+
+    // Reset high water mark
+    [VIPSImage resetMemoryHighWater];
+
+    NSInteger highWaterAfter = [VIPSImage memoryHighWater];
+
+    // High water mark should be reset (could be equal to current usage, but generally lower)
+    XCTAssertLessThanOrEqual(highWaterAfter, highWaterBefore,
+                             @"High water mark should be <= before reset");
+}
+
+- (void)testSetCacheMaxMemory {
+    // Test that we can set cache max memory without crashing
+    // Save original value
+    NSInteger originalMax = 50 * 1024 * 1024; // Assume 50MB default
+
+    // Set a different value
+    [VIPSImage setCacheMaxMemory:25 * 1024 * 1024]; // 25MB
+
+    // Verify operations still work
+    VIPSImage *image = [self createTestImageWithWidth:100 height:100];
+    NSError *error = nil;
+    VIPSImage *processed = [image blurWithSigma:1.0 error:&error];
+    XCTAssertNotNil(processed, @"Should process with reduced cache memory");
+
+    // Restore original
+    [VIPSImage setCacheMaxMemory:originalMax];
+}
+
+- (void)testSetCacheMaxFiles {
+    // Test that we can set cache max files without crashing
+
+    // Set a different value
+    [VIPSImage setCacheMaxFiles:50];
+
+    // Verify operations still work
+    VIPSImage *image = [self createTestImageWithWidth:100 height:100];
+    NSError *error = nil;
+    VIPSImage *processed = [image sharpenWithSigma:1.0 error:&error];
+    XCTAssertNotNil(processed, @"Should process with modified cache files limit");
+
+    // Restore to a reasonable default
+    [VIPSImage setCacheMaxFiles:100];
+}
+
 - (void)testConcurrencySettings {
     // Test concurrency getter/setter
     NSInteger original = [VIPSImage concurrency];

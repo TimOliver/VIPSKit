@@ -314,6 +314,7 @@
 		B9F764DA7E14DD15440ADB8E /* XYZ2CMYK.c in Sources */ = {isa = PBXBuildFile; fileRef = C771BB00F4D9D92F92520C01 /* XYZ2CMYK.c */; };
 		BA30C0F0CA27C1C878D1AF41 /* flip.c in Sources */ = {isa = PBXBuildFile; fileRef = 116DD8DA436270847FCFA713 /* flip.c */; };
 		BA4A3AAFA79FB92D52E195D9 /* hist_ismonotonic.c in Sources */ = {isa = PBXBuildFile; fileRef = 324C2973498C75D4540E5218 /* hist_ismonotonic.c */; };
+		BA8A97D27BE3299515DEFFC5 /* VIPSImageAnalysisTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 365A175F6BC41EE97A7FB4F8 /* VIPSImageAnalysisTests.m */; };
 		BC88F4B3DC36C993ACA91FB0 /* transpose3d.c in Sources */ = {isa = PBXBuildFile; fileRef = 7B2876AAC55E7360F4A73A3B /* transpose3d.c */; };
 		BC9D7306E11070E6159FB01D /* colourspace.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D5FA6EA25F90EF97851B757 /* colourspace.c */; };
 		BF3FDBB46B3EB07DC37CD74C /* im_improve.c in Sources */ = {isa = PBXBuildFile; fileRef = 0C53201E5BC4D13B1E26EAA8 /* im_improve.c */; };
@@ -553,6 +554,7 @@
 		35B0ED0F4E19382C47FABB90 /* scRGB2XYZ.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = scRGB2XYZ.c; path = "Vendor/vips-8.18.0/libvips/colour/scRGB2XYZ.c"; sourceTree = "<group>"; };
 		35D39EE3E3759543A2C5A892 /* scale.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = scale.c; path = "Vendor/vips-8.18.0/libvips/conversion/scale.c"; sourceTree = "<group>"; };
 		363A68CE7AFD1C990AE4A844 /* bandmean.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = bandmean.c; path = "Vendor/vips-8.18.0/libvips/conversion/bandmean.c"; sourceTree = "<group>"; };
+		365A175F6BC41EE97A7FB4F8 /* VIPSImageAnalysisTests.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = VIPSImageAnalysisTests.m; sourceTree = "<group>"; };
 		36B42735B46F316188FB7C2A /* smartcrop.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = smartcrop.c; path = "Vendor/vips-8.18.0/libvips/conversion/smartcrop.c"; sourceTree = "<group>"; };
 		37684905EE1FE5A6D1814AD8 /* eye.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = eye.c; path = "Vendor/vips-8.18.0/libvips/create/eye.c"; sourceTree = "<group>"; };
 		379EC3A68EDE48F9B09285B5 /* openexrload.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = openexrload.c; path = "Vendor/vips-8.18.0/libvips/foreign/openexrload.c"; sourceTree = "<group>"; };
@@ -1413,6 +1415,7 @@
 				7751DB7F6A1B5603A7F0E961 /* VIPSImageCompositeTests.m */,
 				A93ED9F4A631A9D3FA03BB07 /* VIPSImageTilingTests.m */,
 				F830451FC26A365A83C4515F /* VIPSImageCachingTests.m */,
+				365A175F6BC41EE97A7FB4F8 /* VIPSImageAnalysisTests.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -2069,6 +2072,7 @@
 				8C4C8EFEBB98253C7F601A21 /* VIPSImageCompositeTests.m in Sources */,
 				AEB7813098EB175074E7A3A0 /* VIPSImageTilingTests.m in Sources */,
 				B3F83BC72BD8151155D19C12 /* VIPSImageCachingTests.m in Sources */,
+				BA8A97D27BE3299515DEFFC5 /* VIPSImageAnalysisTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
