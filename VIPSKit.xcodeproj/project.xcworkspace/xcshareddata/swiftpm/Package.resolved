@@ -1,13 +1,13 @@
 {
-  "originHash" : "ad1b23dd525093c266e31e4954319e3f2e9225f470aa68078af1568700a95996",
+  "originHash" : "a4f1b4d997c1b8d86ccd1f4796c123e3edee60c711cfea32e92af94f4aafaede",
   "pins" : [
     {
       "identity" : "vips-cocoa",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/TimOliver/vips-cocoa",
       "state" : {
-        "branch" : "main",
-        "revision" : "2b42f18f603763a218fb196c57d05d4f9f1adf7b"
+        "revision" : "a1951780a47bb09f22ab761f95afe716d3768b83",
+        "version" : "8.18.0"
       }
     }
   ],

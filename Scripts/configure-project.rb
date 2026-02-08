@@ -119,14 +119,17 @@ swift_files.each do |path|
   fw.source_build_phase.add_file_reference(ref)
 end
 
-# --- Add vips.xcframework ---
-fw_group = project.main_group.new_group('Frameworks')
-xcfw_ref = fw_group.new_file('Frameworks/vips.xcframework')
-xcfw_ref.source_tree = 'SOURCE_ROOT'
-xcfw_ref.path = 'Frameworks/vips.xcframework'
-xcfw_ref.last_known_file_type = 'wrapper.xcframework'
+# --- Add vips-cocoa SPM package dependency ---
+pkg_ref = project.new(Xcodeproj::Project::Object::XCRemoteSwiftPackageReference)
+pkg_ref.repositoryURL = 'https://github.com/TimOliver/vips-cocoa.git'
+pkg_ref.requirement = { 'kind' => 'upToNextMajorVersion', 'minimumVersion' => '8.18.0' }
+project.root_object.package_references << pkg_ref
 
-fw.frameworks_build_phase.add_file_reference(xcfw_ref, true)
+# Add vips-static product dependency to VIPSKit target
+pkg_dep = project.new(Xcodeproj::Project::Object::XCSwiftPackageProductDependency)
+pkg_dep.package = pkg_ref
+pkg_dep.product_name = 'vips-static'
+fw.package_product_dependencies << pkg_dep
 
 # ===========================================================================
 # Test Host Target: VIPSTestHost (minimal iOS app)
@@ -191,6 +194,16 @@ tests.build_configurations.each do |config|
     'TEST_HOST' => '$(BUILT_PRODUCTS_DIR)/VIPSTestHost.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VIPSTestHost',
     'BUNDLE_LOADER' => '$(TEST_HOST)',
     'SUPPORTED_PLATFORMS' => 'iphoneos iphonesimulator',
+
+    # Tests need module map paths to resolve @testable import of internal imports
+    'SWIFT_INCLUDE_PATHS' => [
+      '$(inherited)',
+      '$(SRCROOT)/Sources/Internal/include',
+    ],
+    'OTHER_SWIFT_FLAGS' => [
+      '$(inherited)',
+      '-Xcc', '-fmodule-map-file=$(SRCROOT)/Sources/Internal/include/module.modulemap',
+    ],
   })
 end
 
@@ -198,6 +211,12 @@ tests.add_dependency(host)
 
 # Link VIPSKit framework to tests
 tests.frameworks_build_phase.add_file_reference(fw.product_reference, true)
+
+# Add vips-static package dependency to test target (for module resolution)
+test_pkg_dep = project.new(Xcodeproj::Project::Object::XCSwiftPackageProductDependency)
+test_pkg_dep.package = pkg_ref
+test_pkg_dep.product_name = 'vips-static'
+tests.package_product_dependencies << test_pkg_dep
 
 # Add test source files
 test_group = project.main_group['Tests'].new_group('VIPSKitTests')

@@ -1,0 +1,30 @@
+{
+  "configurations" : [
+    {
+      "id" : "E5E93451-0B3F-4E98-9277-27593A5BA0A9",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "performanceAntipatternCheckerEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:VIPSKit.xcodeproj",
+      "identifier" : "A1000050",
+      "name" : "VIPSTests"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:VIPSKit.xcodeproj",
+        "identifier" : "A1000060",
+        "name" : "VIPSKitTests"
+      }
+    }
+  ],
+  "version" : 1
+}
