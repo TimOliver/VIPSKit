@@ -94,15 +94,15 @@ end
 
 # --- Add source files ---
 
-sources_group = project.main_group.new_group('Sources')
+sources_group = project.main_group.new_group('Sources', 'Sources')
 
 # Internal/CVIPS group
-internal_group = sources_group.new_group('Internal')
-internal_include_group = internal_group.new_group('include')
+internal_group = sources_group.new_group('Internal', 'Internal')
+internal_include_group = internal_group.new_group('include', 'include')
 
-cvips_c = internal_group.new_file(File.join(ROOT, 'Sources/Internal/CVIPS.c'))
-cvips_h = internal_include_group.new_file(File.join(ROOT, 'Sources/Internal/include/CVIPS.h'))
-internal_include_group.new_file(File.join(ROOT, 'Sources/Internal/include/module.modulemap'))
+cvips_c = internal_group.new_reference('CVIPS.c')
+cvips_h = internal_include_group.new_reference('CVIPS.h')
+internal_include_group.new_reference('module.modulemap')
 
 fw.source_build_phase.add_file_reference(cvips_c)
 
@@ -115,7 +115,7 @@ build_file.settings = { 'ATTRIBUTES' => ['Private'] }
 swift_files = Dir.glob(File.join(ROOT, 'Sources/*.swift')).sort
 
 swift_files.each do |path|
-  ref = sources_group.new_file(path)
+  ref = sources_group.new_reference(File.basename(path))
   fw.source_build_phase.add_file_reference(ref)
 end
 
@@ -145,29 +145,31 @@ host.build_configurations.each do |config|
     'ASSETCATALOG_COMPILER_APPICON_NAME' => 'AppIcon',
     'CODE_SIGN_STYLE' => 'Automatic',
     'SUPPORTED_PLATFORMS' => 'iphoneos iphonesimulator',
+    'MERGED_BINARY_TYPE' => 'none',
   })
 end
 
 # Add test host source files
-test_host_group = project.main_group.new_group('Tests').new_group('TestHost')
+tests_group = project.main_group.new_group('Tests', 'Tests')
+test_host_group = tests_group.new_group('TestHost', 'TestHost')
 ['AppDelegate.h', 'AppDelegate.m', 'main.m'].each do |name|
   path = File.join(ROOT, 'Tests/TestHost', name)
   next unless File.exist?(path)
-  ref = test_host_group.new_file(path)
+  ref = test_host_group.new_reference(name)
   host.source_build_phase.add_file_reference(ref) if name.end_with?('.m')
 end
 
 # Add storyboard
 storyboard_path = File.join(ROOT, 'Tests/TestHost/LaunchScreen.storyboard')
 if File.exist?(storyboard_path)
-  ref = test_host_group.new_file(storyboard_path)
+  ref = test_host_group.new_reference('LaunchScreen.storyboard')
   host.resources_build_phase.add_file_reference(ref)
 end
 
 # Add Info.plist
 info_plist_path = File.join(ROOT, 'Tests/TestHost/Info.plist')
 if File.exist?(info_plist_path)
-  test_host_group.new_file(info_plist_path)
+  test_host_group.new_reference('Info.plist')
 end
 
 # Embed VIPSKit framework in test host
@@ -219,19 +221,21 @@ test_pkg_dep.product_name = 'vips-static'
 tests.package_product_dependencies << test_pkg_dep
 
 # Add test source files
-test_group = project.main_group['Tests'].new_group('VIPSKitTests')
+test_group = tests_group.new_group('VIPSKitTests')
 test_files = Dir.glob(File.join(ROOT, 'Tests/*.swift')).sort
 
 test_files.each do |path|
-  ref = test_group.new_file(path)
+  ref = test_group.new_reference(File.basename(path))
+  ref.source_tree = 'SOURCE_ROOT'
+  ref.path = "Tests/#{File.basename(path)}"
   tests.source_build_phase.add_file_reference(ref)
 end
 
 # Add test resources
-resources_group = project.main_group['Tests'].new_group('TestResources')
+resources_group = tests_group.new_group('TestResources', 'TestResources')
 resource_files = Dir.glob(File.join(ROOT, 'Tests/TestResources/*')).reject { |f| File.basename(f) == '.gitkeep' }
 resource_files.each do |path|
-  ref = resources_group.new_file(path)
+  ref = resources_group.new_reference(File.basename(path))
   tests.resources_build_phase.add_file_reference(ref)
 end
 
