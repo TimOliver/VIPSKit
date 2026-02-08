@@ -26,7 +26,9 @@ class VIPSImageTestCase: XCTestCase {
         if let path = bundle.path(forResource: name, ofType: ext) {
             return path
         }
-        let fallback = "/Users/TiM/Developer/VIPSKit/Tests/TestResources/\(filename)"
+        // Derive path from source file location at compile time
+        let testsDir = URL(fileURLWithPath: #filePath).deletingLastPathComponent().path
+        let fallback = "\(testsDir)/TestResources/\(filename)"
         if FileManager.default.fileExists(atPath: fallback) {
             return fallback
         }
