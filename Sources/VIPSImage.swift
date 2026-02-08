@@ -332,8 +332,8 @@ public final class VIPSImage: @unchecked Sendable {
 
 // MARK: - Debugger Quick Look
 
-extension VIPSImage: CustomPlaygroundDisplayConvertible {
-    public var playgroundDescription: Any {
+extension VIPSImage {
+    @objc func debugQuickLookObject() -> Any? {
         guard let cgImage = try? self.createCGImage() else {
             return "VIPSImage(\(width)x\(height), \(bands) bands)"
         }
