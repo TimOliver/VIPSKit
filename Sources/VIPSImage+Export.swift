@@ -4,13 +4,8 @@ internal import CVIPS
 
 extension VIPSImage {
 
-    /// Export as lossless WebP for disk caching (~30% smaller than PNG).
-    public func cacheData() throws -> Data {
-        return try cacheData(format: .webP, quality: 0, lossless: true)
-    }
-
-    /// Export for caching with explicit format control.
-    public func cacheData(format: VIPSImageFormat, quality: Int = 0, lossless: Bool = true) throws -> Data {
+    /// Export to data with explicit format control.
+    public func exportData(format: VIPSImageFormat = .webP, quality: Int = 0, lossless: Bool = true) throws -> Data {
         var buffer: UnsafeMutableRawPointer?
         var length: Int = 0
         let result: Int32
@@ -39,7 +34,7 @@ extension VIPSImage {
         case .gif:
             result = cvips_gifsave_buffer(pointer, &buffer, &length)
         case .unknown:
-            throw VIPSError("Unknown format for cache export")
+            throw VIPSError("Unknown format for export")
         }
 
         guard result == 0, let buffer else { throw VIPSError.fromVips() }
@@ -47,13 +42,8 @@ extension VIPSImage {
         return Data(bytes: buffer, count: length)
     }
 
-    /// Write as lossless WebP cache file (auto-appends .webp extension).
-    public func writeToCache(file path: String) throws {
-        try writeToCache(file: path, format: .webP, quality: 0, lossless: true)
-    }
-
-    /// Write cache file with explicit format control.
-    public func writeToCache(file path: String, format: VIPSImageFormat, quality: Int = 0, lossless: Bool = true) throws {
+    /// Export to file with explicit format control.
+    public func export(toFile path: String, format: VIPSImageFormat = .webP, quality: Int = 0, lossless: Bool = true) throws {
         var finalPath = path
         if let ext = format.fileExtension,
            (path as NSString).pathExtension.lowercased() != ext {
@@ -79,7 +69,7 @@ extension VIPSImage {
                 result = cvips_jxlsave(pointer, finalPath, Int32(quality))
             }
         case .gif:     result = cvips_gifsave(pointer, finalPath)
-        case .unknown: throw VIPSError("Unknown format for cache export")
+        case .unknown: throw VIPSError("Unknown format for export")
         }
 
         guard result == 0 else { throw VIPSError.fromVips() }
