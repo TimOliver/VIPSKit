@@ -43,10 +43,7 @@
 		228C22122F38EF3A00AC49DD /* VIPSImageLoadingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228C22012F38EF3A00AC49DD /* VIPSImageLoadingTests.swift */; };
 		228C22132F38EF3A00AC49DD /* VIPSImageTransformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228C22062F38EF3A00AC49DD /* VIPSImageTransformTests.swift */; };
 		275E8BFA729A748468BCAD13 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4AB5AA15FA17AC1BA89517 /* AppDelegate.m */; };
-		3539104BFBE409E6452DAD01 /* VIPSKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D61DB7EA226BB69E4FA81C1B /* VIPSKit.framework */; };
-		3CCE0C81F172FE5C9CB430C4 /* VIPSKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D61DB7EA226BB69E4FA81C1B /* VIPSKit.framework */; };
 		50A384241B380E2E3304FBF3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EFF9158D7D6DE03FB95B1E01 /* LaunchScreen.storyboard */; };
-		522C34EA344A3232F5A0BF74 /* VIPSKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D61DB7EA226BB69E4FA81C1B /* VIPSKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CC491B71D964FF6A8E06271D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2200921D9FCEE38574240C34 /* main.m */; };
 		CFCCDDE300D4A4AE25F59836 /* superman.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 776D4ABD7E68C5E46D248F27 /* superman.jpg */; };
 /* End PBXBuildFile section */
@@ -75,7 +72,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				522C34EA344A3232F5A0BF74 /* VIPSKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -83,7 +79,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		01FBD9E9627FE7309F176B12 /* VIPSKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VIPSKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		01FBD9E9627FE7309F176B12 /* VIPSKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = VIPSKitTests.xctest; path = "/Users/TiM/Developer/VIPSKit/build/Debug-iphoneos/VIPSTestHost.app/PlugIns/VIPSKitTests.xctest"; sourceTree = "<absolute>"; };
 		1B4AB5AA15FA17AC1BA89517 /* AppDelegate.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Tests/TestHost/AppDelegate.m; sourceTree = "<group>"; };
 		2200921D9FCEE38574240C34 /* main.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Tests/TestHost/main.m; sourceTree = "<group>"; };
 		228C21B22F38EEA500AC49DD /* CVIPS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CVIPS.h; sourceTree = "<group>"; };
@@ -121,9 +117,9 @@
 		228C22052F38EF3A00AC49DD /* VIPSImageTilingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VIPSImageTilingTests.swift; path = Tests/VIPSImageTilingTests.swift; sourceTree = "<group>"; };
 		228C22062F38EF3A00AC49DD /* VIPSImageTransformTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VIPSImageTransformTests.swift; path = Tests/VIPSImageTransformTests.swift; sourceTree = "<group>"; };
 		776D4ABD7E68C5E46D248F27 /* superman.jpg */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.jpeg; name = superman.jpg; path = Tests/TestResources/superman.jpg; sourceTree = "<group>"; };
-		9BFF5D535DB9A381E123DED5 /* VIPSTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VIPSTestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9BFF5D535DB9A381E123DED5 /* VIPSTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = VIPSTestHost.app; path = "/Users/TiM/Developer/VIPSKit/build/Debug-iphoneos/VIPSTestHost.app"; sourceTree = "<absolute>"; };
 		CCA9A0AFFE27DB46F348078E /* AppDelegate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Tests/TestHost/AppDelegate.h; sourceTree = "<group>"; };
-		D61DB7EA226BB69E4FA81C1B /* VIPSKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VIPSKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D61DB7EA226BB69E4FA81C1B /* VIPSKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = VIPSKit.framework; path = "/Users/TiM/Developer/VIPSKit/build/Debug-iphoneos/VIPSKit.framework"; sourceTree = "<absolute>"; };
 		EF41E7FF4E6C7CD28E39D02E /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = Info.plist; path = Tests/TestHost/Info.plist; sourceTree = "<group>"; };
 		EFF9158D7D6DE03FB95B1E01 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Tests/TestHost/LaunchScreen.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -133,7 +129,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3CCE0C81F172FE5C9CB430C4 /* VIPSKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -142,7 +137,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				228C21B12F38EE6A00AC49DD /* vips-static in Frameworks */,
-				3539104BFBE409E6452DAD01 /* VIPSKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -221,21 +215,10 @@
 			name = TestHost;
 			sourceTree = "<group>";
 		};
-		715EB8BA1140FE40E2FD86BC /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				D61DB7EA226BB69E4FA81C1B /* VIPSKit.framework */,
-				9BFF5D535DB9A381E123DED5 /* VIPSTestHost.app */,
-				01FBD9E9627FE7309F176B12 /* VIPSKitTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		ED27891EF7DBA959E681A9DB = {
 			isa = PBXGroup;
 			children = (
 				228C21C92F38EEA500AC49DD /* Sources */,
-				715EB8BA1140FE40E2FD86BC /* Products */,
 				F43760645F8EFF984F3261EF /* Tests */,
 			);
 			sourceTree = "<group>";
@@ -364,7 +347,7 @@
 			packageReferences = (
 				AA2C9CAE3B61981518D1C8E2 /* XCRemoteSwiftPackageReference "vips-cocoa" */,
 			);
-			productRefGroup = 715EB8BA1140FE40E2FD86BC /* Products */;
+			productRefGroup = ED27891EF7DBA959E681A9DB;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
