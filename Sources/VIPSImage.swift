@@ -73,7 +73,7 @@ public final class VIPSImage: @unchecked Sendable {
     }
 
     /// Detected source format of the image.
-    public var sourceFormat: ImageFormat {
+    public var sourceFormat: VIPSImageFormat {
         guard let loader = loaderName else { return .unknown }
         if loader.hasPrefix("jpeg") || loader.hasPrefix("jpg") {
             return .jpeg
@@ -214,13 +214,13 @@ public final class VIPSImage: @unchecked Sendable {
     }
 
     /// Get image statistics (min, max, mean, standard deviation).
-    public func statistics() throws -> ImageStatistics {
+    public func statistics() throws -> VIPSImageStatistics {
         var min: Double = 0, max: Double = 0, mean: Double = 0, stddev: Double = 0
         guard cvips_min(pointer, &min) == 0 else { throw VIPSError.fromVips() }
         guard cvips_max(pointer, &max) == 0 else { throw VIPSError.fromVips() }
         guard cvips_avg(pointer, &mean) == 0 else { throw VIPSError.fromVips() }
         guard cvips_deviate(pointer, &stddev) == 0 else { throw VIPSError.fromVips() }
-        return ImageStatistics(min: min, max: max, mean: mean, standardDeviation: stddev)
+        return VIPSImageStatistics(min: min, max: max, mean: mean, standardDeviation: stddev)
     }
 
     /// Get the average color of the image as per-band mean values.

@@ -1,5 +1,5 @@
 /// Resize kernel/interpolation method.
-public enum ResizeKernel: Int, Sendable {
+public enum VIPSResizeKernel: Int, Sendable {
     case nearest = 0
     case linear
     case cubic

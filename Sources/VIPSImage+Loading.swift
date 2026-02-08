@@ -7,7 +7,7 @@ extension VIPSImage {
     // MARK: - Image Info
 
     /// Get image dimensions and format without loading pixels.
-    public static func getImageInfo(atPath path: String) throws -> (width: Int, height: Int, format: ImageFormat) {
+    public static func getImageInfo(atPath path: String) throws -> (width: Int, height: Int, format: VIPSImageFormat) {
         guard let image = cvips_image_new_from_file_sequential(path) else {
             throw VIPSError.fromVips()
         }
@@ -16,7 +16,7 @@ extension VIPSImage {
         let w = Int(vips_image_get_width(image))
         let h = Int(vips_image_get_height(image))
 
-        var format: ImageFormat = .unknown
+        var format: VIPSImageFormat = .unknown
         var loader: UnsafePointer<CChar>?
         if vips_image_get_string(image, VIPS_META_LOADER, &loader) == 0, let loader {
             let name = String(cString: loader)

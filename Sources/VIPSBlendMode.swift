@@ -1,5 +1,5 @@
 /// Blend modes for image compositing.
-public enum BlendMode: Int, Sendable {
+public enum VIPSBlendMode: Int, Sendable {
     case clear = 0
     case source
     case over

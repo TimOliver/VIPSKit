@@ -13,7 +13,7 @@ extension VIPSImage {
     }
 
     /// Resize by scale factor.
-    public func resize(scale: Double, kernel: ResizeKernel = .lanczos3) throws -> VIPSImage {
+    public func resize(scale: Double, kernel: VIPSResizeKernel = .lanczos3) throws -> VIPSImage {
         let vipsKernel: VipsKernel
         switch kernel {
         case .nearest:  vipsKernel = VIPS_KERNEL_NEAREST

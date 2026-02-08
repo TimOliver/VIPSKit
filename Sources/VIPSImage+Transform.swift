@@ -57,7 +57,7 @@ extension VIPSImage {
     }
 
     /// Content-aware smart crop.
-    public func smartCrop(toWidth width: Int, height: Int, interesting: Interesting = .attention) throws -> VIPSImage {
+    public func smartCrop(toWidth width: Int, height: Int, interesting: VIPSInteresting = .attention) throws -> VIPSImage {
         let vipsInteresting: VipsInteresting
         switch interesting {
         case .none:      vipsInteresting = VIPS_INTERESTING_NONE

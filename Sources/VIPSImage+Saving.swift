@@ -14,7 +14,7 @@ extension VIPSImage {
     }
 
     /// Save to file with explicit format and quality.
-    public func write(toFile path: String, format: ImageFormat, quality: Int = 85) throws {
+    public func write(toFile path: String, format: VIPSImageFormat, quality: Int = 85) throws {
         let result: Int32
         switch format {
         case .jpeg:    result = cvips_jpegsave(pointer, path, Int32(quality))
@@ -32,7 +32,7 @@ extension VIPSImage {
     // MARK: - Data Export
 
     /// Export to Data in the specified format.
-    public func data(format: ImageFormat, quality: Int = 85) throws -> Data {
+    public func data(format: VIPSImageFormat, quality: Int = 85) throws -> Data {
         var buffer: UnsafeMutableRawPointer?
         var length: Int = 0
         let result: Int32

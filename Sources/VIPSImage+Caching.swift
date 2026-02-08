@@ -10,7 +10,7 @@ extension VIPSImage {
     }
 
     /// Export for caching with explicit format control.
-    public func cacheData(format: ImageFormat, quality: Int = 0, lossless: Bool = true) throws -> Data {
+    public func cacheData(format: VIPSImageFormat, quality: Int = 0, lossless: Bool = true) throws -> Data {
         var buffer: UnsafeMutableRawPointer?
         var length: Int = 0
         let result: Int32
@@ -53,7 +53,7 @@ extension VIPSImage {
     }
 
     /// Write cache file with explicit format control.
-    public func writeToCache(file path: String, format: ImageFormat, quality: Int = 0, lossless: Bool = true) throws {
+    public func writeToCache(file path: String, format: VIPSImageFormat, quality: Int = 0, lossless: Bool = true) throws {
         var finalPath = path
         if let ext = format.fileExtension,
            (path as NSString).pathExtension.lowercased() != ext {

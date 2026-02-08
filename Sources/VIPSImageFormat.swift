@@ -1,5 +1,5 @@
 /// Image format for saving and detection.
-public enum ImageFormat: Int, Sendable {
+public enum VIPSImageFormat: Int, Sendable {
     case unknown = -1
     case jpeg = 0
     case png

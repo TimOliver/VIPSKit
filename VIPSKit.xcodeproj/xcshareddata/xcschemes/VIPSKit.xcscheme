@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "EEEFD3C1F39D29179C54471C"
+               BlueprintIdentifier = "C73D018084E54595EBC99356"
                BuildableName = "VIPSKit.framework"
                BlueprintName = "VIPSKit"
                ReferencedContainer = "container:VIPSKit.xcodeproj">
@@ -33,7 +33,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "F56C7E488BDA4E2818CE0D2D"
+               BlueprintIdentifier = "3A7D7F388406442C39205AEB"
                BuildableName = "VIPSKitTests.xctest"
                BlueprintName = "VIPSKitTests"
                ReferencedContainer = "container:VIPSKit.xcodeproj">
@@ -55,7 +55,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "C45E0E5DF944970D8D1A7E61"
+            BlueprintIdentifier = "A7821DEE02475C9BD0BFE273"
             BuildableName = "VIPSTestHost.app"
             BlueprintName = "VIPSTestHost"
             ReferencedContainer = "container:VIPSKit.xcodeproj">
@@ -72,7 +72,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "C45E0E5DF944970D8D1A7E61"
+            BlueprintIdentifier = "A7821DEE02475C9BD0BFE273"
             BuildableName = "VIPSTestHost.app"
             BlueprintName = "VIPSTestHost"
             ReferencedContainer = "container:VIPSKit.xcodeproj">

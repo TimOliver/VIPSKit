@@ -1,5 +1,5 @@
 /// Smart crop strategy for finding interesting regions.
-public enum Interesting: Int, Sendable {
+public enum VIPSInteresting: Int, Sendable {
     /// Don't look for interesting areas
     case none = 0
     /// Crop from center
