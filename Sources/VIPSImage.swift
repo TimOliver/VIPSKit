@@ -3,6 +3,12 @@ import CoreGraphics
 internal import vips
 internal import CVIPS
 
+#if canImport(UIKit)
+import UIKit
+#elseif canImport(AppKit)
+import AppKit
+#endif
+
 /// Image processing wrapper for libvips.
 public final class VIPSImage: @unchecked Sendable {
 
@@ -321,5 +327,22 @@ public final class VIPSImage: @unchecked Sendable {
             throw VIPSError.fromVips()
         }
         return VIPSImage(pointer: out)
+    }
+}
+
+// MARK: - Debugger Quick Look
+
+extension VIPSImage: CustomPlaygroundDisplayConvertible {
+    public var playgroundDescription: Any {
+        guard let cgImage = try? self.createCGImage() else {
+            return "VIPSImage(\(width)x\(height), \(bands) bands)"
+        }
+        #if canImport(UIKit)
+        return UIImage(cgImage: cgImage)
+        #elseif canImport(AppKit)
+        return NSImage(cgImage: cgImage, size: NSSize(width: cgImage.width, height: cgImage.height))
+        #else
+        return "VIPSImage(\(width)x\(height), \(bands) bands)"
+        #endif
     }
 }
