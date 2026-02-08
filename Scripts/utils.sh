@@ -122,7 +122,7 @@ setup_build_env() {
     export CXXFLAGS="${CFLAGS}"
     export LDFLAGS=$(get_ldflags "$arch" "$sdk" "$target_type")
 
-    export HOST=$(get_host_triple "$arch" "$target_type")
+    export HOST=$(get_host_triple "$arch")
 
     # pkg-config configuration
     export PKG_CONFIG_PATH=""
@@ -178,7 +178,8 @@ cmake_build_ios() {
     local build_dir="$2"
     local install_dir="$3"
     local platform="$4"
-    shift 4
+    local deployment_target="$5"
+    shift 5
     local cmake_args=("$@")
 
     mkdir -p "$build_dir"
@@ -187,7 +188,7 @@ cmake_build_ios() {
     cmake "$src_dir" \
         -DCMAKE_TOOLCHAIN_FILE="${TOOLCHAINS_DIR}/ios.toolchain.cmake" \
         -DPLATFORM="$platform" \
-        -DDEPLOYMENT_TARGET="${IOS_MIN_VERSION}" \
+        -DDEPLOYMENT_TARGET="${deployment_target}" \
         -DCMAKE_INSTALL_PREFIX="$install_dir" \
         -DCMAKE_BUILD_TYPE=Release \
         -DBUILD_SHARED_LIBS=OFF \
@@ -293,6 +294,7 @@ clean_all() {
     rm -rf "$BUILD_OUTPUT_DIR"
     rm -rf "$STAGING_DIR"
     rm -rf "${OUTPUT_DIR}/VIPSKit.xcframework"
+    rm -rf "${OUTPUT_DIR}/xcframeworks"
 }
 
 # =============================================================================

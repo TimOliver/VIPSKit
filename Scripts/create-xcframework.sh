@@ -7,28 +7,89 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/env.sh"
 source "${SCRIPT_DIR}/utils.sh"
 
-log_step "Creating VIPSKit.xcframework (dynamic with ObjC wrapper)"
+# =============================================================================
+# Parse Arguments
+# =============================================================================
+SELECTED_PLATFORMS=()
 
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --platforms)
+            shift
+            while [[ $# -gt 0 && ! "$1" =~ ^-- ]]; do
+                SELECTED_PLATFORMS+=("$1")
+                shift
+            done
+            ;;
+        *)
+            shift
+            ;;
+    esac
+done
+
+# Default to ios if no platforms specified
+if [ ${#SELECTED_PLATFORMS[@]} -eq 0 ]; then
+    SELECTED_PLATFORMS=("ios")
+fi
+
+# Determine if we're building multiple platform families
+MULTI_PLATFORM=false
+if [ ${#SELECTED_PLATFORMS[@]} -gt 1 ]; then
+    MULTI_PLATFORM=true
+fi
+
+# =============================================================================
+# Platform Configuration
+# =============================================================================
+# Returns xcframework platform slice configs for a given platform family
+# Format: "slice_name:target1,target2:arch1,arch2"
+get_xcf_platforms() {
+    case "$1" in
+        ios)
+            echo "ios-arm64:ios:arm64"
+            echo "ios-arm64_x86_64-simulator:ios-sim-arm64,ios-sim-x86_64:arm64,x86_64"
+            echo "ios-arm64_x86_64-maccatalyst:catalyst-arm64,catalyst-x86_64:arm64,x86_64"
+            ;;
+        macos)
+            echo "macos-arm64_x86_64:macos-arm64,macos-x86_64:arm64,x86_64"
+            ;;
+        tvos)
+            echo "tvos-arm64:tvos:arm64"
+            echo "tvos-arm64_x86_64-simulator:tvos-sim-arm64,tvos-sim-x86_64:arm64,x86_64"
+            ;;
+        visionos)
+            echo "xros-arm64:visionos:arm64"
+            echo "xros-arm64-simulator:visionos-sim-arm64:arm64"
+            ;;
+    esac
+}
+
+# Returns the output directory for a given platform family
+get_xcf_output_dir() {
+    local platform_family="$1"
+    if [ "$MULTI_PLATFORM" = true ]; then
+        echo "${OUTPUT_DIR}/xcframeworks/${platform_family}"
+    else
+        echo "${OUTPUT_DIR}"
+    fi
+}
+
+# =============================================================================
 # Paths
-XCFRAMEWORK_DIR="${OUTPUT_DIR}/VIPSKit.xcframework"
+# =============================================================================
 TEMP_DIR="${BUILD_OUTPUT_DIR}/xcframework_temp"
 WRAPPER_DIR="${PROJECT_ROOT}/Sources"
 
-# Clean previous output
-rm -rf "$XCFRAMEWORK_DIR"
+# Clean temp
 rm -rf "$TEMP_DIR"
 mkdir -p "$TEMP_DIR"
 
-# Platform configurations
-PLATFORMS=(
-    "ios-arm64:ios:arm64"
-    "ios-arm64_x86_64-simulator:ios-sim-arm64,ios-sim-x86_64:arm64,x86_64"
-    "ios-arm64_x86_64-maccatalyst:catalyst-arm64,catalyst-x86_64:arm64,x86_64"
-)
-
-# Create Info.plist
+# =============================================================================
+# Info.plist
+# =============================================================================
 create_framework_plist() {
     local output_dir="$1"
+    local min_version="$2"
     cat > "${output_dir}/Info.plist" << EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -51,13 +112,15 @@ create_framework_plist() {
     <key>CFBundleVersion</key>
     <string>${LIBVIPS_VERSION}</string>
     <key>MinimumOSVersion</key>
-    <string>${IOS_MIN_VERSION}</string>
+    <string>${min_version}</string>
 </dict>
 </plist>
 EOF
 }
 
-# Create module map
+# =============================================================================
+# Module Map
+# =============================================================================
 create_module_map() {
     local output_dir="$1"
     mkdir -p "${output_dir}/Modules"
@@ -74,8 +137,9 @@ framework module VIPSKit {
 EOF
 }
 
-# Compile wrapper and create dylib for a single architecture
-# Sets DYLIB_OUTPUT variable with the path
+# =============================================================================
+# Build dylib for a single target
+# =============================================================================
 build_dylib_for_target() {
     local target="$1"
     local arch=$(get_target_arch "$target")
@@ -175,7 +239,9 @@ build_dylib_for_target() {
     echo "$dylib"
 }
 
+# =============================================================================
 # Create fat dylib from multiple architectures
+# =============================================================================
 create_fat_dylib() {
     local output="$1"
     shift
@@ -188,91 +254,125 @@ create_fat_dylib() {
     fi
 }
 
-# Process each platform
-for platform_config in "${PLATFORMS[@]}"; do
-    IFS=':' read -r platform_name target_types archs <<< "$platform_config"
+# =============================================================================
+# Build xcframework for a single platform family
+# =============================================================================
+build_xcframework_for_platform() {
+    local platform_family="$1"
+    local xcf_output_dir
+    xcf_output_dir=$(get_xcf_output_dir "$platform_family")
+    local xcframework_dir="${xcf_output_dir}/VIPSKit.xcframework"
 
-    log_info "Processing platform: ${platform_name}"
+    log_step "Creating VIPSKit.xcframework for ${platform_family}"
 
-    # Create framework structure
-    framework_dir="${TEMP_DIR}/${platform_name}/VIPSKit.framework"
-    mkdir -p "${framework_dir}/Headers"
+    # Clean previous output for this platform
+    rm -rf "$xcframework_dir"
+    mkdir -p "$xcf_output_dir"
 
-    # Split target types and archs
-    IFS=',' read -ra target_array <<< "$target_types"
-    IFS=',' read -ra arch_array <<< "$archs"
+    # Get the first target to determine deployment target
+    local first_target
+    first_target=$(get_platform_targets "$platform_family" | awk '{print $1}')
+    local min_version
+    min_version=$(get_deployment_target "$first_target")
 
-    platform_build_dir="${TEMP_DIR}/${platform_name}/build"
-    mkdir -p "$platform_build_dir"
+    # Get platform slice configurations
+    local platform_configs=()
+    while IFS= read -r line; do
+        [ -n "$line" ] && platform_configs+=("$line")
+    done < <(get_xcf_platforms "$platform_family")
 
-    arch_dylibs=()
+    # Process each platform slice
+    for platform_config in "${platform_configs[@]}"; do
+        IFS=':' read -r platform_name target_types archs <<< "$platform_config"
 
-    for i in "${!target_array[@]}"; do
-        target_type="${target_array[$i]}"
-        arch="${arch_array[$i]}"
+        log_info "Processing platform slice: ${platform_name}"
 
-        dylib=$(build_dylib_for_target "$target_type" "$platform_build_dir")
-        arch_dylibs+=("$dylib")
+        # Create framework structure
+        framework_dir="${TEMP_DIR}/${platform_family}/${platform_name}/VIPSKit.framework"
+        mkdir -p "${framework_dir}/Headers"
+
+        # Split target types and archs
+        IFS=',' read -ra target_array <<< "$target_types"
+        IFS=',' read -ra arch_array <<< "$archs"
+
+        platform_build_dir="${TEMP_DIR}/${platform_family}/${platform_name}/build"
+        mkdir -p "$platform_build_dir"
+
+        arch_dylibs=()
+
+        for i in "${!target_array[@]}"; do
+            target_type="${target_array[$i]}"
+            arch="${arch_array[$i]}"
+
+            dylib=$(build_dylib_for_target "$target_type" "$platform_build_dir")
+            arch_dylibs+=("$dylib")
+        done
+
+        # Create fat binary
+        log_info "  Creating framework binary..."
+        create_fat_dylib "${framework_dir}/VIPSKit" "${arch_dylibs[@]}"
+
+        # Copy public header only
+        cp "${WRAPPER_DIR}/VIPSImage.h" "${framework_dir}/Headers/VIPSKit.h"
+
+        # Create Info.plist with correct min version
+        create_framework_plist "$framework_dir" "$min_version"
+
+        # Create module map
+        create_module_map "$framework_dir"
+
+        # Show info
+        size=$(ls -lh "${framework_dir}/VIPSKit" | awk '{print $5}')
+        archs_info=$(lipo -info "${framework_dir}/VIPSKit" 2>/dev/null | sed 's/.*: //' || echo "unknown")
+        log_info "  Framework: ${archs_info} (${size})"
     done
 
-    # Create fat binary
-    log_info "  Creating framework binary..."
-    create_fat_dylib "${framework_dir}/VIPSKit" "${arch_dylibs[@]}"
+    # Create xcframework
+    log_info "Creating xcframework for ${platform_family}..."
 
-    # Copy public header only
-    cp "${WRAPPER_DIR}/VIPSImage.h" "${framework_dir}/Headers/VIPSKit.h"
+    xcframework_args=()
+    for platform_config in "${platform_configs[@]}"; do
+        IFS=':' read -r platform_name _ _ <<< "$platform_config"
+        framework_dir="${TEMP_DIR}/${platform_family}/${platform_name}/VIPSKit.framework"
+        xcframework_args+=(-framework "$framework_dir")
+    done
 
-    # Create Info.plist
-    create_framework_plist "$framework_dir"
+    xcodebuild -create-xcframework \
+        "${xcframework_args[@]}" \
+        -output "$xcframework_dir"
 
-    # Create module map
-    create_module_map "$framework_dir"
+    # Verify output
+    log_step "Verifying ${platform_family} xcframework"
 
-    # Show info
-    size=$(ls -lh "${framework_dir}/VIPSKit" | awk '{print $5}')
-    archs_info=$(lipo -info "${framework_dir}/VIPSKit" 2>/dev/null | sed 's/.*: //' || echo "unknown")
-    log_info "  Framework: ${archs_info} (${size})"
-done
-
-# Create xcframework
-log_info "Creating xcframework..."
-
-xcframework_args=()
-for platform_config in "${PLATFORMS[@]}"; do
-    IFS=':' read -r platform_name _ _ <<< "$platform_config"
-    framework_dir="${TEMP_DIR}/${platform_name}/VIPSKit.framework"
-    xcframework_args+=(-framework "$framework_dir")
-done
-
-mkdir -p "$OUTPUT_DIR"
-xcodebuild -create-xcframework \
-    "${xcframework_args[@]}" \
-    -output "$XCFRAMEWORK_DIR"
-
-# Cleanup
-rm -rf "$TEMP_DIR"
-
-# Verify output
-log_step "Verifying xcframework"
-
-for dir in "${XCFRAMEWORK_DIR}"/*; do
-    if [ -d "$dir" ] && [ -d "${dir}/VIPSKit.framework" ]; then
-        platform=$(basename "$dir")
-        binary="${dir}/VIPSKit.framework/VIPSKit"
-        if [ -f "$binary" ]; then
-            archs=$(lipo -info "$binary" 2>/dev/null | sed 's/.*: //' || echo "unknown")
-            size=$(ls -lh "$binary" | awk '{print $5}')
-            log_success "${platform}: ${archs} (${size})"
+    for dir in "${xcframework_dir}"/*; do
+        if [ -d "$dir" ] && [ -d "${dir}/VIPSKit.framework" ]; then
+            platform=$(basename "$dir")
+            binary="${dir}/VIPSKit.framework/VIPSKit"
+            if [ -f "$binary" ]; then
+                archs=$(lipo -info "$binary" 2>/dev/null | sed 's/.*: //' || echo "unknown")
+                size=$(ls -lh "$binary" | awk '{print $5}')
+                log_success "${platform}: ${archs} (${size})"
+            fi
         fi
-    fi
+    done
+
+    log_success "Created xcframework at: ${xcframework_dir}"
+}
+
+# =============================================================================
+# Main: Build xcframeworks for all selected platforms
+# =============================================================================
+for platform_family in "${SELECTED_PLATFORMS[@]}"; do
+    build_xcframework_for_platform "$platform_family"
 done
 
-log_success "Created xcframework at: ${XCFRAMEWORK_DIR}"
+# Cleanup temp
+rm -rf "$TEMP_DIR"
 
 # Print usage instructions
 echo ""
 echo "To use in your Xcode project:"
-echo "1. Drag ${XCFRAMEWORK_DIR} into your Xcode project"
+echo "1. Drag VIPSKit.xcframework into your Xcode project"
 echo "2. Add to 'Frameworks, Libraries, and Embedded Content'"
 echo "3. Set 'Embed' to 'Embed & Sign'"
 echo ""

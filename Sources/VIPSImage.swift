@@ -1,7 +1,7 @@
 import Foundation
 import CoreGraphics
-@_implementationOnly import vips
-@_implementationOnly import CVIPS
+internal import vips
+internal import CVIPS
 
 /// Image processing wrapper for libvips.
 public final class VIPSImage: @unchecked Sendable {

@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B91CA704FF2D21874DF1438B"
+               BlueprintIdentifier = "EE7CB7C738C6BB3A2FDB85AB"
                BuildableName = "VIPSKit.framework"
                BlueprintName = "VIPSKit"
                ReferencedContainer = "container:VIPSKit.xcodeproj">
@@ -30,7 +30,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E0AF536FE607F1E75ECA1974"
+            BlueprintIdentifier = "75496363454843FF9036E708"
             BuildableName = "VIPSTestHost.app"
             BlueprintName = "VIPSTestHost"
             ReferencedContainer = "container:VIPSKit.xcodeproj">
@@ -41,7 +41,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "215414035127B9FB6207F2DF"
+               BlueprintIdentifier = "05328A6C900B33E455BB5852"
                BuildableName = "VIPSKitTests.xctest"
                BlueprintName = "VIPSKitTests"
                ReferencedContainer = "container:VIPSKit.xcodeproj">
@@ -63,7 +63,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E0AF536FE607F1E75ECA1974"
+            BlueprintIdentifier = "75496363454843FF9036E708"
             BuildableName = "VIPSTestHost.app"
             BlueprintName = "VIPSTestHost"
             ReferencedContainer = "container:VIPSKit.xcodeproj">
@@ -80,7 +80,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E0AF536FE607F1E75ECA1974"
+            BlueprintIdentifier = "75496363454843FF9036E708"
             BuildableName = "VIPSTestHost.app"
             BlueprintName = "VIPSTestHost"
             ReferencedContainer = "container:VIPSKit.xcodeproj">

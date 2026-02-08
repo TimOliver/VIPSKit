@@ -12,7 +12,6 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
 VERSION="${1:-1.0.0}"
-OUTPUT_FILE="vipskit-prebuilt-${VERSION}.tar.gz"
 
 STAGING_DIR="${PROJECT_ROOT}/build/staging"
 
@@ -62,7 +61,8 @@ done
 
 log_info "All required libraries present."
 
-# Create the tarball
+# Create the staging tarball
+OUTPUT_FILE="vipskit-prebuilt-${VERSION}.tar.gz"
 log_info "Creating ${OUTPUT_FILE}..."
 cd "${PROJECT_ROOT}/build"
 
@@ -74,8 +74,47 @@ mv "${OUTPUT_FILE}" "${PROJECT_ROOT}/"
 log_info ""
 log_info "Created: ${OUTPUT_FILE}"
 log_info "Size: $(du -h "${PROJECT_ROOT}/${OUTPUT_FILE}" | cut -f1)"
+
+# Package xcframeworks if they exist
+PACKAGED_XCFRAMEWORKS=()
+
+# Check root-level xcframework (single platform build)
+if [ -d "${PROJECT_ROOT}/VIPSKit.xcframework" ]; then
+    zip_name="VIPSKit-${VERSION}.xcframework.zip"
+    log_info "Packaging ${zip_name}..."
+    cd "${PROJECT_ROOT}"
+    zip -r -q "${zip_name}" VIPSKit.xcframework
+    PACKAGED_XCFRAMEWORKS+=("${zip_name}")
+fi
+
+# Check multi-platform xcframeworks
+if [ -d "${PROJECT_ROOT}/xcframeworks" ]; then
+    for platform_dir in "${PROJECT_ROOT}/xcframeworks"/*/; do
+        [ -d "$platform_dir" ] || continue
+        platform=$(basename "$platform_dir")
+
+        for xcf_dir in "${platform_dir}"*.xcframework; do
+            [ -d "$xcf_dir" ] || continue
+            xcf_name=$(basename "$xcf_dir" .xcframework)
+            zip_name="${xcf_name}-${platform}-${VERSION}.xcframework.zip"
+            log_info "Packaging ${zip_name}..."
+            cd "$platform_dir"
+            zip -r -q "${PROJECT_ROOT}/${zip_name}" "$(basename "$xcf_dir")"
+            PACKAGED_XCFRAMEWORKS+=("${zip_name}")
+        done
+    done
+fi
+
 log_info ""
-log_info "Upload this file to GitHub releases:"
+if [ ${#PACKAGED_XCFRAMEWORKS[@]} -gt 0 ]; then
+    log_info "Packaged xcframeworks:"
+    for zip in "${PACKAGED_XCFRAMEWORKS[@]}"; do
+        log_info "  ${zip} ($(du -h "${PROJECT_ROOT}/${zip}" | cut -f1))"
+    done
+fi
+
+log_info ""
+log_info "Upload these files to GitHub releases:"
 log_info "  https://github.com/YOUR_USERNAME/VIPSKit/releases/new"
 log_info ""
 log_info "Then update PREBUILT_VERSION in Scripts/bootstrap.sh to match."

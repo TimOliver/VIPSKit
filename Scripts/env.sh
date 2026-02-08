@@ -22,6 +22,8 @@ export TOOLCHAINS_DIR="${SCRIPTS_DIR}/toolchains"
 # =============================================================================
 export IOS_MIN_VERSION="15.0"
 export MACOS_MIN_VERSION="12.0"
+export TVOS_MIN_VERSION="15.0"
+export VISIONOS_MIN_VERSION="1.0"
 
 # =============================================================================
 # Library Versions
@@ -64,14 +66,48 @@ export LIBVIPS_URL="https://github.com/libvips/libvips/releases/download/v${LIBV
 # =============================================================================
 # Target Architectures
 # =============================================================================
-# Target list
-export TARGETS="ios ios-sim-arm64 ios-sim-x86_64 catalyst-arm64 catalyst-x86_64"
+# Default target list (iOS only, overridden by --platform in build.sh)
+if [ -z "$TARGETS" ]; then
+    export TARGETS="ios ios-sim-arm64 ios-sim-x86_64 catalyst-arm64 catalyst-x86_64"
+fi
+
+# =============================================================================
+# Platform/Target Mapping
+# =============================================================================
+# Maps platform family name to its build targets
+get_platform_targets() {
+    case "$1" in
+        ios) echo "ios ios-sim-arm64 ios-sim-x86_64 catalyst-arm64 catalyst-x86_64" ;;
+        macos) echo "macos-arm64 macos-x86_64" ;;
+        tvos) echo "tvos tvos-sim-arm64 tvos-sim-x86_64" ;;
+        visionos) echo "visionos visionos-sim-arm64" ;;
+    esac
+}
+
+# Returns the minimum deployment version for a given target
+get_deployment_target() {
+    case "$1" in
+        ios|ios-sim-arm64|ios-sim-x86_64|catalyst-arm64|catalyst-x86_64)
+            echo "$IOS_MIN_VERSION" ;;
+        macos-arm64|macos-x86_64)
+            echo "$MACOS_MIN_VERSION" ;;
+        tvos|tvos-sim-arm64|tvos-sim-x86_64)
+            echo "$TVOS_MIN_VERSION" ;;
+        visionos|visionos-sim-arm64)
+            echo "$VISIONOS_MIN_VERSION" ;;
+    esac
+}
 
 # Get target properties using case statements (bash 3.2 compatible)
 get_target_arch() {
     case "$1" in
         ios|ios-sim-arm64|catalyst-arm64) echo "arm64" ;;
         ios-sim-x86_64|catalyst-x86_64) echo "x86_64" ;;
+        macos-arm64) echo "arm64" ;;
+        macos-x86_64) echo "x86_64" ;;
+        tvos|tvos-sim-arm64) echo "arm64" ;;
+        tvos-sim-x86_64) echo "x86_64" ;;
+        visionos|visionos-sim-arm64) echo "arm64" ;;
     esac
 }
 
@@ -80,6 +116,11 @@ get_target_sdk() {
         ios) echo "iphoneos" ;;
         ios-sim-arm64|ios-sim-x86_64) echo "iphonesimulator" ;;
         catalyst-arm64|catalyst-x86_64) echo "macosx" ;;
+        macos-arm64|macos-x86_64) echo "macosx" ;;
+        tvos) echo "appletvos" ;;
+        tvos-sim-arm64|tvos-sim-x86_64) echo "appletvsimulator" ;;
+        visionos) echo "xros" ;;
+        visionos-sim-arm64) echo "xrsimulator" ;;
     esac
 }
 
@@ -90,6 +131,13 @@ get_target_cmake_platform() {
         ios-sim-x86_64) echo "SIMULATOR64" ;;
         catalyst-arm64) echo "MAC_CATALYST_ARM64" ;;
         catalyst-x86_64) echo "MAC_CATALYST" ;;
+        macos-arm64) echo "MAC_ARM64" ;;
+        macos-x86_64) echo "MAC" ;;
+        tvos) echo "TVOS" ;;
+        tvos-sim-arm64) echo "SIMULATORARM64_TVOS" ;;
+        tvos-sim-x86_64) echo "SIMULATOR_TVOS" ;;
+        visionos) echo "VISIONOS" ;;
+        visionos-sim-arm64) echo "SIMULATOR_VISIONOS" ;;
     esac
 }
 
@@ -148,6 +196,21 @@ get_cflags() {
         catalyst-x86_64)
             flags+=" -target x86_64-apple-ios${IOS_MIN_VERSION}-macabi"
             ;;
+        macos-arm64|macos-x86_64)
+            flags+=" -mmacosx-version-min=${MACOS_MIN_VERSION}"
+            ;;
+        tvos)
+            flags+=" -mtvos-version-min=${TVOS_MIN_VERSION}"
+            ;;
+        tvos-sim-arm64|tvos-sim-x86_64)
+            flags+=" -mtvos-simulator-version-min=${TVOS_MIN_VERSION}"
+            ;;
+        visionos)
+            flags+=" -target arm64-apple-xros${VISIONOS_MIN_VERSION}"
+            ;;
+        visionos-sim-arm64)
+            flags+=" -target arm64-apple-xros${VISIONOS_MIN_VERSION}-simulator"
+            ;;
     esac
 
     # Enable position independent code for static libraries
@@ -177,6 +240,21 @@ get_ldflags() {
         catalyst-x86_64)
             flags+=" -target x86_64-apple-ios${IOS_MIN_VERSION}-macabi"
             ;;
+        macos-arm64|macos-x86_64)
+            flags+=" -mmacosx-version-min=${MACOS_MIN_VERSION}"
+            ;;
+        tvos)
+            flags+=" -mtvos-version-min=${TVOS_MIN_VERSION}"
+            ;;
+        tvos-sim-arm64|tvos-sim-x86_64)
+            flags+=" -mtvos-simulator-version-min=${TVOS_MIN_VERSION}"
+            ;;
+        visionos)
+            flags+=" -target arm64-apple-xros${VISIONOS_MIN_VERSION}"
+            ;;
+        visionos-sim-arm64)
+            flags+=" -target arm64-apple-xros${VISIONOS_MIN_VERSION}-simulator"
+            ;;
     esac
 
     echo "$flags"
@@ -187,15 +265,10 @@ get_ldflags() {
 # =============================================================================
 get_host_triple() {
     local arch="$1"
-    local target_type="$2"
 
-    case "$target_type" in
-        ios|ios-sim-arm64|catalyst-arm64)
-            echo "aarch64-apple-darwin"
-            ;;
-        ios-sim-x86_64|catalyst-x86_64)
-            echo "x86_64-apple-darwin"
-            ;;
+    case "$arch" in
+        arm64) echo "aarch64-apple-darwin" ;;
+        x86_64) echo "x86_64-apple-darwin" ;;
     esac
 }
 

@@ -30,7 +30,7 @@ build_expat() {
     cmake "$SRC_DIR" \
         -DCMAKE_TOOLCHAIN_FILE="${TOOLCHAINS_DIR}/ios.toolchain.cmake" \
         -DPLATFORM="$platform" \
-        -DDEPLOYMENT_TARGET="${IOS_MIN_VERSION}" \
+        -DDEPLOYMENT_TARGET="$(get_deployment_target "$target")" \
         -DCMAKE_INSTALL_PREFIX="$install_dir" \
         -DCMAKE_BUILD_TYPE=Release \
         -DBUILD_SHARED_LIBS=OFF \

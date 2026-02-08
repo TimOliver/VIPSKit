@@ -1,6 +1,6 @@
 import Foundation
-@_implementationOnly import vips
-@_implementationOnly import CVIPS
+internal import vips
+internal import CVIPS
 
 extension VIPSImage {
 

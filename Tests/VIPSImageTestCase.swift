@@ -16,7 +16,11 @@ class VIPSImageTestCase: XCTestCase {
     // MARK: - Helpers
 
     func pathForTestResource(_ filename: String) -> String? {
+        #if SWIFT_PACKAGE
+        let bundle = Bundle.module
+        #else
         let bundle = Bundle(for: type(of: self))
+        #endif
         let name = (filename as NSString).deletingPathExtension
         let ext = (filename as NSString).pathExtension
         if let path = bundle.path(forResource: name, ofType: ext) {
