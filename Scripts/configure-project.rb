@@ -246,6 +246,7 @@ scheme = Xcodeproj::XCScheme.new
 scheme.add_build_target(fw)
 scheme.add_test_target(tests)
 scheme.set_launch_target(host)
+scheme.test_action.code_coverage_enabled = true
 scheme.save_as(PROJ_PATH, 'VIPSKit', true)
 
 puts "✅ VIPSKit.xcodeproj configured successfully"

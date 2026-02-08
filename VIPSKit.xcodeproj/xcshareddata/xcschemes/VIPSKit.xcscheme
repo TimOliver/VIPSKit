@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A995424D681A2A77ED261205"
+               BlueprintIdentifier = "EEEFD3C1F39D29179C54471C"
                BuildableName = "VIPSKit.framework"
                BlueprintName = "VIPSKit"
                ReferencedContainer = "container:VIPSKit.xcodeproj">
@@ -26,13 +26,14 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES">
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      codeCoverageEnabled = "YES">
       <Testables>
          <TestableReference
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "9D30B59A84AE12F7FF63BADF"
+               BlueprintIdentifier = "F56C7E488BDA4E2818CE0D2D"
                BuildableName = "VIPSKitTests.xctest"
                BlueprintName = "VIPSKitTests"
                ReferencedContainer = "container:VIPSKit.xcodeproj">
@@ -54,7 +55,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1E66BD66941843C3B6980752"
+            BlueprintIdentifier = "C45E0E5DF944970D8D1A7E61"
             BuildableName = "VIPSTestHost.app"
             BlueprintName = "VIPSTestHost"
             ReferencedContainer = "container:VIPSKit.xcodeproj">
@@ -71,7 +72,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1E66BD66941843C3B6980752"
+            BlueprintIdentifier = "C45E0E5DF944970D8D1A7E61"
             BuildableName = "VIPSTestHost.app"
             BlueprintName = "VIPSTestHost"
             ReferencedContainer = "container:VIPSKit.xcodeproj">
