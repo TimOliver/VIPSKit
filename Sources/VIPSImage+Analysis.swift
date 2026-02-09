@@ -57,10 +57,10 @@ extension VIPSImage {
         }
 
         let data = pixel.assumingMemoryBound(to: Double.self)
-        let statsWidth = numBands + 1
+        let statsWidth = Int(vips_image_get_width(statsImage))
         var result: [Double] = []
         for band in 1...numBands {
-            result.append(data[4 * statsWidth + band])
+            result.append(data[4 + (statsWidth * band)])
         }
         return VIPSColor(values: result)
     }

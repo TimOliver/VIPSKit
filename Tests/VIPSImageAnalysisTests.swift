@@ -30,8 +30,7 @@ final class VIPSImageAnalysisTests: VIPSImageTestCase {
         let avg = try image.averageColor()
         XCTAssertEqual(avg.count, 3)
         for val in avg {
-            XCTAssertGreaterThanOrEqual(val, 0.0)
-            XCTAssertLessThanOrEqual(val, 255.0)
+            XCTAssertEqual(val, 128.0)
         }
     }
 
@@ -39,6 +38,10 @@ final class VIPSImageAnalysisTests: VIPSImageTestCase {
         let image = createSolidColorImage(width: 50, height: 50, r: 200, g: 100, b: 50, a: 128)
         let avg = try image.averageColor()
         XCTAssertEqual(avg.count, 4)
+        XCTAssertEqual(avg.red, 200)
+        XCTAssertEqual(avg.green, 100)
+        XCTAssertEqual(avg.blue, 50)
+        XCTAssertEqual(avg.alpha, 128)
     }
 
     func testAverageColorGradient() throws {
