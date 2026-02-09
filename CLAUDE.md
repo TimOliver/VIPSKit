@@ -40,7 +40,7 @@ vips-cocoa (separate repo)              VIPSKit (this repo)
                                        │           ├── CVIPS.h
                                        │           ├── module.modulemap
                                        │           └── vips.h (umbrella header)
-                                       ├── Tests/*.swift (13 test files)
+                                       ├── Tests/*.swift (19 test files)
                                        ├── Scripts/configure-project.rb (Xcode project generator)
                                        └── build.sh (xcframework builder)
 ```
@@ -65,23 +65,33 @@ VIPSKit/
 ├── Package.swift                      # SPM package definition
 ├── build.sh                           # Builds VIPSKit.xcframework
 ├── Sources/
-│   ├── VIPSImage.swift                # Main class, lifecycle, properties, memory
-│   ├── VIPSImage+Loading.swift        # File/data loading, thumbnails
+│   ├── VIPSImage.swift                # Main class, lifecycle, Cache namespace, PixelBuffer, concurrency
+│   ├── VIPSImage+Loading.swift        # File/data loading, thumbnails, imageInfo
 │   ├── VIPSImage+Saving.swift         # File/data export
 │   ├── VIPSImage+Resize.swift         # Resize operations
-│   ├── VIPSImage+Transform.swift      # Crop, rotate, flip, smart crop
-│   ├── VIPSImage+Color.swift          # Grayscale, adjustments, invert
+│   ├── VIPSImage+Transform.swift      # Crop, flip, smart crop
+│   ├── VIPSImage+Rotate.swift         # Rotation operations
+│   ├── VIPSImage+Color.swift          # Grayscale, adjustments, invert, flatten
 │   ├── VIPSImage+Filter.swift         # Blur, sharpen, edge detection
-│   ├── VIPSImage+CGImage.swift        # CGImage creation
+│   ├── VIPSImage+CGImage.swift        # CGImage creation (cgImage property, thumbnailCGImage)
 │   ├── VIPSImage+Composite.swift      # Image compositing
 │   ├── VIPSImage+Tiling.swift         # Strip/region extraction
-│   ├── VIPSImage+Caching.swift        # Cache export
+│   ├── VIPSImage+Band.swift           # Alpha, premultiply, band operations
+│   ├── VIPSImage+Histogram.swift      # Histogram equalization
+│   ├── VIPSImage+Pixel.swift          # Raw pixel value access
+│   ├── VIPSImage+Embed.swift          # Gravity/embed operations
+│   ├── VIPSImage+Draw.swift           # Drawing primitives (rect, line, circle, flood fill)
+│   ├── VIPSImage+Analysis.swift       # Statistics, trim, average color, background detection
+│   ├── VIPSImage+Metadata.swift       # EXIF/metadata access, MetadataProxy subscript
+│   ├── VIPSColor.swift                # RGB color type with ink(forBands:) helper
 │   ├── VIPSError.swift                # Error type
-│   ├── ImageFormat.swift              # Format enum
-│   ├── ResizeKernel.swift             # Kernel enum
-│   ├── BlendMode.swift                # Blend mode enum
-│   ├── Interesting.swift              # Smart crop strategy enum
-│   ├── ImageStatistics.swift          # Statistics struct
+│   ├── VIPSImageFormat.swift          # Format enum
+│   ├── VIPSImageStatistics.swift      # Statistics struct
+│   ├── VIPSResizeKernel.swift         # Kernel enum (with vipsValue)
+│   ├── VIPSBlendMode.swift            # Blend mode enum (with vipsValue)
+│   ├── VIPSInteresting.swift          # Smart crop strategy enum (with vipsValue)
+│   ├── VIPSExtendMode.swift           # Extend mode enum (with vipsValue)
+│   ├── VIPSCompassDirection.swift     # Compass direction enum (with vipsValue)
 │   └── Internal/
 │       ├── CVIPS.c                    # C shim implementation
 │       └── include/
@@ -95,13 +105,19 @@ VIPSKit/
 │   ├── VIPSImageSavingTests.swift
 │   ├── VIPSImageResizeTests.swift
 │   ├── VIPSImageTransformTests.swift
+│   ├── VIPSImageRotateTests.swift
 │   ├── VIPSImageColorTests.swift
 │   ├── VIPSImageFilterTests.swift
 │   ├── VIPSImageCGImageTests.swift
 │   ├── VIPSImageCompositeTests.swift
 │   ├── VIPSImageTilingTests.swift
-│   ├── VIPSImageCachingTests.swift
+│   ├── VIPSImageHistogramTests.swift
+│   ├── VIPSImageBandTests.swift
+│   ├── VIPSImagePixelTests.swift
+│   ├── VIPSImageEmbedTests.swift
+│   ├── VIPSImageDrawTests.swift
 │   ├── VIPSImageAnalysisTests.swift
+│   ├── VIPSImageMetadataTests.swift
 │   ├── TestHost/                      # Minimal iOS app for Xcode test runner
 │   └── TestResources/superman.jpg
 ├── Scripts/
@@ -194,45 +210,53 @@ let image = try VIPSImage(data: imageData)
 print("Size: \(image.width)x\(image.height)")
 print("Bands: \(image.bands), hasAlpha: \(image.hasAlpha)")
 
-// Resize
+// Resize (CGSize overloads available for all)
 let fitted = try image.resizeToFit(width: 200, height: 200)
 let scaled = try image.resize(scale: 0.5)
 let exact = try image.resize(toWidth: 400, height: 300)
 
 // Transform
 let cropped = try image.crop(x: 10, y: 10, width: 100, height: 100)
+let cropped2 = try image.crop(CGRect(x: 10, y: 10, width: 100, height: 100))
 let rotated = try image.rotate(byDegrees: 90)
-let flipped = try image.flipHorizontal()
-let oriented = try image.autoRotate()
+let flipped = try image.flippedHorizontally()
+let oriented = try image.autoRotated()
 let smart = try image.smartCrop(toWidth: 400, height: 400, interesting: .attention)
 
 // Color
-let gray = try image.grayscale()
+let gray = try image.grayscaled()
 let brighter = try image.adjustBrightness(0.2)
 let adjusted = try image.adjust(brightness: 0.1, contrast: 1.2, saturation: 1.1)
-let inverted = try image.invert()
+let inverted = try image.inverted()
 let gammaCorrected = try image.adjustGamma(2.2)
-let flattened = try image.flatten(red: 255, green: 255, blue: 255)
+let flattened = try image.flatten(background: .white)
 
 // Filter
-let blurred = try image.blur(sigma: 2.0)
-let sharpened = try image.sharpen(sigma: 1.0)
+let blurred = try image.blurred(sigma: 2.0)
+let sharpened = try image.sharpened(sigma: 1.0)
 let edges = try image.sobel()
 let cannyEdges = try image.canny(sigma: 1.4)
 
-// Composite
+// Composite (CGPoint overload available)
 let watermarked = try base.composite(withOverlay: overlay, mode: .over, x: 10, y: 10)
+
+// Drawing
+let canvas = try VIPSImage.blank(width: 200, height: 200)
+let withRect = try canvas.drawRect(x: 10, y: 10, width: 50, height: 50,
+                                    color: VIPSColor(red: 255, green: 0, blue: 0), fill: true)
+let withLine = try canvas.drawLine(from: CGPoint(x: 0, y: 0), to: CGPoint(x: 99, y: 99),
+                                    color: .white)
+let withCircle = try canvas.drawCircle(cx: 50, cy: 50, radius: 30, color: .black, fill: true)
 
 // Thumbnail (shrink-on-load, most memory efficient)
 let thumb = try VIPSImage.thumbnail(fromFile: path, width: 200, height: 200)
 
 // CGImage (zero-copy for display)
-if let cgImage = try image.createCGImage() {
-    let uiImage = UIImage(cgImage: cgImage)
-}
+let cgImage = try image.cgImage
+let uiImage = UIImage(cgImage: cgImage)
 
 // Direct thumbnail to CGImage (minimal peak memory)
-if let cgImage = try VIPSImage.createThumbnail(fromFile: path, width: 200, height: 200) {
+if let cgImage = try VIPSImage.thumbnailCGImage(fromFile: path, width: 200, height: 200) {
     let uiImage = UIImage(cgImage: cgImage)
 }
 
@@ -250,24 +274,30 @@ let region = try VIPSImage.extractRegion(fromFile: path, x: 0, y: 0, width: 500,
 
 // Analysis
 let bounds = try image.findTrim(threshold: 20.0)
+let boundsExplicit = try image.findTrim(threshold: 5.0, background: VIPSColor(red: 255, green: 255, blue: 255))
 let stats = try image.statistics()
 let avgColor = try image.averageColor()
 let bgColor = try image.detectBackgroundColor()
 let diff = try image1.subtract(image2)
 
-// Caching
-let cacheData = try image.cacheData()  // Lossless WebP
-try image.writeToCache(file: "/path/to/cache/thumb")
+// Metadata
+let orientation = image.getString(named: "exif-ifd0-Orientation")
+image.metadata["my-custom-key"] = "value"  // Subscript access via MetadataProxy
 
-// Raw pixel access
-try image.withPixelData { data, width, height, bytesPerRow, bands in
-    // data is UInt8 pointer, valid only within this block
+// Raw pixel access (via PixelBuffer struct)
+try image.withPixelData { buffer in
+    // buffer.data, buffer.width, buffer.height, buffer.bytesPerRow, buffer.bands
 }
 
 // Memory management
-let copied = try image.copyToMemory()  // Break lazy reference chain
-VIPSImage.clearCache()
-VIPSImage.setCacheMaxMemory(25 * 1024 * 1024)
+let copied = try image.copiedToMemory()  // Break lazy reference chain
+VIPSImage.Cache.clear()
+VIPSImage.Cache.maxMemory = 25 * 1024 * 1024
+
+// Cache configuration
+VIPSImage.Cache.maxOperations = 100
+VIPSImage.Cache.maxFiles = 100
+VIPSImage.concurrency = 0  // Use all cores
 
 // Cleanup
 VIPSImage.shutdown()
@@ -286,33 +316,45 @@ VIPSImage.shutdown()
 | `init(data:)` | Load image from Data |
 | `init(buffer:width:height:bands:)` | Create from raw pixel buffer |
 | `thumbnail(fromFile:width:height:)` | Shrink-on-load thumbnail |
-| `createThumbnail(fromFile:width:height:)` | Thumbnail direct to CGImage |
+| `thumbnail(fromFile:size:)` | Shrink-on-load thumbnail (CGSize) |
+| `thumbnailCGImage(fromFile:width:height:)` | Thumbnail direct to CGImage |
+| `thumbnailCGImage(fromFile:size:)` | Thumbnail direct to CGImage (CGSize) |
 | `write(toFile:)` | Save to file (format from extension) |
 | `data(format:quality:)` | Export to Data |
-| `createCGImage()` | Create CGImage (most efficient for display) |
+| `cgImage` | Throwing computed property → CGImage |
 | `resizeToFit(width:height:)` | Resize maintaining aspect ratio |
+| `resizeToFit(size:)` | Resize maintaining aspect ratio (CGSize) |
 | `resize(scale:kernel:)` | Scale by factor |
 | `resize(toWidth:height:)` | Resize to exact dimensions |
+| `resize(to:)` | Resize to exact dimensions (CGSize) |
 | `crop(x:y:width:height:)` | Crop region |
+| `crop(_ rect:)` | Crop region (CGRect) |
 | `rotate(byDegrees:)` | Rotate 90/180/270 degrees |
-| `flipHorizontal()`, `flipVertical()` | Mirror |
-| `autoRotate()` | Apply EXIF orientation |
+| `flippedHorizontally()` | Mirror horizontally |
+| `flippedVertically()` | Mirror vertically |
+| `autoRotated()` | Apply EXIF orientation |
 | `smartCrop(toWidth:height:interesting:)` | Content-aware crop |
+| `smartCrop(to:interesting:)` | Content-aware crop (CGSize) |
 | `composite(withOverlay:mode:x:y:)` | Composite with blend mode |
-| `grayscale()` | Convert to grayscale |
-| `flatten(red:green:blue:)` | Flatten alpha to background |
-| `invert()` | Invert colors |
+| `composite(withOverlay:mode:at:)` | Composite with blend mode (CGPoint) |
+| `grayscaled()` | Convert to grayscale |
+| `flatten(background:)` | Flatten alpha to VIPSColor background |
+| `inverted()` | Invert colors |
 | `adjustBrightness(_:)` | Adjust brightness (-1.0 to 1.0) |
 | `adjustContrast(_:)` | Adjust contrast (0.5 to 2.0) |
 | `adjustSaturation(_:)` | Adjust saturation (0 to 2.0) |
 | `adjustGamma(_:)` | Adjust gamma curve |
 | `adjust(brightness:contrast:saturation:)` | Combined adjustment |
-| `blur(sigma:)` | Gaussian blur |
-| `sharpen(sigma:)` | Sharpen |
+| `blurred(sigma:)` | Gaussian blur |
+| `sharpened(sigma:)` | Sharpen |
 | `sobel()` | Sobel edge detection |
 | `canny(sigma:)` | Canny edge detection |
-| `copyToMemory()` | Break lazy reference chain |
-| `withPixelData(_:)` | Zero-copy raw pixel access |
+| `histogramEqualized()` | Equalize histogram |
+| `addingAlpha()` | Add alpha band |
+| `premultiplied()` | Premultiply alpha |
+| `unpremultiplied()` | Unpremultiply alpha |
+| `copiedToMemory()` | Break lazy reference chain |
+| `withPixelData(_:)` | Zero-copy raw pixel access (PixelBuffer) |
 | `findTrim(threshold:background:)` | Find content bounding box |
 | `statistics()` | Image statistics (min, max, mean, stddev) |
 | `averageColor()` | Per-band mean values |
@@ -324,21 +366,73 @@ VIPSImage.shutdown()
 | `extractRegion(fromFile:x:y:width:height:)` | Extract region from file |
 | `cacheData(format:quality:lossless:)` | Export for caching |
 | `writeToCache(file:format:quality:lossless:)` | Write cache file |
-| `clearCache()` | Clear operation cache |
-| `setCacheMaxOperations(_:)` | Set max cached operations |
-| `setCacheMaxMemory(_:)` | Set max cache memory |
 | `memoryUsage()` | Current tracked memory |
+| `blank(width:height:bands:)` | Create blank (black) image |
+| `blank(size:bands:)` | Create blank image (CGSize) |
+| `drawRect(x:y:width:height:color:fill:)` | Draw rectangle |
+| `drawLine(from:to:color:)` | Draw line (CGPoint) |
+| `drawCircle(cx:cy:radius:color:fill:)` | Draw circle |
+| `drawCircle(center:radius:color:fill:)` | Draw circle (CGPoint) |
+| `floodFill(x:y:color:)` | Flood fill region |
+| `floodFill(at:color:)` | Flood fill region (CGPoint) |
+| `gravity(direction:width:height:extend:)` | Embed with gravity |
+| `gravity(direction:size:extend:)` | Embed with gravity (CGSize) |
+| `pixelValues(atX:y:)` | Read pixel values at coordinates |
+| `pixelValues(at:)` | Read pixel values (CGPoint) |
+| `imageInfo(atPath:)` | Get image info without full decode |
+| `metadata` | MetadataProxy for subscript access |
+
+### VIPSImage.Cache
+
+| Method/Property | Description |
+|--------|-------------|
+| `Cache.maxOperations` | Max cached operations (read-write) |
+| `Cache.maxMemory` | Max cache memory in bytes (read-write) |
+| `Cache.maxFiles` | Max cached files (read-write) |
+| `Cache.clear()` | Clear operation cache |
+
+### VIPSImage.concurrency
+
+| Property | Description |
+|----------|-------------|
+| `concurrency` | VIPS concurrency level (read-write, 0 = all cores) |
+
+### VIPSColor
+
+| Member | Description |
+|--------|-------------|
+| `init(red:green:blue:)` | Create color from UInt8 components |
+| `.white` | Pure white constant |
+| `.black` | Pure black constant |
+
+### PixelBuffer
+
+| Property | Description |
+|----------|-------------|
+| `data` | `UnsafePointer<UInt8>` to pixel data |
+| `width` | Image width in pixels |
+| `height` | Image height in pixels |
+| `bytesPerRow` | Row stride in bytes |
+| `bands` | Number of bands/channels |
+
+### MetadataProxy
+
+| Member | Description |
+|--------|-------------|
+| `subscript(key: String) -> String?` | Get/set string metadata by key |
 
 ### Enums
 
 | Type | Values |
 |------|--------|
-| `ImageFormat` | `.unknown`, `.jpeg`, `.png`, `.webP`, `.heif`, `.avif`, `.jxl`, `.gif` |
-| `ResizeKernel` | `.nearest`, `.linear`, `.cubic`, `.lanczos2`, `.lanczos3` |
-| `BlendMode` | `.over`, `.multiply`, `.screen`, `.overlay`, `.add`, `.darken`, `.lighten`, `.softLight`, `.hardLight`, `.difference`, `.exclusion` |
-| `Interesting` | `.none`, `.centre`, `.entropy`, `.attention`, `.low`, `.high` |
+| `VIPSImageFormat` | `.unknown`, `.jpeg`, `.png`, `.webP`, `.heif`, `.avif`, `.jxl`, `.gif` |
+| `VIPSResizeKernel` | `.nearest`, `.linear`, `.cubic`, `.lanczos2`, `.lanczos3` |
+| `VIPSBlendMode` | `.over`, `.multiply`, `.screen`, `.overlay`, `.add`, `.darken`, `.lighten`, `.softLight`, `.hardLight`, `.difference`, `.exclusion` |
+| `VIPSInteresting` | `.none`, `.centre`, `.entropy`, `.attention`, `.low`, `.high` |
+| `VIPSExtendMode` | `.black`, `.copy`, `.repeat`, `.mirror`, `.white`, `.background` |
+| `VIPSCompassDirection` | `.centre`, `.north`, `.east`, `.south`, `.west`, `.northEast`, `.southEast`, `.southWest`, `.northWest` |
 
-### ImageStatistics
+### VIPSImageStatistics
 
 | Property | Description |
 |----------|-------------|
@@ -355,18 +449,26 @@ VIPSImage.shutdown()
 - `g_object_ref`/`g_object_unref` require `gpointer()` casts
 - `vips_init()` is called directly (the `VIPS_INIT` macro is not callable from Swift)
 - Uses `internal import` (Swift 5.9+ `AccessLevelOnImport`) to hide C types from public API
+- Enums have `internal var vipsValue` computed properties that map to C counterparts via `rawValue`, eliminating switch boilerplate
+
+### VIPSColor and Ink Conversion
+
+`VIPSColor` is the public RGB color type. Internally, `ink(forBands:)` converts to a `[Double]` array matching the image's band count:
+- 1-band: luminance approximation `0.2126*R + 0.7152*G + 0.0722*B`
+- 3-band: `[R, G, B]`
+- 4-band: `[R, G, B, 255.0]` (fully opaque)
 
 ### Lazy Evaluation
 
-libvips uses lazy evaluation — operations build a pipeline that only executes when output is needed. Use `copyToMemory()` to break reference chains and free source images early.
+libvips uses lazy evaluation — operations build a pipeline that only executes when output is needed. Use `copiedToMemory()` to break reference chains and free source images early.
 
 ### Threading
 
-Default: VIPS concurrency = 1 (single-threaded per operation). Parallelize at the application layer with `DispatchQueue.concurrentPerform`. For single large images, use `VIPSImage.setConcurrency(0)` for all cores.
+Default: VIPS concurrency = 1 (single-threaded per operation). Parallelize at the application layer with `DispatchQueue.concurrentPerform`. For single large images, use `VIPSImage.concurrency = 0` for all cores.
 
 ### CGImage Export
 
-`createCGImage()` transfers pixels directly from libvips to CoreGraphics via `CGDataProvider`, avoiding encode/decode overhead. The `CGDataProvider` release callback frees vips memory when the CGImage is deallocated.
+`cgImage` (throwing computed property) transfers pixels directly from libvips to CoreGraphics via `CGDataProvider`, avoiding encode/decode overhead. The `CGDataProvider` release callback frees vips memory when the CGImage is deallocated.
 
 ### Thread Safety
 
@@ -374,7 +476,7 @@ VIPSImage is `@unchecked Sendable`. Safe to use from multiple threads with each 
 
 ### vips_cache_drop_all Bug (Workaround)
 
-`clearCache()` does NOT call `vips_cache_drop_all()` (which crashes by destroying the hash table). Instead it temporarily sets `vips_cache_set_max(0)` to evict all entries, then restores the limit.
+`Cache.clear()` does NOT call `vips_cache_drop_all()` (which crashes by destroying the hash table). Instead it temporarily sets `vips_cache_set_max(0)` to evict all entries, then restores the limit.
 
 ## License
 
