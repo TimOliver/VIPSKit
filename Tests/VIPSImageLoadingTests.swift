@@ -108,4 +108,175 @@ final class VIPSImageLoadingTests: VIPSImageTestCase {
         let loaded = try VIPSImage(data: data)
         XCTAssertEqual(loaded.sourceFormat, .webP)
     }
+
+    // MARK: - Load From File (Various Formats)
+
+    func testLoadPNGFromFile() throws {
+        guard let path = pathForTestResource("test-rgb.png") else {
+            XCTFail("Test resource test-rgb.png not found")
+            return
+        }
+        let image = try VIPSImage(contentsOfFile: path)
+        XCTAssertEqual(image.width, 256)
+        XCTAssertEqual(image.height, 256)
+        XCTAssertEqual(image.sourceFormat, .png)
+        XCTAssertFalse(image.hasAlpha)
+    }
+
+    func testLoadPNGWithAlphaFromFile() throws {
+        guard let path = pathForTestResource("test-rgba.png") else {
+            XCTFail("Test resource test-rgba.png not found")
+            return
+        }
+        let image = try VIPSImage(contentsOfFile: path)
+        XCTAssertEqual(image.width, 256)
+        XCTAssertEqual(image.height, 256)
+        XCTAssertEqual(image.sourceFormat, .png)
+        XCTAssertTrue(image.hasAlpha)
+        XCTAssertEqual(image.bands, 4)
+    }
+
+    func testLoadWebPFromFile() throws {
+        guard let path = pathForTestResource("test.webp") else {
+            XCTFail("Test resource test.webp not found")
+            return
+        }
+        let image = try VIPSImage(contentsOfFile: path)
+        XCTAssertEqual(image.width, 256)
+        XCTAssertEqual(image.height, 256)
+        XCTAssertEqual(image.sourceFormat, .webP)
+    }
+
+    func testLoadGIFFromFile() throws {
+        guard let path = pathForTestResource("test.gif") else {
+            XCTFail("Test resource test.gif not found")
+            return
+        }
+        let image = try VIPSImage(contentsOfFile: path)
+        XCTAssertEqual(image.width, 64)
+        XCTAssertEqual(image.height, 64)
+        XCTAssertEqual(image.sourceFormat, .gif)
+    }
+
+    func testLoadTIFFFromFile() throws {
+        guard let path = pathForTestResource("test.tiff") else {
+            XCTFail("Test resource test.tiff not found")
+            return
+        }
+        let image = try VIPSImage(contentsOfFile: path)
+        XCTAssertEqual(image.width, 256)
+        XCTAssertEqual(image.height, 256)
+        XCTAssertEqual(image.sourceFormat, .tiff)
+    }
+
+    func testLoadGrayscaleJPEGFromFile() throws {
+        guard let path = pathForTestResource("grayscale.jpg") else {
+            XCTFail("Test resource grayscale.jpg not found")
+            return
+        }
+        let image = try VIPSImage(contentsOfFile: path)
+        XCTAssertEqual(image.width, 256)
+        XCTAssertEqual(image.height, 256)
+        XCTAssertEqual(image.sourceFormat, .jpeg)
+        XCTAssertEqual(image.bands, 1)
+        XCTAssertFalse(image.hasAlpha)
+    }
+
+    func testLoadTinyImageFromFile() throws {
+        guard let path = pathForTestResource("tiny.png") else {
+            XCTFail("Test resource tiny.png not found")
+            return
+        }
+        let image = try VIPSImage(contentsOfFile: path)
+        XCTAssertEqual(image.width, 8)
+        XCTAssertEqual(image.height, 8)
+    }
+
+    // MARK: - Image Info (Various Formats)
+
+    func testImageInfoPNG() throws {
+        guard let path = pathForTestResource("test-rgb.png") else {
+            XCTFail("Test resource not found")
+            return
+        }
+        let info = try VIPSImage.imageInfo(atPath: path)
+        XCTAssertEqual(info.width, 256)
+        XCTAssertEqual(info.height, 256)
+        XCTAssertEqual(info.format, .png)
+    }
+
+    func testImageInfoWebP() throws {
+        guard let path = pathForTestResource("test.webp") else {
+            XCTFail("Test resource not found")
+            return
+        }
+        let info = try VIPSImage.imageInfo(atPath: path)
+        XCTAssertEqual(info.width, 256)
+        XCTAssertEqual(info.height, 256)
+        XCTAssertEqual(info.format, .webP)
+    }
+
+    func testImageInfoGIF() throws {
+        guard let path = pathForTestResource("test.gif") else {
+            XCTFail("Test resource not found")
+            return
+        }
+        let info = try VIPSImage.imageInfo(atPath: path)
+        XCTAssertEqual(info.width, 64)
+        XCTAssertEqual(info.height, 64)
+        XCTAssertEqual(info.format, .gif)
+    }
+
+    func testImageInfoTIFF() throws {
+        guard let path = pathForTestResource("test.tiff") else {
+            XCTFail("Test resource not found")
+            return
+        }
+        let info = try VIPSImage.imageInfo(atPath: path)
+        XCTAssertEqual(info.width, 256)
+        XCTAssertEqual(info.height, 256)
+        XCTAssertEqual(info.format, .tiff)
+    }
+
+    // MARK: - Thumbnail From Various Formats
+
+    func testThumbnailFromPNG() throws {
+        guard let path = pathForTestResource("test-rgb.png") else {
+            XCTFail("Test resource not found")
+            return
+        }
+        let thumb = try VIPSImage.thumbnail(fromFile: path, width: 64, height: 64)
+        XCTAssertLessThanOrEqual(thumb.width, 64)
+        XCTAssertLessThanOrEqual(thumb.height, 64)
+    }
+
+    func testThumbnailFromWebP() throws {
+        guard let path = pathForTestResource("test.webp") else {
+            XCTFail("Test resource not found")
+            return
+        }
+        let thumb = try VIPSImage.thumbnail(fromFile: path, width: 64, height: 64)
+        XCTAssertLessThanOrEqual(thumb.width, 64)
+        XCTAssertLessThanOrEqual(thumb.height, 64)
+    }
+
+    func testThumbnailFromGIF() throws {
+        guard let path = pathForTestResource("test.gif") else {
+            XCTFail("Test resource not found")
+            return
+        }
+        let thumb = try VIPSImage.thumbnail(fromFile: path, width: 32, height: 32)
+        XCTAssertLessThanOrEqual(thumb.width, 32)
+        XCTAssertLessThanOrEqual(thumb.height, 32)
+    }
+
+    func testThumbnailPreservesAlpha() throws {
+        guard let path = pathForTestResource("test-rgba.png") else {
+            XCTFail("Test resource not found")
+            return
+        }
+        let thumb = try VIPSImage.thumbnail(fromFile: path, width: 64, height: 64)
+        XCTAssertTrue(thumb.hasAlpha)
+        XCTAssertEqual(thumb.bands, 4)
+    }
 }

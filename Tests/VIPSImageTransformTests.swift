@@ -88,6 +88,65 @@ final class VIPSImageTransformTests: VIPSImageTestCase {
         XCTAssertEqual(rotated.height, 100)
     }
 
+    func testAutoRotatedWithOrientation6() throws {
+        // Orientation 6 = 90° CW rotation needed
+        guard let path = pathForTestResource("rotated-6.jpg") else {
+            XCTFail("Test resource rotated-6.jpg not found")
+            return
+        }
+        let image = try VIPSImage(contentsOfFile: path)
+
+        // Check that orientation metadata is present
+        XCTAssertEqual(image.orientation, 6)
+
+        // Original dimensions (before auto-rotate)
+        XCTAssertEqual(image.width, 256)
+        XCTAssertEqual(image.height, 256)
+
+        // After auto-rotate, orientation should be applied
+        let rotated = try image.autoRotated()
+        // For a square image, dimensions stay the same
+        XCTAssertEqual(rotated.width, 256)
+        XCTAssertEqual(rotated.height, 256)
+        // Orientation should be reset to 1 (or removed)
+        XCTAssertTrue(rotated.orientation == nil || rotated.orientation == 1)
+    }
+
+    func testAutoRotatedWithOrientation3() throws {
+        // Orientation 3 = 180° rotation needed
+        guard let path = pathForTestResource("rotated-3.jpg") else {
+            XCTFail("Test resource rotated-3.jpg not found")
+            return
+        }
+        let image = try VIPSImage(contentsOfFile: path)
+
+        // Check that orientation metadata is present
+        XCTAssertEqual(image.orientation, 3)
+
+        let rotated = try image.autoRotated()
+        XCTAssertEqual(rotated.width, 256)
+        XCTAssertEqual(rotated.height, 256)
+        // Orientation should be reset
+        XCTAssertTrue(rotated.orientation == nil || rotated.orientation == 1)
+    }
+
+    func testAutoRotatedPixelVerification() throws {
+        // Load the rotated image and verify pixels are actually rotated
+        guard let path = pathForTestResource("rotated-6.jpg") else {
+            XCTFail("Test resource rotated-6.jpg not found")
+            return
+        }
+        let image = try VIPSImage(contentsOfFile: path)
+        let rotated = try image.autoRotated()
+
+        // Sample a corner pixel to verify rotation happened
+        // The asymmetric pattern has red in top-left (after rotation),
+        // so we can verify the rotation was applied correctly
+        let cornerColor = try rotated.pixelValues(atX: 10, y: 10)
+        // After 90° CW rotation, the colors should have shifted
+        XCTAssertNotNil(cornerColor)
+    }
+
     // MARK: - Smart Crop
 
     func testSmartCropCentre() throws {

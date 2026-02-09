@@ -189,4 +189,48 @@ final class VIPSImageMetadataTests: VIPSImageTestCase {
         image.setInt(named: "orientation", value: 6)
         XCTAssertEqual(image.orientation, 6)
     }
+
+    // MARK: - EXIF Orientation from Real Images
+
+    func testOrientationFromRotated6Image() throws {
+        guard let path = pathForTestResource("rotated-6.jpg") else {
+            XCTFail("Test resource rotated-6.jpg not found")
+            return
+        }
+        let image = try VIPSImage(contentsOfFile: path)
+        XCTAssertEqual(image.orientation, 6)
+    }
+
+    func testOrientationFromRotated3Image() throws {
+        guard let path = pathForTestResource("rotated-3.jpg") else {
+            XCTFail("Test resource rotated-3.jpg not found")
+            return
+        }
+        let image = try VIPSImage(contentsOfFile: path)
+        XCTAssertEqual(image.orientation, 3)
+    }
+
+    func testOrientationNilForNonRotatedImage() throws {
+        // PNG files typically don't have EXIF orientation
+        guard let path = pathForTestResource("test-rgb.png") else {
+            XCTFail("Test resource test-rgb.png not found")
+            return
+        }
+        let image = try VIPSImage(contentsOfFile: path)
+        // PNG should not have orientation metadata
+        XCTAssertNil(image.orientation)
+    }
+
+    func testOrientationFromTestJPEG() throws {
+        // test.jpg was created without explicit orientation, should be nil or 1
+        guard let path = pathForTestResource("test.jpg") else {
+            XCTFail("Test resource test.jpg not found")
+            return
+        }
+        let image = try VIPSImage(contentsOfFile: path)
+        // Either nil (not set) or 1 (normal) is acceptable
+        if let orientation = image.orientation {
+            XCTAssertEqual(orientation, 1)
+        }
+    }
 }

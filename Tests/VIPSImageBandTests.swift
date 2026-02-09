@@ -57,4 +57,64 @@ final class VIPSImageBandTests: VIPSImageTestCase {
         let unpremultiplied = try premultiplied.unpremultiplied()
         XCTAssertEqual(unpremultiplied.bands, image.bands)
     }
+
+    // MARK: - Real Image Alpha Tests
+
+    func testLoadPNGWithAlpha() throws {
+        guard let path = pathForTestResource("test-rgba.png") else {
+            XCTFail("Test resource test-rgba.png not found")
+            return
+        }
+        let image = try VIPSImage(contentsOfFile: path)
+        XCTAssertTrue(image.hasAlpha)
+        XCTAssertEqual(image.bands, 4)
+    }
+
+    func testPremultiplyRealImage() throws {
+        guard let path = pathForTestResource("test-rgba.png") else {
+            XCTFail("Test resource test-rgba.png not found")
+            return
+        }
+        let image = try VIPSImage(contentsOfFile: path)
+        let premultiplied = try image.premultiplied()
+        XCTAssertEqual(premultiplied.bands, 4)
+        XCTAssertTrue(premultiplied.hasAlpha)
+    }
+
+    func testAddAlphaToRealImage() throws {
+        guard let path = pathForTestResource("test-rgb.png") else {
+            XCTFail("Test resource test-rgb.png not found")
+            return
+        }
+        let image = try VIPSImage(contentsOfFile: path)
+        XCTAssertFalse(image.hasAlpha)
+        XCTAssertEqual(image.bands, 3)
+
+        let withAlpha = try image.addingAlpha()
+        XCTAssertTrue(withAlpha.hasAlpha)
+        XCTAssertEqual(withAlpha.bands, 4)
+    }
+
+    func testGrayscaleImageBands() throws {
+        guard let path = pathForTestResource("grayscale.jpg") else {
+            XCTFail("Test resource grayscale.jpg not found")
+            return
+        }
+        let image = try VIPSImage(contentsOfFile: path)
+        XCTAssertEqual(image.bands, 1)
+        XCTAssertFalse(image.hasAlpha)
+    }
+
+    func testAddAlphaToGrayscale() throws {
+        guard let path = pathForTestResource("grayscale.jpg") else {
+            XCTFail("Test resource grayscale.jpg not found")
+            return
+        }
+        let image = try VIPSImage(contentsOfFile: path)
+        XCTAssertEqual(image.bands, 1)
+
+        let withAlpha = try image.addingAlpha()
+        XCTAssertTrue(withAlpha.hasAlpha)
+        XCTAssertEqual(withAlpha.bands, 2)
+    }
 }
