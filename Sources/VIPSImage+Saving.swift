@@ -30,6 +30,7 @@ extension VIPSImage {
         case .avif:    result = cvips_avifsave(pointer, path, Int32(quality))
         case .jxl:     result = cvips_jxlsave(pointer, path, Int32(quality))
         case .gif:     result = cvips_gifsave(pointer, path)
+        case .tiff:    result = cvips_tiffsave(pointer, path)
         case .unknown: throw VIPSError("Unknown format for saving")
         }
         guard result == 0 else { throw VIPSError.fromVips() }
@@ -55,6 +56,7 @@ extension VIPSImage {
         case .avif:    result = cvips_avifsave_buffer(pointer, &buffer, &length, Int32(quality))
         case .jxl:     result = cvips_jxlsave_buffer(pointer, &buffer, &length, Int32(quality))
         case .gif:     result = cvips_gifsave_buffer(pointer, &buffer, &length)
+        case .tiff:    result = cvips_tiffsave_buffer(pointer, &buffer, &length)
         case .unknown: throw VIPSError("Unknown format for export")
         }
 

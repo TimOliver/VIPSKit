@@ -238,6 +238,110 @@ int cvips_gifsave(VipsImage *in, const char *filename) {
 }
 
 // =============================================================================
+// Histogram
+// =============================================================================
+
+int cvips_hist_equal(VipsImage *in, VipsImage **out) {
+    return vips_hist_equal(in, out, NULL);
+}
+
+// =============================================================================
+// Arbitrary rotation
+// =============================================================================
+
+int cvips_rotate(VipsImage *in, VipsImage **out, double angle) {
+    return vips_rotate(in, out, angle, NULL);
+}
+
+// =============================================================================
+// Embed / Pad
+// =============================================================================
+
+int cvips_embed(VipsImage *in, VipsImage **out, int x, int y, int width, int height, VipsExtend extend) {
+    return vips_embed(in, out, x, y, width, height, "extend", extend, NULL);
+}
+
+int cvips_gravity(VipsImage *in, VipsImage **out, VipsCompassDirection direction, int width, int height, VipsExtend extend) {
+    return vips_gravity(in, out, direction, width, height, "extend", extend, NULL);
+}
+
+// =============================================================================
+// Band manipulation
+// =============================================================================
+
+int cvips_bandjoin2(VipsImage *in1, VipsImage *in2, VipsImage **out) {
+    return vips_bandjoin2(in1, in2, out, NULL);
+}
+
+int cvips_bandjoin_const1(VipsImage *in, VipsImage **out, double c) {
+    return vips_bandjoin_const1(in, out, c, NULL);
+}
+
+int cvips_addalpha(VipsImage *in, VipsImage **out) {
+    return vips_addalpha(in, out, NULL);
+}
+
+// =============================================================================
+// Premultiplied alpha
+// =============================================================================
+
+int cvips_premultiply(VipsImage *in, VipsImage **out) {
+    return vips_premultiply(in, out, NULL);
+}
+
+int cvips_unpremultiply(VipsImage *in, VipsImage **out) {
+    return vips_unpremultiply(in, out, NULL);
+}
+
+// =============================================================================
+// Canvas creation
+// =============================================================================
+
+int cvips_black(VipsImage **out, int width, int height, int bands) {
+    return vips_black(out, width, height, "bands", bands, NULL);
+}
+
+// =============================================================================
+// Drawing (mutate in-place)
+// =============================================================================
+
+int cvips_draw_rect(VipsImage *image, double *ink, int n, int left, int top, int width, int height, int fill) {
+    return vips_draw_rect(image, ink, n, left, top, width, height, "fill", fill, NULL);
+}
+
+int cvips_draw_line(VipsImage *image, double *ink, int n, int x1, int y1, int x2, int y2) {
+    return vips_draw_line(image, ink, n, x1, y1, x2, y2, NULL);
+}
+
+int cvips_draw_circle(VipsImage *image, double *ink, int n, int cx, int cy, int radius, int fill) {
+    return vips_draw_circle(image, ink, n, cx, cy, radius, "fill", fill, NULL);
+}
+
+int cvips_draw_flood(VipsImage *image, double *ink, int n, int x, int y) {
+    return vips_draw_flood(image, ink, n, x, y, NULL);
+}
+
+// =============================================================================
+// Pixel reading
+// =============================================================================
+
+int cvips_getpoint(VipsImage *in, double **vector, int *n, int x, int y) {
+    return vips_getpoint(in, vector, n, x, y, NULL);
+}
+
+// =============================================================================
+// TIFF I/O
+// =============================================================================
+
+int cvips_tiffsave(VipsImage *in, const char *filename) {
+    return vips_tiffsave(in, filename, NULL);
+}
+
+int cvips_tiffsave_buffer(VipsImage *in, void **buf, size_t *len) {
+    return vips_tiffsave_buffer(in, buf, len, NULL);
+}
+
+// =============================================================================
 // Save to buffer
 // =============================================================================
 

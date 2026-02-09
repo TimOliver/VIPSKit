@@ -117,6 +117,8 @@ public final class VIPSImage: @unchecked Sendable {
             return .jxl
         } else if loader.hasPrefix("gif") {
             return .gif
+        } else if loader.hasPrefix("tiff") {
+            return .tiff
         }
         return .unknown
     }

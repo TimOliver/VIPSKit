@@ -16,6 +16,8 @@ public enum VIPSImageFormat: Int, Sendable {
     case jxl
     /// GIF format (palette-based, quality parameter ignored)
     case gif
+    /// TIFF format (lossless, quality parameter ignored)
+    case tiff
 
     /// The standard file extension associated with this format, or `nil` for unknown formats.
     public var fileExtension: String? {
@@ -28,6 +30,7 @@ public enum VIPSImageFormat: Int, Sendable {
         case .avif:    return "avif"
         case .jxl:     return "jxl"
         case .gif:     return "gif"
+        case .tiff:    return "tif"
         }
     }
 }

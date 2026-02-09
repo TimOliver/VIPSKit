@@ -41,6 +41,8 @@ extension VIPSImage {
                 format = .jxl
             } else if name.hasPrefix("gif") {
                 format = .gif
+            } else if name.hasPrefix("tiff") {
+                format = .tiff
             }
         }
 

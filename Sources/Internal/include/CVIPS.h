@@ -100,6 +100,68 @@ int cvips_jxlsave_lossless(VipsImage *in, const char *filename);
 int cvips_gifsave(VipsImage *in, const char *filename);
 
 // =============================================================================
+// Histogram
+// =============================================================================
+
+int cvips_hist_equal(VipsImage *in, VipsImage **out);
+
+// =============================================================================
+// Arbitrary rotation
+// =============================================================================
+
+int cvips_rotate(VipsImage *in, VipsImage **out, double angle);
+
+// =============================================================================
+// Embed / Pad
+// =============================================================================
+
+int cvips_embed(VipsImage *in, VipsImage **out, int x, int y, int width, int height, VipsExtend extend);
+int cvips_gravity(VipsImage *in, VipsImage **out, VipsCompassDirection direction, int width, int height, VipsExtend extend);
+
+// =============================================================================
+// Band manipulation
+// =============================================================================
+
+int cvips_bandjoin2(VipsImage *in1, VipsImage *in2, VipsImage **out);
+int cvips_bandjoin_const1(VipsImage *in, VipsImage **out, double c);
+int cvips_addalpha(VipsImage *in, VipsImage **out);
+
+// =============================================================================
+// Premultiplied alpha
+// =============================================================================
+
+int cvips_premultiply(VipsImage *in, VipsImage **out);
+int cvips_unpremultiply(VipsImage *in, VipsImage **out);
+
+// =============================================================================
+// Canvas creation
+// =============================================================================
+
+int cvips_black(VipsImage **out, int width, int height, int bands);
+
+// =============================================================================
+// Drawing (mutate in-place)
+// =============================================================================
+
+int cvips_draw_rect(VipsImage *image, double *ink, int n, int left, int top, int width, int height, int fill);
+int cvips_draw_line(VipsImage *image, double *ink, int n, int x1, int y1, int x2, int y2);
+int cvips_draw_circle(VipsImage *image, double *ink, int n, int cx, int cy, int radius, int fill);
+int cvips_draw_flood(VipsImage *image, double *ink, int n, int x, int y);
+
+// =============================================================================
+// Pixel reading
+// =============================================================================
+
+int cvips_getpoint(VipsImage *in, double **vector, int *n, int x, int y);
+
+// =============================================================================
+// TIFF I/O
+// =============================================================================
+
+int cvips_tiffsave(VipsImage *in, const char *filename);
+int cvips_tiffsave_buffer(VipsImage *in, void **buf, size_t *len);
+
+// =============================================================================
 // Save to buffer
 // =============================================================================
 
