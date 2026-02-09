@@ -51,7 +51,7 @@ final class VIPSImageTilingTests: VIPSImageTestCase {
             XCTFail("Test resource not found")
             return
         }
-        let info = try VIPSImage.getImageInfo(atPath: path)
+        let info = try VIPSImage.imageInfo(atPath: path)
         let regionW = min(100, info.width)
         let regionH = min(100, info.height)
         let region = try VIPSImage.extractRegion(fromFile: path, x: 0, y: 0,

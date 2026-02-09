@@ -31,8 +31,8 @@ extension VIPSImage {
     /// Add a fully opaque alpha channel to the image.
     /// If the image already has an alpha channel, returns a copy without adding another.
     /// - Returns: A new image with an alpha channel
-    public func addAlpha() throws -> VIPSImage {
-        if hasAlpha { return try copyToMemory() }
+    public func addingAlpha() throws -> VIPSImage {
+        if hasAlpha { return try copiedToMemory() }
         var out: UnsafeMutablePointer<VipsImage>?
         guard cvips_addalpha(pointer, &out) == 0, let out else {
             throw VIPSError.fromVips()
@@ -44,7 +44,7 @@ extension VIPSImage {
     /// This is required before certain operations (like resizing) to avoid
     /// dark fringes around semi-transparent edges.
     /// - Returns: A new image with premultiplied alpha
-    public func premultiply() throws -> VIPSImage {
+    public func premultiplied() throws -> VIPSImage {
         var out: UnsafeMutablePointer<VipsImage>?
         guard cvips_premultiply(pointer, &out) == 0, let out else {
             throw VIPSError.fromVips()
@@ -56,7 +56,7 @@ extension VIPSImage {
     /// Call this after performing operations on premultiplied images to restore
     /// normal (straight) alpha.
     /// - Returns: A new image with straight (unpremultiplied) alpha
-    public func unpremultiply() throws -> VIPSImage {
+    public func unpremultiplied() throws -> VIPSImage {
         var out: UnsafeMutablePointer<VipsImage>?
         guard cvips_unpremultiply(pointer, &out) == 0, let out else {
             throw VIPSError.fromVips()

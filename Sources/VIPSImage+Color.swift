@@ -6,7 +6,7 @@ extension VIPSImage {
 
     /// Convert the image to grayscale (single-band luminance).
     /// - Returns: A new grayscale image
-    public func grayscale() throws -> VIPSImage {
+    public func grayscaled() throws -> VIPSImage {
         var out: UnsafeMutablePointer<VipsImage>?
         guard cvips_colourspace(pointer, &out, VIPS_INTERPRETATION_B_W) == 0, let out else {
             throw VIPSError.fromVips()
@@ -17,21 +17,18 @@ extension VIPSImage {
     /// Flatten the alpha channel against a solid background color.
     /// Fully transparent pixels become the background color, and semi-transparent
     /// pixels are blended accordingly.
-    /// - Parameters:
-    ///   - red: The red component of the background color (0-255)
-    ///   - green: The green component of the background color (0-255)
-    ///   - blue: The blue component of the background color (0-255)
+    /// - Parameter background: The background color to flatten against
     /// - Returns: A new image with the alpha channel removed
-    public func flatten(red: Int, green: Int, blue: Int) throws -> VIPSImage {
+    public func flatten(background: VIPSColor) throws -> VIPSImage {
         var out: UnsafeMutablePointer<VipsImage>?
-        guard cvips_flatten(pointer, &out, Double(red), Double(green), Double(blue)) == 0,
+        guard cvips_flatten(pointer, &out, Double(background.red), Double(background.green), Double(background.blue)) == 0,
               let out else { throw VIPSError.fromVips() }
         return VIPSImage(pointer: out)
     }
 
     /// Invert the colors of the image, producing a photographic negative effect.
     /// - Returns: A new image with inverted colors
-    public func invert() throws -> VIPSImage {
+    public func inverted() throws -> VIPSImage {
         var out: UnsafeMutablePointer<VipsImage>?
         guard cvips_invert(pointer, &out) == 0, let out else {
             throw VIPSError.fromVips()

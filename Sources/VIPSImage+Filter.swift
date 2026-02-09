@@ -8,7 +8,7 @@ extension VIPSImage {
     /// - Parameter sigma: The standard deviation of the Gaussian kernel.
     ///   Larger values produce a stronger blur.
     /// - Returns: A new blurred image
-    public func blur(sigma: Double) throws -> VIPSImage {
+    public func blurred(sigma: Double) throws -> VIPSImage {
         var out: UnsafeMutablePointer<VipsImage>?
         guard cvips_gaussblur(pointer, &out, sigma) == 0, let out else {
             throw VIPSError.fromVips()
@@ -20,7 +20,7 @@ extension VIPSImage {
     /// - Parameter sigma: The standard deviation of the sharpening kernel.
     ///   Larger values sharpen a wider area.
     /// - Returns: A new sharpened image
-    public func sharpen(sigma: Double) throws -> VIPSImage {
+    public func sharpened(sigma: Double) throws -> VIPSImage {
         var out: UnsafeMutablePointer<VipsImage>?
         guard cvips_sharpen(pointer, &out, sigma) == 0, let out else {
             throw VIPSError.fromVips()

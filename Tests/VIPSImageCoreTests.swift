@@ -21,16 +21,16 @@ final class VIPSImageCoreTests: VIPSImageTestCase {
 
     // MARK: - Memory Management
 
-    func testCopyToMemory() throws {
+    func testCopiedToMemory() throws {
         let source = createTestImage(width: 100, height: 100)
-        let copied = try source.copyToMemory()
+        let copied = try source.copiedToMemory()
         XCTAssertEqual(copied.width, source.width)
         XCTAssertEqual(copied.height, source.height)
         XCTAssertEqual(copied.bands, source.bands)
     }
 
     func testClearCache() {
-        VIPSImage.clearCache()
+        VIPSImage.Cache.clear()
         // Should not crash
     }
 
@@ -45,35 +45,35 @@ final class VIPSImageCoreTests: VIPSImageTestCase {
     }
 
     func testCacheSettings() {
-        VIPSImage.setCacheMaxOperations(50)
-        VIPSImage.setCacheMaxMemory(25 * 1024 * 1024)
-        VIPSImage.setCacheMaxFiles(5)
+        VIPSImage.Cache.maxOperations = 50
+        VIPSImage.Cache.maxMemory = 25 * 1024 * 1024
+        VIPSImage.Cache.maxFiles = 5
         // Restore defaults
-        VIPSImage.setCacheMaxOperations(100)
-        VIPSImage.setCacheMaxMemory(50 * 1024 * 1024)
-        VIPSImage.setCacheMaxFiles(10)
+        VIPSImage.Cache.maxOperations = 100
+        VIPSImage.Cache.maxMemory = 50 * 1024 * 1024
+        VIPSImage.Cache.maxFiles = 10
     }
 
     func testConcurrency() {
         let original = VIPSImage.concurrency
-        VIPSImage.setConcurrency(2)
+        VIPSImage.concurrency = 2
         XCTAssertEqual(VIPSImage.concurrency, 2)
-        VIPSImage.setConcurrency(original)
+        VIPSImage.concurrency = original
     }
 
     // MARK: - Pixel Access
 
     func testWithPixelData() throws {
         let image = createSolidColorImage(width: 10, height: 10, r: 128, g: 64, b: 32)
-        try image.withPixelData { data, width, height, bytesPerRow, bands in
-            XCTAssertEqual(width, 10)
-            XCTAssertEqual(height, 10)
-            XCTAssertEqual(bands, 3)
-            XCTAssertEqual(bytesPerRow, 30)
+        try image.withPixelData { buffer in
+            XCTAssertEqual(buffer.width, 10)
+            XCTAssertEqual(buffer.height, 10)
+            XCTAssertEqual(buffer.bands, 3)
+            XCTAssertEqual(buffer.bytesPerRow, 30)
             // Check first pixel
-            XCTAssertEqual(data[0], 128)
-            XCTAssertEqual(data[1], 64)
-            XCTAssertEqual(data[2], 32)
+            XCTAssertEqual(buffer.data[0], 128)
+            XCTAssertEqual(buffer.data[1], 64)
+            XCTAssertEqual(buffer.data[2], 32)
         }
     }
 

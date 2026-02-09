@@ -52,7 +52,7 @@ final class VIPSImageLoadingTests: VIPSImageTestCase {
             XCTFail("Test resource not found")
             return
         }
-        let info = try VIPSImage.getImageInfo(atPath: path)
+        let info = try VIPSImage.imageInfo(atPath: path)
         XCTAssertGreaterThan(info.width, 0)
         XCTAssertGreaterThan(info.height, 0)
         XCTAssertEqual(info.format, .jpeg)

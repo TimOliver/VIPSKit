@@ -1,4 +1,5 @@
 import Foundation
+import CoreGraphics
 internal import vips
 internal import CVIPS
 
@@ -19,5 +20,12 @@ extension VIPSImage {
         }
         defer { g_free(vector) }
         return Array(UnsafeBufferPointer(start: vector, count: Int(n)))
+    }
+
+    /// Read the pixel values at the specified point.
+    /// - Parameter point: The pixel coordinate
+    /// - Returns: An array of band values as `Double`
+    public func pixelValues(at point: CGPoint) throws -> [Double] {
+        try pixelValues(atX: Int(point.x), y: Int(point.y))
     }
 }

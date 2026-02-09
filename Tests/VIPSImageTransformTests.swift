@@ -65,25 +65,25 @@ final class VIPSImageTransformTests: VIPSImageTestCase {
 
     // MARK: - Flip
 
-    func testFlipHorizontal() throws {
+    func testFlippedHorizontally() throws {
         let image = createTestImage(width: 100, height: 100)
-        let flipped = try image.flipHorizontal()
+        let flipped = try image.flippedHorizontally()
         XCTAssertEqual(flipped.width, 100)
         XCTAssertEqual(flipped.height, 100)
     }
 
-    func testFlipVertical() throws {
+    func testFlippedVertically() throws {
         let image = createTestImage(width: 100, height: 100)
-        let flipped = try image.flipVertical()
+        let flipped = try image.flippedVertically()
         XCTAssertEqual(flipped.width, 100)
         XCTAssertEqual(flipped.height, 100)
     }
 
     // MARK: - Auto Rotate
 
-    func testAutoRotate() throws {
+    func testAutoRotated() throws {
         let image = createTestImage(width: 100, height: 100)
-        let rotated = try image.autoRotate()
+        let rotated = try image.autoRotated()
         XCTAssertEqual(rotated.width, 100)
         XCTAssertEqual(rotated.height, 100)
     }

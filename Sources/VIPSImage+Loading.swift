@@ -1,4 +1,5 @@
 import Foundation
+import CoreGraphics
 internal import vips
 internal import CVIPS
 
@@ -10,7 +11,7 @@ extension VIPSImage {
     /// This is a fast, low-memory operation suitable for preflight checks.
     /// - Parameter path: The file path of the image to inspect
     /// - Returns: A tuple containing the image width, height, and detected format
-    public static func getImageInfo(atPath path: String) throws -> (width: Int, height: Int, format: VIPSImageFormat) {
+    public static func imageInfo(atPath path: String) throws -> (width: Int, height: Int, format: VIPSImageFormat) {
         guard let image = cvips_image_new_from_file_sequential(path) else {
             throw VIPSError.fromVips()
         }
@@ -103,6 +104,24 @@ extension VIPSImage {
             }
             return VIPSImage(pointer: out)
         }
+    }
+
+    /// Create a thumbnail from a file using shrink-on-load.
+    /// - Parameters:
+    ///   - path: The file path of the source image
+    ///   - size: The maximum size of the thumbnail
+    /// - Returns: A new thumbnail image that fits within the specified size
+    public static func thumbnail(fromFile path: String, size: CGSize) throws -> VIPSImage {
+        try thumbnail(fromFile: path, width: Int(size.width), height: Int(size.height))
+    }
+
+    /// Create a thumbnail from in-memory data using shrink-on-load.
+    /// - Parameters:
+    ///   - data: The encoded image data
+    ///   - size: The maximum size of the thumbnail
+    /// - Returns: A new thumbnail image that fits within the specified size
+    public static func thumbnail(fromData data: Data, size: CGSize) throws -> VIPSImage {
+        try thumbnail(fromData: data, width: Int(size.width), height: Int(size.height))
     }
 
     // MARK: - Data Loading

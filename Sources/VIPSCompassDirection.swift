@@ -1,3 +1,5 @@
+internal import vips
+
 /// Compass directions for positioning an image within a larger canvas.
 /// These correspond to the `VipsCompassDirection` enum in libvips.
 public enum VIPSCompassDirection: Int, Sendable {
@@ -19,4 +21,9 @@ public enum VIPSCompassDirection: Int, Sendable {
     case southWest
     /// Align to the top-left corner
     case northWest
+
+    /// The corresponding libvips `VipsCompassDirection` value.
+    internal var vipsValue: VipsCompassDirection {
+        VipsCompassDirection(rawValue: UInt32(rawValue))
+    }
 }

@@ -3,29 +3,29 @@ import XCTest
 
 final class VIPSImageColorTests: VIPSImageTestCase {
 
-    func testGrayscale() throws {
+    func testGrayscaled() throws {
         let image = createTestImage(width: 100, height: 100)
-        let gray = try image.grayscale()
+        let gray = try image.grayscaled()
         XCTAssertEqual(gray.width, 100)
         XCTAssertEqual(gray.bands, 1)
     }
 
-    func testGrayscaleWithAlpha() throws {
+    func testGrayscaledWithAlpha() throws {
         let image = createTestImage(width: 100, height: 100, bands: 4)
-        let gray = try image.grayscale()
+        let gray = try image.grayscaled()
         XCTAssertEqual(gray.width, 100)
     }
 
     func testFlatten() throws {
         let image = createTestImage(width: 100, height: 100, bands: 4)
-        let flat = try image.flatten(red: 255, green: 255, blue: 255)
+        let flat = try image.flatten(background: .white)
         XCTAssertEqual(flat.width, 100)
         XCTAssertFalse(flat.hasAlpha)
     }
 
-    func testInvert() throws {
+    func testInverted() throws {
         let image = createTestImage(width: 100, height: 100)
-        let inverted = try image.invert()
+        let inverted = try image.inverted()
         XCTAssertEqual(inverted.width, image.width)
         XCTAssertEqual(inverted.height, image.height)
     }

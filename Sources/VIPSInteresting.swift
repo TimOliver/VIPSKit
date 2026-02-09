@@ -1,3 +1,5 @@
+internal import vips
+
 /// Strategies for selecting the most interesting region when performing a smart crop.
 /// Used by ``VIPSImage/smartCrop(toWidth:height:interesting:)`` to determine
 /// which part of the image to keep.
@@ -14,4 +16,9 @@ public enum VIPSInteresting: Int, Sendable {
     case low
     /// Crop from the high (bottom-right) coordinate
     case high
+
+    /// The corresponding libvips `VipsInteresting` value.
+    internal var vipsValue: VipsInteresting {
+        VipsInteresting(rawValue: UInt32(rawValue))
+    }
 }

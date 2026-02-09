@@ -1,3 +1,5 @@
+internal import vips
+
 /// Blend modes for compositing one image over another.
 /// These correspond to the Porter-Duff compositing operators
 /// and common Photoshop-style blend modes supported by libvips.
@@ -52,4 +54,9 @@ public enum VIPSBlendMode: Int, Sendable {
     case difference
     /// Similar to difference but with lower contrast
     case exclusion
+
+    /// The corresponding libvips `VipsBlendMode` value.
+    internal var vipsValue: VipsBlendMode {
+        VipsBlendMode(rawValue: UInt32(rawValue))
+    }
 }

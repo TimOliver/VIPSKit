@@ -1,3 +1,5 @@
+internal import vips
+
 /// Interpolation kernels used when resizing images.
 /// Higher quality kernels produce sharper results but are slower to compute.
 public enum VIPSResizeKernel: Int, Sendable {
@@ -11,4 +13,9 @@ public enum VIPSResizeKernel: Int, Sendable {
     case lanczos2
     /// Lanczos interpolation with a=3. Best quality (default).
     case lanczos3
+
+    /// The corresponding libvips `VipsKernel` value.
+    internal var vipsValue: VipsKernel {
+        VipsKernel(rawValue: UInt32(rawValue))
+    }
 }

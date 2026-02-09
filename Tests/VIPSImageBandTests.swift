@@ -23,7 +23,7 @@ final class VIPSImageBandTests: VIPSImageTestCase {
     func testAddAlpha() throws {
         let image = createTestImage(width: 50, height: 50, bands: 3)
         XCTAssertFalse(image.hasAlpha)
-        let result = try image.addAlpha()
+        let result = try image.addingAlpha()
         XCTAssertTrue(result.hasAlpha)
         XCTAssertEqual(result.bands, 4)
     }
@@ -31,30 +31,30 @@ final class VIPSImageBandTests: VIPSImageTestCase {
     func testAddAlphaIdempotent() throws {
         let image = createTestImage(width: 50, height: 50, bands: 4)
         XCTAssertTrue(image.hasAlpha)
-        let result = try image.addAlpha()
+        let result = try image.addingAlpha()
         // Should still have 4 bands (alpha already present)
         XCTAssertEqual(result.bands, 4)
     }
 
     func testPremultiply() throws {
         let image = createSolidColorImage(width: 50, height: 50, r: 200, g: 100, b: 50, a: 128)
-        let premultiplied = try image.premultiply()
+        let premultiplied = try image.premultiplied()
         XCTAssertEqual(premultiplied.width, 50)
         XCTAssertEqual(premultiplied.height, 50)
     }
 
     func testUnpremultiply() throws {
         let image = createSolidColorImage(width: 50, height: 50, r: 200, g: 100, b: 50, a: 128)
-        let premultiplied = try image.premultiply()
-        let unpremultiplied = try premultiplied.unpremultiply()
+        let premultiplied = try image.premultiplied()
+        let unpremultiplied = try premultiplied.unpremultiplied()
         XCTAssertEqual(unpremultiplied.width, 50)
         XCTAssertEqual(unpremultiplied.height, 50)
     }
 
     func testPremultiplyRoundtrip() throws {
         let image = createSolidColorImage(width: 50, height: 50, r: 200, g: 100, b: 50, a: 255)
-        let premultiplied = try image.premultiply()
-        let unpremultiplied = try premultiplied.unpremultiply()
+        let premultiplied = try image.premultiplied()
+        let unpremultiplied = try premultiplied.unpremultiplied()
         XCTAssertEqual(unpremultiplied.bands, image.bands)
     }
 }

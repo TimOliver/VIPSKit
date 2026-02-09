@@ -21,7 +21,7 @@ import AppKit
 /// try VIPSImage.initialize()
 /// let image = try VIPSImage(contentsOfFile: "/path/to/photo.jpg")
 /// let thumbnail = try image.resizeToFit(width: 200, height: 200)
-/// let cgImage = try thumbnail.createCGImage()
+/// let cgImage = try thumbnail.cgImage
 /// ```
 public final class VIPSImage: @unchecked Sendable {
 
@@ -123,33 +123,36 @@ public final class VIPSImage: @unchecked Sendable {
         return .unknown
     }
 
-    // MARK: - Class Memory Management
+    // MARK: - Cache
 
-    /// Clear all cached operations and free associated memory.
-    /// Uses a safe workaround that avoids the `vips_cache_drop_all()` crash.
-    public static func clearCache() {
-        let originalMax = vips_cache_get_max()
-        vips_cache_set_max(0)
-        vips_cache_set_max(originalMax)
-    }
+    /// Controls for the libvips operation cache.
+    public struct Cache {
+        /// The maximum number of operations to keep in the cache.
+        /// Set to 0 to disable caching entirely.
+        public static var maxOperations: Int {
+            get { Int(vips_cache_get_max()) }
+            set { vips_cache_set_max(Int32(newValue)) }
+        }
 
-    /// Set the maximum number of operations to keep in the cache.
-    /// Set to 0 to disable caching entirely.
-    /// - Parameter max: The maximum number of cached operations
-    public static func setCacheMaxOperations(_ max: Int) {
-        vips_cache_set_max(Int32(max))
-    }
+        /// The maximum amount of memory used by the operation cache, in bytes.
+        public static var maxMemory: Int {
+            get { vips_cache_get_max_mem() }
+            set { vips_cache_set_max_mem(newValue) }
+        }
 
-    /// Set the maximum amount of memory used by the operation cache.
-    /// - Parameter bytes: The maximum cache memory in bytes
-    public static func setCacheMaxMemory(_ bytes: Int) {
-        vips_cache_set_max_mem(bytes)
-    }
+        /// The maximum number of open files held by the cache.
+        public static var maxFiles: Int {
+            get { Int(vips_cache_get_max_files()) }
+            set { vips_cache_set_max_files(Int32(newValue)) }
+        }
 
-    /// Set the maximum number of open files held by the cache.
-    /// - Parameter max: The maximum number of open files
-    public static func setCacheMaxFiles(_ max: Int) {
-        vips_cache_set_max_files(Int32(max))
+        /// Clear all cached operations and free associated memory.
+        /// Uses a safe workaround that avoids the `vips_cache_drop_all()` crash.
+        public static func clear() {
+            let originalMax = vips_cache_get_max()
+            vips_cache_set_max(0)
+            vips_cache_set_max(originalMax)
+        }
     }
 
     /// The current memory usage tracked by libvips in bytes.
@@ -163,15 +166,12 @@ public final class VIPSImage: @unchecked Sendable {
         _ = vips_tracked_get_mem_highwater()
     }
 
-    /// Set the number of worker threads used by libvips for internal parallelism.
+    /// The number of worker threads used by libvips for internal parallelism.
     /// Set to 0 to auto-detect based on available CPU cores.
-    /// - Parameter threads: The number of threads to use
-    public static func setConcurrency(_ threads: Int) {
-        vips_concurrency_set(Int32(threads))
+    public static var concurrency: Int {
+        get { Int(vips_concurrency_get()) }
+        set { vips_concurrency_set(Int32(newValue)) }
     }
-
-    /// The current number of worker threads used by libvips.
-    public static var concurrency: Int { Int(vips_concurrency_get()) }
 
     // MARK: - Instance Memory Management
 
@@ -179,7 +179,7 @@ public final class VIPSImage: @unchecked Sendable {
     /// any lazy evaluation chain. This allows source images to be freed
     /// even if downstream images still exist.
     /// - Returns: A new image with all pixels evaluated and stored in memory
-    public func copyToMemory() throws -> VIPSImage {
+    public func copiedToMemory() throws -> VIPSImage {
         guard let out = vips_image_copy_memory(pointer) else {
             throw VIPSError.fromVips()
         }
@@ -188,20 +188,28 @@ public final class VIPSImage: @unchecked Sendable {
 
     // MARK: - Pixel Access
 
+    /// A snapshot of raw pixel data, valid only within the `withPixelData` closure.
+    public struct PixelBuffer {
+        /// A pointer to the raw pixel bytes.
+        public let data: UnsafePointer<UInt8>
+        /// The image width in pixels.
+        public let width: Int
+        /// The image height in pixels.
+        public let height: Int
+        /// The number of bytes per row (stride).
+        public let bytesPerRow: Int
+        /// The number of bands (3 for RGB, 4 for RGBA).
+        public let bands: Int
+    }
+
     /// Provides zero-copy access to the image's raw pixel data within a closure.
     ///
     /// The pixel data is converted to 8-bit unsigned sRGB format before being passed
-    /// to the closure. The data pointer is only valid within the closure's scope.
+    /// to the closure. The ``PixelBuffer`` is only valid within the closure's scope.
     ///
-    /// - Parameter body: A closure that receives the pixel data and image dimensions.
-    ///   The closure parameters are:
-    ///   1. `data` — A pointer to the raw pixel bytes
-    ///   2. `width` — The image width in pixels
-    ///   3. `height` — The image height in pixels
-    ///   4. `bytesPerRow` — The number of bytes per row (stride)
-    ///   5. `bands` — The number of bands (3 for RGB, 4 for RGBA)
+    /// - Parameter body: A closure that receives a ``PixelBuffer`` with the pixel data
     /// - Returns: The value returned by the closure
-    public func withPixelData<T>(_ body: (UnsafePointer<UInt8>, Int, Int, Int, Int) throws -> T) throws -> T {
+    public func withPixelData<T>(_ body: (PixelBuffer) throws -> T) throws -> T {
         var prepared: UnsafeMutablePointer<VipsImage>
 
         let interpretation = vips_image_get_interpretation(pointer)
@@ -240,7 +248,9 @@ public final class VIPSImage: @unchecked Sendable {
         g_object_unref(gpointer(prepared))
 
         defer { g_free(data) }
-        return try body(data.assumingMemoryBound(to: UInt8.self), w, h, bytesPerRow, b)
+        let buffer = PixelBuffer(data: data.assumingMemoryBound(to: UInt8.self),
+                                 width: w, height: h, bytesPerRow: bytesPerRow, bands: b)
+        return try body(buffer)
     }
 
 }
@@ -249,7 +259,7 @@ public final class VIPSImage: @unchecked Sendable {
 
 extension VIPSImage {
     @objc func debugQuickLookObject() -> Any? {
-        guard let cgImage = try? self.createCGImage() else {
+        guard let cgImage = try? self.cgImage else {
             return "VIPSImage(\(width)x\(height), \(bands) bands)"
         }
         #if canImport(UIKit)

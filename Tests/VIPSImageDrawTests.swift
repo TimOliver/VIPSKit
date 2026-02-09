@@ -1,4 +1,5 @@
 import XCTest
+import CoreGraphics
 @testable import VIPSKit
 
 final class VIPSImageDrawTests: VIPSImageTestCase {
@@ -43,7 +44,7 @@ final class VIPSImageDrawTests: VIPSImageTestCase {
 
     func testDrawLine() throws {
         let image = createTestImage(width: 100, height: 100)
-        let result = try image.drawLine(from: (x: 0, y: 0), to: (x: 99, y: 99),
+        let result = try image.drawLine(from: CGPoint(x: 0, y: 0), to: CGPoint(x: 99, y: 99),
                                         color: [255, 255, 0])
         XCTAssertEqual(result.width, 100)
         XCTAssertEqual(result.height, 100)
@@ -73,7 +74,7 @@ final class VIPSImageDrawTests: VIPSImageTestCase {
 
     func testDrawDoesNotMutateOriginal() throws {
         let original = createTestImage(width: 100, height: 100)
-        let originalCopy = try original.copyToMemory()
+        let originalCopy = try original.copiedToMemory()
         _ = try original.drawRect(x: 10, y: 10, width: 30, height: 30,
                                   color: [255, 0, 0], fill: true)
         // Original should be unchanged
@@ -87,7 +88,7 @@ final class VIPSImageDrawTests: VIPSImageTestCase {
                                           color: [255, 0, 0], fill: true)
         let withCircle = try withRect.drawCircle(cx: 70, cy: 70, radius: 15,
                                                  color: [0, 255, 0], fill: true)
-        let withLine = try withCircle.drawLine(from: (x: 0, y: 0), to: (x: 99, y: 99),
+        let withLine = try withCircle.drawLine(from: CGPoint(x: 0, y: 0), to: CGPoint(x: 99, y: 99),
                                                color: [0, 0, 255])
         XCTAssertEqual(withLine.width, 100)
         XCTAssertEqual(withLine.height, 100)

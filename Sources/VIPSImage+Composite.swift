@@ -1,4 +1,5 @@
 import Foundation
+import CoreGraphics
 internal import vips
 internal import CVIPS
 
@@ -14,11 +15,20 @@ extension VIPSImage {
     /// - Returns: A new composited image
     public func composite(withOverlay overlay: VIPSImage, mode: VIPSBlendMode, x: Int, y: Int) throws -> VIPSImage {
         var out: UnsafeMutablePointer<VipsImage>?
-        guard cvips_composite2(pointer, overlay.pointer, &out,
-                               VipsBlendMode(rawValue: UInt32(mode.rawValue)),
+        guard cvips_composite2(pointer, overlay.pointer, &out, mode.vipsValue,
                                Int32(x), Int32(y)) == 0,
               let out else { throw VIPSError.fromVips() }
         return VIPSImage(pointer: out)
+    }
+
+    /// Composite an overlay image on top of this image at the specified point.
+    /// - Parameters:
+    ///   - overlay: The image to composite on top
+    ///   - mode: The blend mode to use for compositing
+    ///   - point: The position for placing the overlay
+    /// - Returns: A new composited image
+    public func composite(withOverlay overlay: VIPSImage, mode: VIPSBlendMode, at point: CGPoint) throws -> VIPSImage {
+        try composite(withOverlay: overlay, mode: mode, x: Int(point.x), y: Int(point.y))
     }
 
     /// Composite an overlay image centered on top of this image using the given blend mode.

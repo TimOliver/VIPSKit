@@ -1,4 +1,5 @@
 import Foundation
+import CoreGraphics
 internal import vips
 internal import CVIPS
 
@@ -16,7 +17,7 @@ extension VIPSImage {
     public func embed(x: Int, y: Int, width: Int, height: Int, extend: VIPSExtendMode = .black) throws -> VIPSImage {
         var out: UnsafeMutablePointer<VipsImage>?
         guard cvips_embed(pointer, &out, Int32(x), Int32(y), Int32(width), Int32(height),
-                          VipsExtend(rawValue: UInt32(extend.rawValue))) == 0,
+                          extend.vipsValue) == 0,
               let out else { throw VIPSError.fromVips() }
         return VIPSImage(pointer: out)
     }
@@ -30,12 +31,21 @@ extension VIPSImage {
     /// - Returns: A new image positioned within a larger canvas
     public func gravity(direction: VIPSCompassDirection, width: Int, height: Int, extend: VIPSExtendMode = .black) throws -> VIPSImage {
         var out: UnsafeMutablePointer<VipsImage>?
-        guard cvips_gravity(pointer, &out,
-                            VipsCompassDirection(rawValue: UInt32(direction.rawValue)),
+        guard cvips_gravity(pointer, &out, direction.vipsValue,
                             Int32(width), Int32(height),
-                            VipsExtend(rawValue: UInt32(extend.rawValue))) == 0,
+                            extend.vipsValue) == 0,
               let out else { throw VIPSError.fromVips() }
         return VIPSImage(pointer: out)
+    }
+
+    /// Place the image within a larger canvas using a compass direction for alignment.
+    /// - Parameters:
+    ///   - direction: Where to position the image within the canvas
+    ///   - size: The total size of the output canvas
+    ///   - extend: How to fill the extra space (default is ``VIPSExtendMode/black``)
+    /// - Returns: A new image positioned within a larger canvas
+    public func gravity(direction: VIPSCompassDirection, size: CGSize, extend: VIPSExtendMode = .black) throws -> VIPSImage {
+        try gravity(direction: direction, width: Int(size.width), height: Int(size.height), extend: extend)
     }
 
     /// Add uniform padding around the image.

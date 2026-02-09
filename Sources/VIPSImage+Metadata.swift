@@ -3,6 +3,40 @@ internal import vips
 
 extension VIPSImage {
 
+    // MARK: - Metadata Subscript
+
+    /// A convenience proxy for reading and writing string metadata by key.
+    ///
+    /// ```swift
+    /// // Read
+    /// let artist = image.metadata["exif-ifd0-Artist"]
+    ///
+    /// // Write
+    /// image.metadata["my-custom-field"] = "hello"
+    ///
+    /// // Remove
+    /// image.metadata["my-custom-field"] = nil
+    /// ```
+    public var metadata: MetadataProxy { MetadataProxy(image: self) }
+
+    /// A lightweight proxy that provides subscript access to string metadata fields.
+    public struct MetadataProxy {
+        internal let image: VIPSImage
+
+        /// Get or set a string metadata value by key.
+        /// Setting `nil` removes the field.
+        public subscript(key: String) -> String? {
+            get { image.getString(named: key) }
+            nonmutating set {
+                if let value = newValue {
+                    image.setString(named: key, value: value)
+                } else {
+                    image.removeMetadata(named: key)
+                }
+            }
+        }
+    }
+
     // MARK: - Generic Metadata Access
 
     /// All metadata field names attached to the image.
