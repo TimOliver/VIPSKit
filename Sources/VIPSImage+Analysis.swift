@@ -12,14 +12,14 @@ extension VIPSImage {
     /// - Parameters:
     ///   - threshold: How different a pixel must be from the background to count as
     ///     content (default is 10.0)
-    ///   - background: An explicit background color as per-band values (e.g., `[255, 255, 255]`
-    ///     for white). If `nil`, the background is auto-detected.
+    ///   - background: An explicit background color. If `nil`, the background is auto-detected.
     /// - Returns: A rectangle describing the bounding box of the content area
-    public func findTrim(threshold: Double = 10.0, background: [Double]? = nil) throws -> CGRect {
+    public func findTrim(threshold: Double = 10.0, background: VIPSColor? = nil) throws -> CGRect {
         var left: Int32 = 0, top: Int32 = 0, width: Int32 = 0, height: Int32 = 0
         let result: Int32
 
-        if var bg = background, !bg.isEmpty {
+        if let background {
+            var bg = background.ink(forBands: bands)
             result = cvips_find_trim_bg(pointer, &left, &top, &width, &height,
                                         threshold, &bg, Int32(bg.count))
         } else {

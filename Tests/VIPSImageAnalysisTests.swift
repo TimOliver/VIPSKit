@@ -111,7 +111,7 @@ final class VIPSImageAnalysisTests: VIPSImageTestCase {
         let image = createImageWithMargins(width: 100, height: 100, margin: 10,
                                            contentR: 100, contentG: 100, contentB: 100,
                                            bgR: 200, bgG: 200, bgB: 200)
-        let bounds = try image.findTrim(threshold: 5.0, background: [200, 200, 200])
+        let bounds = try image.findTrim(threshold: 5.0, background: VIPSColor(red: 200, green: 200, blue: 200))
         XCTAssertFalse(bounds.isEmpty)
         XCTAssertEqual(bounds.origin.x, 10, accuracy: 3)
         XCTAssertEqual(bounds.origin.y, 10, accuracy: 3)

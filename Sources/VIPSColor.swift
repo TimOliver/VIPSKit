@@ -18,4 +18,20 @@ public struct VIPSColor: Sendable {
     public static let white = VIPSColor(red: 255, green: 255, blue: 255)
     /// Pure black.
     public static let black = VIPSColor(red: 0, green: 0, blue: 0)
+
+    /// Build an ink array matching the given band count.
+    /// For 1-band images, uses the luminance approximation.
+    /// For 3-band images, returns `[R, G, B]`.
+    /// For 4-band images, returns `[R, G, B, 255]` (fully opaque).
+    internal func ink(forBands bands: Int) -> [Double] {
+        switch bands {
+        case 1:
+            let luma = 0.2126 * Double(red) + 0.7152 * Double(green) + 0.0722 * Double(blue)
+            return [luma]
+        case 4:
+            return [Double(red), Double(green), Double(blue), 255.0]
+        default:
+            return [Double(red), Double(green), Double(blue)]
+        }
+    }
 }
