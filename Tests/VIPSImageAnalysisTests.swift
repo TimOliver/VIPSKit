@@ -91,6 +91,39 @@ final class VIPSImageAnalysisTests: VIPSImageTestCase {
         XCTAssertEqual(bg.blue, 128.0, accuracy: 5.0)
     }
 
+    func testDetectBackgroundColorOneSideMargin() throws {
+        // Simulate a comic page: content fills to top/bottom/right,
+        // left edge has a white spine margin.
+        let w = 100, h = 100, margin = 15
+        var buffer = [UInt8](repeating: 0, count: w * h * 3)
+        for y in 0..<h {
+            for x in 0..<w {
+                let idx = (y * w + x) * 3
+                if x < margin {
+                    buffer[idx] = 255; buffer[idx + 1] = 255; buffer[idx + 2] = 255
+                } else {
+                    buffer[idx] = 255; buffer[idx + 1] = 0; buffer[idx + 2] = 0
+                }
+            }
+        }
+        let image = try VIPSImage(buffer: &buffer, width: w, height: h, bands: 3)
+        let bg = try image.detectBackgroundColor()
+        // Should detect white from the spine margin via findTrim
+        XCTAssertEqual(bg.red, 255.0, accuracy: 5.0)
+        XCTAssertEqual(bg.green, 255.0, accuracy: 5.0)
+        XCTAssertEqual(bg.blue, 255.0, accuracy: 5.0)
+    }
+
+    func testDetectBackgroundColorNoMargins() throws {
+        // Solid color image: findTrim returns full bounds (no margins to detect).
+        // Falls through to step 2 which finds the dominant edge color via bucketing.
+        let image = createSolidColorImage(width: 50, height: 50, r: 100, g: 150, b: 200)
+        let bg = try image.detectBackgroundColor()
+        XCTAssertEqual(bg.red, 100.0, accuracy: 1.0)
+        XCTAssertEqual(bg.green, 150.0, accuracy: 1.0)
+        XCTAssertEqual(bg.blue, 200.0, accuracy: 1.0)
+    }
+
     // MARK: - Find Trim
 
     func testFindTrimWhiteMargins() throws {
