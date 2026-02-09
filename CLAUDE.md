@@ -84,6 +84,7 @@ VIPSKit/
 │   ├── VIPSImage+Analysis.swift       # Statistics, trim, average color, background detection
 │   ├── VIPSImage+Metadata.swift       # EXIF/metadata access, MetadataProxy subscript
 │   ├── VIPSColor.swift                # RGB color type with ink(forBands:) helper
+│   ├── VIPSColor+Platform.swift       # CGColor/UIColor/NSColor interop
 │   ├── VIPSError.swift                # Error type
 │   ├── VIPSImageFormat.swift          # Format enum
 │   ├── VIPSImageStatistics.swift      # Statistics struct
@@ -409,6 +410,12 @@ VIPSImage.shutdown()
 | `.white` | Pure white constant |
 | `.black` | Pure black constant |
 | `subscript(position:)` | Band value by index (`RandomAccessCollection`) |
+| `init?(cgColor:)` | Create from CGColor (converts to sRGB, failable) |
+| `cgColor` | Export as CGColor in sRGB color space |
+| `init?(uiColor:)` | Create from UIColor (iOS/visionOS/Catalyst only) |
+| `uiColor` | Export as UIColor (iOS/visionOS/Catalyst only) |
+| `init?(nsColor:)` | Create from NSColor (macOS only, non-Catalyst) |
+| `nsColor` | Export as NSColor (macOS only, non-Catalyst) |
 
 ### PixelBuffer
 

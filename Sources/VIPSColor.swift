@@ -1,3 +1,5 @@
+import CoreGraphics
+
 /// A color representation for use with VIPSKit operations.
 /// Stores per-band values as `Double` for full precision. Supports variable band counts
 /// (1-band grayscale, 3-band RGB, 4-band RGBA).
@@ -43,6 +45,80 @@ public struct VIPSColor: Sendable, Equatable {
         }
     }
 }
+
+// MARK: - CGColor Interop
+
+extension VIPSColor {
+
+    /// Create a VIPSColor from a CGColor, converting to sRGB.
+    /// Returns nil if the color cannot be converted to the sRGB color space.
+    public init?(cgColor: CGColor) {
+        guard let srgb = CGColorSpace(name: CGColorSpace.sRGB),
+              let converted = cgColor.converted(to: srgb, intent: .defaultIntent, options: nil),
+              let components = converted.components,
+              components.count >= 3 else {
+            return nil
+        }
+        let r = components[0] * 255.0
+        let g = components[1] * 255.0
+        let b = components[2] * 255.0
+        let a = components.count >= 4 ? components[3] : 1.0
+        if a < 1.0 {
+            self.init(values: [r, g, b, a * 255.0])
+        } else {
+            self.init(values: [r, g, b])
+        }
+    }
+
+    /// The color as a CGColor in the sRGB color space.
+    public var cgColor: CGColor {
+        let a = alpha ?? 255.0
+        return CGColor(srgbRed: red / 255.0,
+                       green: green / 255.0,
+                       blue: blue / 255.0,
+                       alpha: a / 255.0)
+    }
+}
+
+// MARK: - UIColor Interop
+
+#if canImport(UIKit)
+import UIKit
+
+extension VIPSColor {
+
+    /// Create a VIPSColor from a UIColor.
+    /// Returns nil if the color cannot be converted to sRGB.
+    public init?(uiColor: UIColor) {
+        self.init(cgColor: uiColor.cgColor)
+    }
+
+    /// The color as a UIColor.
+    public var uiColor: UIColor {
+        UIColor(cgColor: cgColor)
+    }
+}
+#endif
+
+// MARK: - NSColor Interop
+
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
+import AppKit
+
+extension VIPSColor {
+
+    /// Create a VIPSColor from an NSColor.
+    /// Returns nil if the color cannot be converted to sRGB.
+    public init?(nsColor: NSColor) {
+        self.init(cgColor: nsColor.cgColor)
+    }
+
+    /// The color as an NSColor.
+    public var nsColor: NSColor {
+        NSColor(cgColor: cgColor)!
+    }
+}
+#endif
 
 extension VIPSColor: RandomAccessCollection {
     public var startIndex: Int { 0 }
