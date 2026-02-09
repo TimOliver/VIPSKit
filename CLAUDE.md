@@ -357,8 +357,8 @@ VIPSImage.shutdown()
 | `withPixelData(_:)` | Zero-copy raw pixel access (PixelBuffer) |
 | `findTrim(threshold:background:)` | Find content bounding box |
 | `statistics()` | Image statistics (min, max, mean, stddev) |
-| `averageColor()` | Per-band mean values |
-| `detectBackgroundColor(stripWidth:)` | Detect background by sampling edges |
+| `averageColor()` | Per-band mean values → VIPSColor |
+| `detectBackgroundColor(stripWidth:)` | Detect background by sampling edges → VIPSColor |
 | `subtract(_:)` | Pixel-wise subtraction |
 | `absolute()` | Absolute value of pixels |
 | `numberOfStrips(withHeight:)` | Count horizontal strips |
@@ -377,8 +377,8 @@ VIPSImage.shutdown()
 | `floodFill(at:color:)` | Flood fill region (CGPoint) |
 | `gravity(direction:width:height:extend:)` | Embed with gravity |
 | `gravity(direction:size:extend:)` | Embed with gravity (CGSize) |
-| `pixelValues(atX:y:)` | Read pixel values at coordinates |
-| `pixelValues(at:)` | Read pixel values (CGPoint) |
+| `pixelValues(atX:y:)` | Read pixel values at coordinates → VIPSColor |
+| `pixelValues(at:)` | Read pixel values (CGPoint) → VIPSColor |
 | `imageInfo(atPath:)` | Get image info without full decode |
 | `metadata` | MetadataProxy for subscript access |
 
@@ -401,9 +401,14 @@ VIPSImage.shutdown()
 
 | Member | Description |
 |--------|-------------|
+| `values` | Raw per-band `[Double]` values (0.0–255.0 for 8-bit) |
+| `red`, `green`, `blue` | Per-component `Double` accessors |
+| `alpha` | Optional alpha `Double` (nil if < 4 bands) |
 | `init(red:green:blue:)` | Create color from UInt8 components |
+| `init(values:)` | Create from per-band `[Double]` values |
 | `.white` | Pure white constant |
 | `.black` | Pure black constant |
+| `subscript(position:)` | Band value by index (`RandomAccessCollection`) |
 
 ### PixelBuffer
 
@@ -453,7 +458,7 @@ VIPSImage.shutdown()
 
 ### VIPSColor and Ink Conversion
 
-`VIPSColor` is the public RGB color type. Internally, `ink(forBands:)` converts to a `[Double]` array matching the image's band count:
+`VIPSColor` stores per-band `Double` values internally (via `values: [Double]`), used both as input (drawing, flatten) and output (averageColor, pixelValues, detectBackgroundColor). Conforms to `RandomAccessCollection` for subscript/iteration. `init(red: UInt8, ...)` converts to Double storage; `init(values:)` takes raw band data. `red`/`green`/`blue` accessors return `Double`. For drawing, `ink(forBands:)` converts to a `[Double]` array matching the image's band count:
 - 1-band: luminance approximation `0.2126*R + 0.7152*G + 0.0722*B`
 - 3-band: `[R, G, B]`
 - 4-band: `[R, G, B, 255.0]` (fully opaque)

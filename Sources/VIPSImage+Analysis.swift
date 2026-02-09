@@ -42,9 +42,9 @@ extension VIPSImage {
     }
 
     /// Calculate the average color of the image as per-band mean values.
-    /// For an RGB image, this returns `[R, G, B]`. For RGBA, `[R, G, B, A]`.
-    /// - Returns: An array of mean values, one per band
-    public func averageColor() throws -> [Double] {
+    /// For an RGB image, this returns a 3-band color `[R, G, B]`. For RGBA, `[R, G, B, A]`.
+    /// - Returns: A ``VIPSColor`` containing the mean value for each band
+    public func averageColor() throws -> VIPSColor {
         var statsImage: UnsafeMutablePointer<VipsImage>?
         guard cvips_stats(pointer, &statsImage) == 0, let statsImage else {
             throw VIPSError.fromVips()
@@ -62,14 +62,14 @@ extension VIPSImage {
         for band in 1...numBands {
             result.append(data[4 * statsWidth + band])
         }
-        return result
+        return VIPSColor(values: result)
     }
 
     /// Detect the background color of the image by sampling pixels along all four edges.
     /// This is useful for setting a viewer background that matches the image's margins.
     /// - Parameter stripWidth: The width of the edge strip to sample in pixels (default is 10)
-    /// - Returns: An array of mean color values from the edge pixels, one per band
-    public func detectBackgroundColor(stripWidth: Int = 10) throws -> [Double] {
+    /// - Returns: A ``VIPSColor`` containing the mean color values from the edge pixels
+    public func detectBackgroundColor(stripWidth: Int = 10) throws -> VIPSColor {
         let w = width
         let h = height
         let sw = max(1, stripWidth)

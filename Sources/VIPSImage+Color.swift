@@ -21,7 +21,7 @@ extension VIPSImage {
     /// - Returns: A new image with the alpha channel removed
     public func flatten(background: VIPSColor) throws -> VIPSImage {
         var out: UnsafeMutablePointer<VipsImage>?
-        guard cvips_flatten(pointer, &out, Double(background.red), Double(background.green), Double(background.blue)) == 0,
+        guard cvips_flatten(pointer, &out, background.red, background.green, background.blue) == 0,
               let out else { throw VIPSError.fromVips() }
         return VIPSImage(pointer: out)
     }
