@@ -65,71 +65,148 @@ extension VIPSImage {
         return VIPSColor(values: result)
     }
 
-    /// Detect the background color of the image by sampling pixels along all four edges.
-    /// This is useful for setting a viewer background that matches the image's margins.
-    /// - Parameter stripWidth: The width of the edge strip to sample in pixels (default is 10)
-    /// - Returns: A ``VIPSColor`` containing the mean color values from the edge pixels
+    /// Detect the background color of the image.
+    ///
+    /// Uses a two-step approach:
+    /// 1. Attempts ``findTrim(threshold:background:)`` to locate content margins.
+    ///    If margins exist, samples from those margin areas for an accurate background color.
+    /// 2. If no margins are found (content fills to all edges), identifies the most
+    ///    prominent color along the image edges by quantizing pixels into color buckets
+    ///    and selecting the most frequent one.
+    ///
+    /// - Parameter stripWidth: The width of the edge strip to sample in pixels (default is 10).
+    ///   Used in step 2 when no trim margins are found.
+    /// - Returns: A ``VIPSColor`` representing the detected background color
     public func detectBackgroundColor(stripWidth: Int = 10) throws -> VIPSColor {
-        let w = width
-        let h = height
         let sw = max(1, stripWidth)
 
-        if w <= sw * 2 || h <= sw * 2 {
+        if width <= sw * 2 || height <= sw * 2 {
             return try averageColor()
         }
 
-        var topStrip: UnsafeMutablePointer<VipsImage>?
-        guard cvips_crop(pointer, &topStrip, 0, 0, Int32(w), Int32(sw)) == 0,
-              let topStrip else { throw VIPSError.fromVips() }
-
-        var bottomStrip: UnsafeMutablePointer<VipsImage>?
-        guard cvips_crop(pointer, &bottomStrip, 0, Int32(h - sw), Int32(w), Int32(sw)) == 0,
-              let bottomStrip else {
-            g_object_unref(gpointer(topStrip))
-            throw VIPSError.fromVips()
+        // Step 1: Use findTrim to detect margin areas
+        if let color = try? backgroundColorFromTrim() {
+            return color
         }
 
-        var leftStrip: UnsafeMutablePointer<VipsImage>?
-        guard cvips_crop(pointer, &leftStrip, 0, Int32(sw), Int32(sw), Int32(h - 2 * sw)) == 0,
-              let leftStrip else {
-            g_object_unref(gpointer(topStrip)); g_object_unref(gpointer(bottomStrip))
-            throw VIPSError.fromVips()
+        // Step 2: Find the most prominent color along edges
+        return try prominentEdgeColor(stripWidth: sw)
+    }
+
+    /// Sample from margin areas identified by findTrim.
+    /// Returns nil if there are no margins (content fills to all edges).
+    private func backgroundColorFromTrim() throws -> VIPSColor? {
+        let trimRect = try findTrim()
+        guard !trimRect.isEmpty else { return nil }
+
+        let w = width
+        let h = height
+        let numBands = bands
+        let tx = Int(trimRect.origin.x)
+        let ty = Int(trimRect.origin.y)
+        let tw = Int(trimRect.width)
+        let th = Int(trimRect.height)
+
+        // Bail if the trim rect spans the full image (no margins)
+        guard tx > 0 || ty > 0 || (tx + tw) < w || (ty + th) < h else { return nil }
+
+        var weightedSum = [Double](repeating: 0, count: numBands)
+        var totalPixels = 0
+
+        // Top margin
+        if ty > 0 {
+            let avg = try crop(x: 0, y: 0, width: w, height: ty).averageColor()
+            let count = w * ty
+            for i in 0..<min(avg.count, numBands) { weightedSum[i] += avg[i] * Double(count) }
+            totalPixels += count
         }
 
-        var rightStrip: UnsafeMutablePointer<VipsImage>?
-        guard cvips_crop(pointer, &rightStrip, Int32(w - sw), Int32(sw), Int32(sw), Int32(h - 2 * sw)) == 0,
-              let rightStrip else {
-            g_object_unref(gpointer(topStrip)); g_object_unref(gpointer(bottomStrip)); g_object_unref(gpointer(leftStrip))
-            throw VIPSError.fromVips()
+        // Bottom margin
+        let bottomStart = ty + th
+        if bottomStart < h {
+            let bottomH = h - bottomStart
+            let avg = try crop(x: 0, y: bottomStart, width: w, height: bottomH).averageColor()
+            let count = w * bottomH
+            for i in 0..<min(avg.count, numBands) { weightedSum[i] += avg[i] * Double(count) }
+            totalPixels += count
         }
 
-        var horizontal: UnsafeMutablePointer<VipsImage>?
-        guard cvips_join(topStrip, bottomStrip, &horizontal, VIPS_DIRECTION_VERTICAL) == 0,
-              let horizontal else {
-            g_object_unref(gpointer(topStrip)); g_object_unref(gpointer(bottomStrip))
-            g_object_unref(gpointer(leftStrip)); g_object_unref(gpointer(rightStrip))
-            throw VIPSError.fromVips()
+        // Left margin (between top and bottom to avoid double-counting corners)
+        if tx > 0 && th > 0 {
+            let avg = try crop(x: 0, y: ty, width: tx, height: th).averageColor()
+            let count = tx * th
+            for i in 0..<min(avg.count, numBands) { weightedSum[i] += avg[i] * Double(count) }
+            totalPixels += count
         }
-        g_object_unref(gpointer(topStrip)); g_object_unref(gpointer(bottomStrip))
 
-        var vertical: UnsafeMutablePointer<VipsImage>?
-        guard cvips_join(leftStrip, rightStrip, &vertical, VIPS_DIRECTION_VERTICAL) == 0,
-              let vertical else {
-            g_object_unref(gpointer(horizontal)); g_object_unref(gpointer(leftStrip)); g_object_unref(gpointer(rightStrip))
-            throw VIPSError.fromVips()
+        // Right margin
+        let rightStart = tx + tw
+        if rightStart < w && th > 0 {
+            let rightW = w - rightStart
+            let avg = try crop(x: rightStart, y: ty, width: rightW, height: th).averageColor()
+            let count = rightW * th
+            for i in 0..<min(avg.count, numBands) { weightedSum[i] += avg[i] * Double(count) }
+            totalPixels += count
         }
-        g_object_unref(gpointer(leftStrip)); g_object_unref(gpointer(rightStrip))
 
-        var combined: UnsafeMutablePointer<VipsImage>?
-        guard cvips_join(horizontal, vertical, &combined, VIPS_DIRECTION_VERTICAL) == 0,
-              let combined else {
-            g_object_unref(gpointer(horizontal)); g_object_unref(gpointer(vertical))
-            throw VIPSError.fromVips()
+        guard totalPixels > 0 else { return nil }
+        return VIPSColor(values: weightedSum.map { $0 / Double(totalPixels) })
+    }
+
+    /// Find the most prominent color along the image edges by quantizing pixels
+    /// into color buckets and returning the average color of the most frequent bucket.
+    private func prominentEdgeColor(stripWidth sw: Int) throws -> VIPSColor {
+        let w = width
+        let h = height
+        let numBands = bands
+        let step = 32
+        let levels = (255 / step) + 1
+
+        // Collect edge strips
+        var strips = [VIPSImage]()
+        strips.append(try crop(x: 0, y: 0, width: w, height: sw))
+        strips.append(try crop(x: 0, y: h - sw, width: w, height: sw))
+        if h > sw * 2 {
+            strips.append(try crop(x: 0, y: sw, width: sw, height: h - 2 * sw))
+            strips.append(try crop(x: w - sw, y: sw, width: sw, height: h - 2 * sw))
         }
-        g_object_unref(gpointer(horizontal)); g_object_unref(gpointer(vertical))
 
-        let wrapper = VIPSImage(pointer: combined)
-        return try wrapper.averageColor()
+        // Count quantized color occurrences and accumulate actual values
+        var bucketCounts = [Int: Int]()
+        var bucketSums = [Int: [Double]]()
+
+        for strip in strips {
+            try strip.withPixelData { buffer in
+                for y in 0..<buffer.height {
+                    let rowBase = y * buffer.bytesPerRow
+                    for x in 0..<buffer.width {
+                        let offset = rowBase + x * numBands
+
+                        // Quantize on up to 3 bands (RGB) to build a bucket key
+                        var key = 0
+                        for b in 0..<min(numBands, 3) {
+                            key = key * levels + Int(buffer.data[offset + b]) / step
+                        }
+
+                        bucketCounts[key, default: 0] += 1
+                        if bucketSums[key] == nil {
+                            bucketSums[key] = [Double](repeating: 0, count: numBands)
+                        }
+                        for b in 0..<numBands {
+                            bucketSums[key]![b] += Double(buffer.data[offset + b])
+                        }
+                    }
+                }
+            }
+        }
+
+        guard let (topKey, topCount) = bucketCounts.max(by: { $0.value < $1.value }),
+              topCount > 0,
+              let sums = bucketSums[topKey] else {
+            return try averageColor()
+        }
+
+        return VIPSColor(values: sums.map { $0 / Double(topCount) })
     }
 
     // MARK: - Arithmetic
