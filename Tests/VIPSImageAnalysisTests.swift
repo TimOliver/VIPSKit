@@ -8,9 +8,10 @@ final class VIPSImageAnalysisTests: VIPSImageTestCase {
     func testStatisticsSolidColor() throws {
         let image = createSolidColorImage(width: 50, height: 50, r: 128, g: 128, b: 128)
         let stats = try image.statistics()
-        XCTAssertEqual(stats.min, stats.max, accuracy: 1.0)
-        XCTAssertEqual(stats.mean, stats.min, accuracy: 1.0)
-        XCTAssertLessThan(stats.standardDeviation, 5.0)
+        XCTAssertEqual(stats.min, 128.0, accuracy: 1.0)
+        XCTAssertEqual(stats.max, 128.0, accuracy: 1.0)
+        XCTAssertEqual(stats.mean, 128.0, accuracy: 1.0)
+        XCTAssertEqual(stats.standardDeviation, 0.0, accuracy: 1.0)
     }
 
     func testStatisticsGradient() throws {
@@ -50,6 +51,9 @@ final class VIPSImageAnalysisTests: VIPSImageTestCase {
                                              endR: 0, endG: 0, endB: 255)
         let avg = try image.averageColor()
         XCTAssertEqual(avg.count, 3)
+        XCTAssertEqual(avg.red, 127.0, accuracy: 0.05)
+        XCTAssertEqual(avg.green, 0.0)
+        XCTAssertEqual(avg.blue, 127.0, accuracy: 0.05)
     }
 
     // MARK: - Detect Background Color
@@ -60,6 +64,9 @@ final class VIPSImageAnalysisTests: VIPSImageTestCase {
                                            bgR: 255, bgG: 255, bgB: 255)
         let bg = try image.detectBackgroundColor()
         XCTAssertEqual(bg.count, 3)
+        XCTAssertEqual(bg.red, 255.0, accuracy: 5.0)
+        XCTAssertEqual(bg.green, 255.0, accuracy: 5.0)
+        XCTAssertEqual(bg.blue, 255.0, accuracy: 5.0)
     }
 
     func testDetectBackgroundColorBlack() throws {
@@ -68,6 +75,9 @@ final class VIPSImageAnalysisTests: VIPSImageTestCase {
                                            bgR: 0, bgG: 0, bgB: 0)
         let bg = try image.detectBackgroundColor()
         XCTAssertEqual(bg.count, 3)
+        XCTAssertEqual(bg.red, 0.0, accuracy: 5.0)
+        XCTAssertEqual(bg.green, 0.0, accuracy: 5.0)
+        XCTAssertEqual(bg.blue, 0.0, accuracy: 5.0)
     }
 
     func testDetectBackgroundColorWithStripWidth() throws {
@@ -76,6 +86,9 @@ final class VIPSImageAnalysisTests: VIPSImageTestCase {
                                            bgR: 128, bgG: 128, bgB: 128)
         let bg = try image.detectBackgroundColor(stripWidth: 20)
         XCTAssertEqual(bg.count, 3)
+        XCTAssertEqual(bg.red, 128.0, accuracy: 5.0)
+        XCTAssertEqual(bg.green, 128.0, accuracy: 5.0)
+        XCTAssertEqual(bg.blue, 128.0, accuracy: 5.0)
     }
 
     // MARK: - Find Trim
@@ -93,13 +106,17 @@ final class VIPSImageAnalysisTests: VIPSImageTestCase {
     }
 
     func testFindTrimBlackMargins() throws {
+        // Auto-detection doesn't reliably detect pure black backgrounds,
+        // so provide the background color explicitly.
         let image = createImageWithMargins(width: 150, height: 100, margin: 25,
                                            contentR: 0, contentG: 255, contentB: 0,
                                            bgR: 0, bgG: 0, bgB: 0)
-        let bounds = try image.findTrim()
+        let bounds = try image.findTrim(background: .black)
         XCTAssertFalse(bounds.isEmpty)
-        XCTAssertGreaterThan(bounds.width, 0)
-        XCTAssertGreaterThan(bounds.height, 0)
+        XCTAssertEqual(bounds.origin.x, 25, accuracy: 3)
+        XCTAssertEqual(bounds.origin.y, 25, accuracy: 3)
+        XCTAssertEqual(bounds.width, 100, accuracy: 3)
+        XCTAssertEqual(bounds.height, 50, accuracy: 3)
     }
 
     func testFindTrimWithThreshold() throws {
@@ -108,6 +125,10 @@ final class VIPSImageAnalysisTests: VIPSImageTestCase {
                                            bgR: 255, bgG: 255, bgB: 255)
         let bounds = try image.findTrim(threshold: 10.0)
         XCTAssertFalse(bounds.isEmpty)
+        XCTAssertEqual(bounds.origin.x, 15, accuracy: 3)
+        XCTAssertEqual(bounds.origin.y, 15, accuracy: 3)
+        XCTAssertEqual(bounds.width, 70, accuracy: 3)
+        XCTAssertEqual(bounds.height, 70, accuracy: 3)
     }
 
     func testFindTrimWithExplicitBackground() throws {
@@ -146,7 +167,9 @@ final class VIPSImageAnalysisTests: VIPSImageTestCase {
         let image2 = createSolidColorImage(width: 50, height: 50, r: 100, g: 100, b: 100)
         let diff = try image1.subtract(image2)
         let stats = try diff.statistics()
-        XCTAssertGreaterThan(abs(stats.mean), 50.0)
+        XCTAssertEqual(stats.mean, 100.0, accuracy: 1.0)
+        XCTAssertEqual(stats.min, 100.0, accuracy: 1.0)
+        XCTAssertEqual(stats.max, 100.0, accuracy: 1.0)
     }
 
     func testAbsolute() throws {
@@ -155,7 +178,9 @@ final class VIPSImageAnalysisTests: VIPSImageTestCase {
         let diff = try image1.subtract(image2)
         let absDiff = try diff.absolute()
         let stats = try absDiff.statistics()
-        XCTAssertGreaterThan(stats.mean, 0.0)
+        XCTAssertEqual(stats.mean, 50.0, accuracy: 1.0)
+        XCTAssertEqual(stats.min, 50.0, accuracy: 1.0)
+        XCTAssertEqual(stats.max, 50.0, accuracy: 1.0)
     }
 
     func testSubtractAndAbsoluteForSimilarity() throws {
@@ -168,6 +193,8 @@ final class VIPSImageAnalysisTests: VIPSImageTestCase {
         let diff = try image1.subtract(image2)
         let absDiff = try diff.absolute()
         let stats = try absDiff.statistics()
-        XCTAssertLessThan(stats.mean, 20.0)
+        // Gradients differ by 0–10 in a V-shape, so mean ≈ 5.0
+        XCTAssertEqual(stats.mean, 5.0, accuracy: 1.0)
+        XCTAssertEqual(stats.max, 10.0, accuracy: 2.0)
     }
 }
