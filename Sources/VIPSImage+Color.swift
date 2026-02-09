@@ -117,7 +117,7 @@ extension VIPSImage {
     ///   - contrast: The contrast multiplier (0.5 to 2.0, where 1.0 is unchanged)
     ///   - saturation: The saturation multiplier (0 = grayscale, 1.0 = unchanged, >1.0 = more saturated)
     /// - Returns: A new image with all three adjustments applied
-    public func adjust(brightness: Double, contrast: Double, saturation: Double) throws -> VIPSImage {
+    public func adjust(brightness: Double = 0, contrast: Double = 1.0, saturation: Double = 1.0) throws -> VIPSImage {
         let offset = 127.5 * (1.0 - contrast) + brightness * 255.0
         let n = hasAlpha ? 3 : bands
         var a = [Double](repeating: contrast, count: n)
