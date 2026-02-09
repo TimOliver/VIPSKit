@@ -7,7 +7,15 @@ extension VIPSImage {
 
     // MARK: - Class Methods
 
-    /// Decode directly to thumbnail CGImage (minimal peak memory).
+    /// Decode an image file directly to a thumbnail-sized `CGImage` in one step.
+    /// This is the most memory-efficient path for generating display-ready thumbnails,
+    /// as the source image is decoded at a reduced resolution and the decode buffers
+    /// are released immediately after the `CGImage` is created.
+    /// - Parameters:
+    ///   - path: The file path of the source image
+    ///   - width: The maximum width of the thumbnail
+    ///   - height: The maximum height of the thumbnail
+    /// - Returns: A `CGImage` thumbnail that fits within the specified dimensions
     public static func createThumbnail(fromFile path: String, width: Int, height: Int) throws -> CGImage {
         var thumb: UnsafeMutablePointer<VipsImage>?
         guard cvips_thumbnail(path, &thumb, Int32(width), Int32(height)) == 0, let thumb else {
@@ -53,7 +61,10 @@ extension VIPSImage {
 
     // MARK: - Instance Methods
 
-    /// Create CGImage from this image (most efficient for display).
+    /// Create a `CGImage` from this image by transferring pixel data directly
+    /// to CoreGraphics. This avoids the encode/decode cycle of converting
+    /// through an intermediate format like JPEG or PNG.
+    /// - Returns: A `CGImage` representing this image
     public func createCGImage() throws -> CGImage {
         var prepared = pointer
         let interpretation = vips_image_get_interpretation(pointer)

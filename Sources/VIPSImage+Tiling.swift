@@ -5,7 +5,12 @@ internal import CVIPS
 
 extension VIPSImage {
 
-    /// Calculate tile rects for dividing image into a grid.
+    /// Calculate tile rectangles for dividing the image into a uniform grid.
+    /// Edge tiles may be smaller if the image dimensions are not evenly divisible.
+    /// - Parameters:
+    ///   - tileWidth: The width of each tile in pixels
+    ///   - tileHeight: The height of each tile in pixels
+    /// - Returns: An array of rectangles representing each tile's position and size
     public func tileRects(tileWidth: Int, tileHeight: Int) -> [CGRect] {
         guard tileWidth > 0, tileHeight > 0 else { return [] }
 
@@ -26,13 +31,21 @@ extension VIPSImage {
         return rects
     }
 
-    /// Number of horizontal strips for given height.
+    /// Calculate how many horizontal strips the image can be divided into
+    /// for the given strip height.
+    /// - Parameter stripHeight: The height of each strip in pixels
+    /// - Returns: The total number of strips
     public func numberOfStrips(withHeight stripHeight: Int) -> Int {
         guard stripHeight > 0 else { return 0 }
         return (height + stripHeight - 1) / stripHeight
     }
 
-    /// Extract horizontal strip by index.
+    /// Extract a horizontal strip from the image by its index.
+    /// The last strip may be shorter if the image height is not evenly divisible.
+    /// - Parameters:
+    ///   - index: The zero-based index of the strip to extract
+    ///   - stripHeight: The height of each strip in pixels
+    /// - Returns: A new image containing the specified strip
     public func strip(atIndex index: Int, height stripHeight: Int) throws -> VIPSImage {
         guard stripHeight > 0 else { throw VIPSError("Strip height must be positive") }
         let numStrips = numberOfStrips(withHeight: stripHeight)
@@ -45,7 +58,16 @@ extension VIPSImage {
         return try crop(x: 0, y: y, width: width, height: actualHeight)
     }
 
-    /// Extract region from file (memory efficient).
+    /// Extract a rectangular region from an image file without loading the entire
+    /// image into memory. This is the most memory-efficient way to read a portion
+    /// of a large image.
+    /// - Parameters:
+    ///   - path: The file path of the source image
+    ///   - x: The left edge of the region in pixels
+    ///   - y: The top edge of the region in pixels
+    ///   - width: The width of the region in pixels
+    ///   - height: The height of the region in pixels
+    /// - Returns: A new image containing only the specified region
     public static func extractRegion(fromFile path: String,
                                      x: Int, y: Int, width: Int, height: Int) throws -> VIPSImage {
         guard let source = cvips_image_new_from_file_sequential(path) else {
@@ -76,7 +98,16 @@ extension VIPSImage {
         return VIPSImage(pointer: copied)
     }
 
-    /// Extract region from data (memory efficient).
+    /// Extract a rectangular region from in-memory image data without fully
+    /// decoding the entire image. This is the most memory-efficient way to
+    /// read a portion of a large image from a data buffer.
+    /// - Parameters:
+    ///   - data: The encoded image data
+    ///   - x: The left edge of the region in pixels
+    ///   - y: The top edge of the region in pixels
+    ///   - width: The width of the region in pixels
+    ///   - height: The height of the region in pixels
+    /// - Returns: A new image containing only the specified region
     public static func extractRegion(fromData data: Data,
                                      x: Int, y: Int, width: Int, height: Int) throws -> VIPSImage {
         let source: UnsafeMutablePointer<VipsImage>? = data.withUnsafeBytes { buffer in

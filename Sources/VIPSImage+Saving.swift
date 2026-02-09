@@ -6,14 +6,20 @@ extension VIPSImage {
 
     // MARK: - File Saving
 
-    /// Save to file (format inferred from extension).
+    /// Save the image to a file, inferring the format from the file extension.
+    /// Supported extensions include `.jpg`, `.png`, `.webp`, `.heic`, `.avif`, `.jxl`, and `.gif`.
+    /// - Parameter path: The destination file path (the extension determines the format)
     public func write(toFile path: String) throws {
         guard cvips_write_to_file(pointer, path) == 0 else {
             throw VIPSError.fromVips()
         }
     }
 
-    /// Save to file with explicit format and quality.
+    /// Save the image to a file with an explicit format and quality setting.
+    /// - Parameters:
+    ///   - path: The destination file path
+    ///   - format: The image format to encode as
+    ///   - quality: The encoding quality (1-100). Ignored for PNG and GIF formats. (Default is 85)
     public func write(toFile path: String, format: VIPSImageFormat, quality: Int = 85) throws {
         let result: Int32
         switch format {
@@ -31,7 +37,11 @@ extension VIPSImage {
 
     // MARK: - Data Export
 
-    /// Export to Data in the specified format.
+    /// Export the image as encoded data in the specified format.
+    /// - Parameters:
+    ///   - format: The image format to encode as
+    ///   - quality: The encoding quality (1-100). Ignored for PNG and GIF formats. (Default is 85)
+    /// - Returns: The encoded image data
     public func data(format: VIPSImageFormat, quality: Int = 85) throws -> Data {
         var buffer: UnsafeMutableRawPointer?
         var length: Int = 0

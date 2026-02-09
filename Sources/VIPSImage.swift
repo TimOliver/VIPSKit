@@ -9,20 +9,37 @@ import UIKit
 import AppKit
 #endif
 
-/// Image processing wrapper for libvips.
+/// A high-performance image processing class powered by libvips.
+///
+/// `VIPSImage` wraps the libvips C library to provide fast, memory-efficient image
+/// operations suitable for batch processing and thumbnail generation. Each instance
+/// represents an immutable image — all operations return new `VIPSImage` instances.
+///
+/// You must call ``initialize()`` once before using any other VIPSKit functionality.
+///
+/// ```swift
+/// try VIPSImage.initialize()
+/// let image = try VIPSImage(contentsOfFile: "/path/to/photo.jpg")
+/// let thumbnail = try image.resizeToFit(width: 200, height: 200)
+/// let cgImage = try thumbnail.createCGImage()
+/// ```
 public final class VIPSImage: @unchecked Sendable {
 
-    /// The underlying VipsImage pointer.
+    /// The underlying libvips image pointer.
     internal let pointer: UnsafeMutablePointer<VipsImage>
 
     // MARK: - Lifecycle
 
-    /// Wrap an existing VipsImage pointer. Takes ownership (does NOT add a ref).
+    /// Wrap an existing VipsImage pointer, taking ownership of the reference.
+    /// The caller must not release the pointer after passing it to this initializer.
+    /// - Parameter pointer: A VipsImage pointer to take ownership of
     internal init(pointer: UnsafeMutablePointer<VipsImage>) {
         self.pointer = pointer
     }
 
-    /// Wrap an existing VipsImage pointer with an additional ref.
+    /// Wrap an existing VipsImage pointer by adding a new reference.
+    /// The caller retains their own reference and must release it independently.
+    /// - Parameter pointer: A VipsImage pointer to borrow
     internal init(borrowing pointer: UnsafeMutablePointer<VipsImage>) {
         g_object_ref(gpointer(pointer))
         self.pointer = pointer
@@ -34,7 +51,12 @@ public final class VIPSImage: @unchecked Sendable {
 
     // MARK: - Initialization
 
-    /// Initialize the VIPS library. Call once at app startup.
+    /// Initialize the libvips library. This must be called once before
+    /// performing any image operations.
+    ///
+    /// Configures default cache and concurrency settings optimized for batch processing:
+    /// - Operation cache: 100 operations, 50MB, 10 open files
+    /// - Concurrency: 1 thread (parallelize at the application layer instead)
     public static func initialize() throws {
         if vips_init("VIPSKit") != 0 {
             throw VIPSError.fromVips()
@@ -45,26 +67,28 @@ public final class VIPSImage: @unchecked Sendable {
         vips_concurrency_set(1)
     }
 
-    /// Shutdown the VIPS library. Call at app termination.
+    /// Shut down the libvips library and release all associated resources.
+    /// Call this at application termination if desired. Optional.
     public static func shutdown() {
         vips_shutdown()
     }
 
     // MARK: - Properties
 
-    /// Width of the image in pixels.
+    /// The width of the image in pixels.
     public var width: Int { Int(vips_image_get_width(pointer)) }
 
-    /// Height of the image in pixels.
+    /// The height of the image in pixels.
     public var height: Int { Int(vips_image_get_height(pointer)) }
 
-    /// Number of bands (channels) in the image.
+    /// The number of bands (channels) in the image. For example, 3 for RGB and 4 for RGBA.
     public var bands: Int { Int(vips_image_get_bands(pointer)) }
 
-    /// Whether the image has an alpha channel.
+    /// Whether the image contains an alpha transparency channel.
     public var hasAlpha: Bool { vips_image_hasalpha(pointer) != 0 }
 
-    /// Loader name used to load the image (e.g., "jpegload", "pngload").
+    /// The internal loader name used by libvips when this image was loaded
+    /// (e.g., `"jpegload"`, `"pngload"`), or `nil` if the image was not loaded from a file or buffer.
     public var loaderName: String? {
         var loader: UnsafePointer<CChar>?
         guard vips_image_get_string(pointer, VIPS_META_LOADER, &loader) == 0,
@@ -72,7 +96,8 @@ public final class VIPSImage: @unchecked Sendable {
         return String(cString: loader)
     }
 
-    /// Detected source format of the image.
+    /// The detected source format of the image based on the loader used.
+    /// Returns ``VIPSImageFormat/unknown`` if the format could not be determined.
     public var sourceFormat: VIPSImageFormat {
         guard let loader = loaderName else { return .unknown }
         if loader.hasPrefix("jpeg") || loader.hasPrefix("jpg") {
@@ -99,49 +124,59 @@ public final class VIPSImage: @unchecked Sendable {
     // MARK: - Class Memory Management
 
     /// Clear all cached operations and free associated memory.
+    /// Uses a safe workaround that avoids the `vips_cache_drop_all()` crash.
     public static func clearCache() {
         let originalMax = vips_cache_get_max()
         vips_cache_set_max(0)
         vips_cache_set_max(originalMax)
     }
 
-    /// Set maximum number of operations to cache.
+    /// Set the maximum number of operations to keep in the cache.
+    /// Set to 0 to disable caching entirely.
+    /// - Parameter max: The maximum number of cached operations
     public static func setCacheMaxOperations(_ max: Int) {
         vips_cache_set_max(Int32(max))
     }
 
-    /// Set maximum memory used by operation cache in bytes.
+    /// Set the maximum amount of memory used by the operation cache.
+    /// - Parameter bytes: The maximum cache memory in bytes
     public static func setCacheMaxMemory(_ bytes: Int) {
         vips_cache_set_max_mem(bytes)
     }
 
-    /// Set maximum number of open files in cache.
+    /// Set the maximum number of open files held by the cache.
+    /// - Parameter max: The maximum number of open files
     public static func setCacheMaxFiles(_ max: Int) {
         vips_cache_set_max_files(Int32(max))
     }
 
-    /// Current memory usage tracked by VIPS in bytes.
+    /// The current memory usage tracked by libvips in bytes.
     public static var memoryUsage: Int { Int(vips_tracked_get_mem()) }
 
-    /// Peak memory usage tracked by VIPS in bytes.
+    /// The peak memory usage tracked by libvips since the last reset, in bytes.
     public static var memoryHighWater: Int { Int(vips_tracked_get_mem_highwater()) }
 
-    /// Reset peak memory tracking.
+    /// Reset the peak memory tracking counter back to the current usage level.
     public static func resetMemoryHighWater() {
         _ = vips_tracked_get_mem_highwater()
     }
 
-    /// Set the number of threads used by VIPS for processing.
+    /// Set the number of worker threads used by libvips for internal parallelism.
+    /// Set to 0 to auto-detect based on available CPU cores.
+    /// - Parameter threads: The number of threads to use
     public static func setConcurrency(_ threads: Int) {
         vips_concurrency_set(Int32(threads))
     }
 
-    /// Get the current VIPS concurrency setting.
+    /// The current number of worker threads used by libvips.
     public static var concurrency: Int { Int(vips_concurrency_get()) }
 
     // MARK: - Instance Memory Management
 
-    /// Copy image pixels to memory, breaking lazy evaluation chain.
+    /// Copy the image pixels into a new contiguous memory block, breaking
+    /// any lazy evaluation chain. This allows source images to be freed
+    /// even if downstream images still exist.
+    /// - Returns: A new image with all pixels evaluated and stored in memory
     public func copyToMemory() throws -> VIPSImage {
         guard let out = vips_image_copy_memory(pointer) else {
             throw VIPSError.fromVips()
@@ -151,8 +186,19 @@ public final class VIPSImage: @unchecked Sendable {
 
     // MARK: - Pixel Access
 
-    /// Access raw pixel data with zero-copy block-based API.
-    /// Data is 8-bit per channel in RGB or RGBA format. Only valid within the closure.
+    /// Provides zero-copy access to the image's raw pixel data within a closure.
+    ///
+    /// The pixel data is converted to 8-bit unsigned sRGB format before being passed
+    /// to the closure. The data pointer is only valid within the closure's scope.
+    ///
+    /// - Parameter body: A closure that receives the pixel data and image dimensions.
+    ///   The closure parameters are:
+    ///   1. `data` — A pointer to the raw pixel bytes
+    ///   2. `width` — The image width in pixels
+    ///   3. `height` — The image height in pixels
+    ///   4. `bytesPerRow` — The number of bytes per row (stride)
+    ///   5. `bands` — The number of bands (3 for RGB, 4 for RGBA)
+    /// - Returns: The value returned by the closure
     public func withPixelData<T>(_ body: (UnsafePointer<UInt8>, Int, Int, Int, Int) throws -> T) throws -> T {
         var prepared: UnsafeMutablePointer<VipsImage>
 

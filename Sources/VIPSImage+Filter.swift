@@ -4,7 +4,10 @@ internal import CVIPS
 
 extension VIPSImage {
 
-    /// Gaussian blur.
+    /// Apply a Gaussian blur to the image.
+    /// - Parameter sigma: The standard deviation of the Gaussian kernel.
+    ///   Larger values produce a stronger blur.
+    /// - Returns: A new blurred image
     public func blur(sigma: Double) throws -> VIPSImage {
         var out: UnsafeMutablePointer<VipsImage>?
         guard cvips_gaussblur(pointer, &out, sigma) == 0, let out else {
@@ -13,7 +16,10 @@ extension VIPSImage {
         return VIPSImage(pointer: out)
     }
 
-    /// Sharpen.
+    /// Sharpen the image using an unsharp mask.
+    /// - Parameter sigma: The standard deviation of the sharpening kernel.
+    ///   Larger values sharpen a wider area.
+    /// - Returns: A new sharpened image
     public func sharpen(sigma: Double) throws -> VIPSImage {
         var out: UnsafeMutablePointer<VipsImage>?
         guard cvips_sharpen(pointer, &out, sigma) == 0, let out else {
@@ -22,7 +28,9 @@ extension VIPSImage {
         return VIPSImage(pointer: out)
     }
 
-    /// Sobel edge detection.
+    /// Apply Sobel edge detection to produce a grayscale image
+    /// where edges appear as bright lines on a dark background.
+    /// - Returns: A new image highlighting detected edges
     public func sobel() throws -> VIPSImage {
         var out: UnsafeMutablePointer<VipsImage>?
         guard cvips_sobel(pointer, &out) == 0, let out else {
@@ -31,7 +39,11 @@ extension VIPSImage {
         return VIPSImage(pointer: out)
     }
 
-    /// Canny edge detection.
+    /// Apply Canny edge detection, a more sophisticated edge detector that
+    /// produces thin, well-localized edges.
+    /// - Parameter sigma: The standard deviation of the Gaussian smoothing
+    ///   applied before edge detection (default is 1.4)
+    /// - Returns: A new 8-bit image highlighting detected edges
     public func canny(sigma: Double = 1.4) throws -> VIPSImage {
         var cannyOut: UnsafeMutablePointer<VipsImage>?
         guard cvips_canny(pointer, &cannyOut, sigma) == 0, let cannyOut else {

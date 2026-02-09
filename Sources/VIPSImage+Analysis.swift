@@ -7,7 +7,14 @@ extension VIPSImage {
 
     // MARK: - Analysis
 
-    /// Find the bounding box of non-background pixels (trim margins).
+    /// Find the bounding box of non-background pixels by detecting content margins.
+    /// Useful for trimming whitespace or uniform borders from an image.
+    /// - Parameters:
+    ///   - threshold: How different a pixel must be from the background to count as
+    ///     content (default is 10.0)
+    ///   - background: An explicit background color as per-band values (e.g., `[255, 255, 255]`
+    ///     for white). If `nil`, the background is auto-detected.
+    /// - Returns: A rectangle describing the bounding box of the content area
     public func findTrim(threshold: Double = 10.0, background: [Double]? = nil) throws -> CGRect {
         var left: Int32 = 0, top: Int32 = 0, width: Int32 = 0, height: Int32 = 0
         let result: Int32
@@ -23,7 +30,8 @@ extension VIPSImage {
         return CGRect(x: Int(left), y: Int(top), width: Int(width), height: Int(height))
     }
 
-    /// Get image statistics (min, max, mean, standard deviation).
+    /// Compute basic statistics across all bands of the image.
+    /// - Returns: A ``VIPSImageStatistics`` value containing the min, max, mean, and standard deviation
     public func statistics() throws -> VIPSImageStatistics {
         var min: Double = 0, max: Double = 0, mean: Double = 0, stddev: Double = 0
         guard cvips_min(pointer, &min) == 0 else { throw VIPSError.fromVips() }
@@ -33,7 +41,9 @@ extension VIPSImage {
         return VIPSImageStatistics(min: min, max: max, mean: mean, standardDeviation: stddev)
     }
 
-    /// Get the average color of the image as per-band mean values.
+    /// Calculate the average color of the image as per-band mean values.
+    /// For an RGB image, this returns `[R, G, B]`. For RGBA, `[R, G, B, A]`.
+    /// - Returns: An array of mean values, one per band
     public func averageColor() throws -> [Double] {
         var statsImage: UnsafeMutablePointer<VipsImage>?
         guard cvips_stats(pointer, &statsImage) == 0, let statsImage else {
@@ -55,7 +65,10 @@ extension VIPSImage {
         return result
     }
 
-    /// Detect the background color by sampling edges.
+    /// Detect the background color of the image by sampling pixels along all four edges.
+    /// This is useful for setting a viewer background that matches the image's margins.
+    /// - Parameter stripWidth: The width of the edge strip to sample in pixels (default is 10)
+    /// - Returns: An array of mean color values from the edge pixels, one per band
     public func detectBackgroundColor(stripWidth: Int = 10) throws -> [Double] {
         let w = width
         let h = height
@@ -121,7 +134,10 @@ extension VIPSImage {
 
     // MARK: - Arithmetic
 
-    /// Subtract another image from this image (pixel-wise: self - other).
+    /// Perform pixel-wise subtraction of another image from this image (`self - other`).
+    /// Both images must have the same dimensions and number of bands.
+    /// - Parameter other: The image to subtract
+    /// - Returns: A new image containing the difference values
     public func subtract(_ other: VIPSImage) throws -> VIPSImage {
         var out: UnsafeMutablePointer<VipsImage>?
         guard cvips_subtract(pointer, other.pointer, &out) == 0, let out else {
@@ -130,7 +146,9 @@ extension VIPSImage {
         return VIPSImage(pointer: out)
     }
 
-    /// Compute absolute value of each pixel.
+    /// Compute the absolute value of each pixel. Useful after subtraction
+    /// to get the magnitude of differences regardless of sign.
+    /// - Returns: A new image with all pixel values made positive
     public func absolute() throws -> VIPSImage {
         var out: UnsafeMutablePointer<VipsImage>?
         guard cvips_abs(pointer, &out) == 0, let out else {

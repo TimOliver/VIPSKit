@@ -1,15 +1,23 @@
-/// Image format for saving and detection.
+/// Supported image formats for loading, saving, and format detection.
 public enum VIPSImageFormat: Int, Sendable {
+    /// Format could not be detected or is not supported
     case unknown = -1
+    /// JPEG format (lossy compression, quality 1-100)
     case jpeg = 0
+    /// PNG format (lossless compression, quality parameter ignored)
     case png
+    /// WebP format (lossy or lossless, quality 1-100)
     case webP
+    /// HEIF format (lossy compression, quality 1-100)
     case heif
+    /// AVIF format (AV1-based, lossy compression, quality 1-100)
     case avif
+    /// JPEG XL format (lossy or lossless, quality 1-100)
     case jxl
+    /// GIF format (palette-based, quality parameter ignored)
     case gif
 
-    /// File extension for this format.
+    /// The standard file extension associated with this format, or `nil` for unknown formats.
     public var fileExtension: String? {
         switch self {
         case .unknown: return nil

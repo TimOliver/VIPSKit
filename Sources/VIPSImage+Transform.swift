@@ -4,7 +4,13 @@ internal import CVIPS
 
 extension VIPSImage {
 
-    /// Crop a region from the image.
+    /// Crop a rectangular region from the image.
+    /// - Parameters:
+    ///   - x: The left edge of the crop area in pixels
+    ///   - y: The top edge of the crop area in pixels
+    ///   - width: The width of the crop area in pixels
+    ///   - height: The height of the crop area in pixels
+    /// - Returns: A new image containing only the cropped region
     public func crop(x: Int, y: Int, width: Int, height: Int) throws -> VIPSImage {
         var out: UnsafeMutablePointer<VipsImage>?
         guard cvips_crop(pointer, &out, Int32(x), Int32(y), Int32(width), Int32(height)) == 0,
@@ -12,7 +18,10 @@ extension VIPSImage {
         return VIPSImage(pointer: out)
     }
 
-    /// Rotate by 90, 180, or 270 degrees.
+    /// Rotate the image by a multiple of 90 degrees.
+    /// Values that are not multiples of 90 are rounded to the nearest right angle.
+    /// - Parameter degrees: The rotation angle (90, 180, or 270)
+    /// - Returns: A new rotated image
     public func rotate(degrees: Int) throws -> VIPSImage {
         let angle: VipsAngle
         switch degrees % 360 {
@@ -29,7 +38,8 @@ extension VIPSImage {
         return VIPSImage(pointer: out)
     }
 
-    /// Mirror horizontally.
+    /// Flip the image horizontally (mirror along the vertical axis).
+    /// - Returns: A new horizontally flipped image
     public func flipHorizontal() throws -> VIPSImage {
         var out: UnsafeMutablePointer<VipsImage>?
         guard cvips_flip(pointer, &out, VIPS_DIRECTION_HORIZONTAL) == 0, let out else {
@@ -38,7 +48,8 @@ extension VIPSImage {
         return VIPSImage(pointer: out)
     }
 
-    /// Mirror vertically.
+    /// Flip the image vertically (mirror along the horizontal axis).
+    /// - Returns: A new vertically flipped image
     public func flipVertical() throws -> VIPSImage {
         var out: UnsafeMutablePointer<VipsImage>?
         guard cvips_flip(pointer, &out, VIPS_DIRECTION_VERTICAL) == 0, let out else {
@@ -47,7 +58,9 @@ extension VIPSImage {
         return VIPSImage(pointer: out)
     }
 
-    /// Auto-rotate based on EXIF orientation.
+    /// Automatically rotate the image based on its EXIF orientation metadata,
+    /// then remove the orientation tag so it won't be applied again.
+    /// - Returns: A new correctly oriented image
     public func autoRotate() throws -> VIPSImage {
         var out: UnsafeMutablePointer<VipsImage>?
         guard cvips_autorot(pointer, &out) == 0, let out else {
@@ -56,7 +69,15 @@ extension VIPSImage {
         return VIPSImage(pointer: out)
     }
 
-    /// Content-aware smart crop.
+    /// Perform a content-aware smart crop to the specified dimensions.
+    /// Unlike a regular crop, this analyzes the image to keep the most
+    /// visually important region.
+    /// - Parameters:
+    ///   - width: The target width in pixels
+    ///   - height: The target height in pixels
+    ///   - interesting: The strategy for selecting the interesting region
+    ///     (default is ``VIPSInteresting/attention``)
+    /// - Returns: A new image cropped to the target dimensions around the most interesting region
     public func smartCrop(toWidth width: Int, height: Int, interesting: VIPSInteresting = .attention) throws -> VIPSImage {
         let vipsInteresting: VipsInteresting
         switch interesting {
