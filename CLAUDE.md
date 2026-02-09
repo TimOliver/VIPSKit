@@ -359,7 +359,7 @@ VIPSImage.shutdown()
 | `findTrim(threshold:background:)` | Find content bounding box |
 | `statistics()` | Image statistics (min, max, mean, stddev) |
 | `averageColor()` | Per-band mean values → VIPSColor |
-| `detectBackgroundColor(stripWidth:)` | Detect background by sampling edges → VIPSColor |
+| `detectBackgroundColor(stripWidth:)` | Detect background via trim margins or prominent edge color → VIPSColor |
 | `subtract(_:)` | Pixel-wise subtraction |
 | `absolute()` | Absolute value of pixels |
 | `numberOfStrips(withHeight:)` | Count horizontal strips |
@@ -485,6 +485,13 @@ Default: VIPS concurrency = 1 (single-threaded per operation). Parallelize at th
 ### Thread Safety
 
 VIPSImage is `@unchecked Sendable`. Safe to use from multiple threads with each thread processing different images. The vips operation cache uses mutexes internally.
+
+### Background Color Detection
+
+`detectBackgroundColor(stripWidth:)` uses a two-step approach:
+
+1. **Trim-based** — calls `findTrim()` to detect content margins. If the content rect is inset from the image bounds on any side (e.g., a white spine on a comic page), it samples from those margin areas using a pixel-count-weighted average across all margin strips.
+2. **Prominent edge color** (fallback) — when no trim margins exist (content fills to all edges), it reads raw pixels from edge strips via `withPixelData`, quantizes each pixel's RGB into color buckets (step size 32 → 8 levels per channel, 512 buckets), and returns the average actual color of the most frequent bucket. This finds the dominant edge color rather than the average, which avoids content colors pulling the result off.
 
 ### vips_cache_drop_all Bug (Workaround)
 

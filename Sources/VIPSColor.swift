@@ -120,6 +120,8 @@ extension VIPSColor {
 }
 #endif
 
+// MARK: - RandomAccessCollection
+
 extension VIPSColor: RandomAccessCollection {
     public var startIndex: Int { 0 }
     public var endIndex: Int { values.count }
