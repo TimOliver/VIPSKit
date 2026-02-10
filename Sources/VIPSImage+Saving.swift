@@ -64,4 +64,27 @@ extension VIPSImage {
         defer { g_free(buffer) }
         return Data(bytes: buffer, count: length)
     }
+
+    // MARK: - Async
+
+    /// Asynchronously save the image to a file, inferring the format from the file extension.
+    public func write(toFile path: String) async throws {
+        try await Task.detached {
+            try self.write(toFile: path)
+        }.value
+    }
+
+    /// Asynchronously save the image to a file with an explicit format and quality setting.
+    public func write(toFile path: String, format: VIPSImageFormat, quality: Int = 85) async throws {
+        try await Task.detached {
+            try self.write(toFile: path, format: format, quality: quality)
+        }.value
+    }
+
+    /// Asynchronously export the image as encoded data in the specified format.
+    public func encoded(format: VIPSImageFormat, quality: Int = 85) async throws -> Data {
+        try await Task.detached {
+            try self.data(format: format, quality: quality)
+        }.value
+    }
 }

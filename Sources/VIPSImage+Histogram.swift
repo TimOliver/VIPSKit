@@ -15,4 +15,13 @@ extension VIPSImage {
         }
         return VIPSImage(pointer: out)
     }
+
+    // MARK: - Async
+
+    /// Asynchronously apply histogram equalization to improve contrast.
+    public func histogramEqualized() async throws -> VIPSImage {
+        try await Task.detached {
+            try self.histogramEqualized()
+        }.value
+    }
 }

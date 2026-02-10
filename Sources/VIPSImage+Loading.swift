@@ -154,4 +154,62 @@ extension VIPSImage {
         image.pointee.Type = bands <= 2 ? VIPS_INTERPRETATION_B_W : VIPS_INTERPRETATION_sRGB
         self.init(pointer: image)
     }
+
+    // MARK: - Async
+
+    /// Asynchronously get the dimensions and format of an image file without decoding its pixels.
+    public static func imageInfo(atPath path: String) async throws -> (width: Int, height: Int, format: VIPSImageFormat) {
+        try await Task.detached {
+            try Self.imageInfo(atPath: path)
+        }.value
+    }
+
+    /// Asynchronously load an image from a file path.
+    public static func loaded(fromFile path: String) async throws -> VIPSImage {
+        try await Task.detached {
+            try VIPSImage(contentsOfFile: path)
+        }.value
+    }
+
+    /// Asynchronously load an image with sequential (streaming) access.
+    public static func loaded(fromFileSequential path: String) async throws -> VIPSImage {
+        try await Task.detached {
+            try VIPSImage(contentsOfFileSequential: path)
+        }.value
+    }
+
+    /// Asynchronously load an image from encoded data.
+    public static func loaded(data: Data) async throws -> VIPSImage {
+        try await Task.detached {
+            try VIPSImage(data: data)
+        }.value
+    }
+
+    /// Asynchronously create a thumbnail from a file using shrink-on-load.
+    public static func thumbnail(fromFile path: String, width: Int, height: Int) async throws -> VIPSImage {
+        try await Task.detached {
+            try Self.thumbnail(fromFile: path, width: width, height: height)
+        }.value
+    }
+
+    /// Asynchronously create a thumbnail from a file using shrink-on-load.
+    public static func thumbnail(fromFile path: String, size: CGSize) async throws -> VIPSImage {
+        try await Task.detached {
+            try Self.thumbnail(fromFile: path, size: size)
+        }.value
+    }
+
+    /// Asynchronously create a thumbnail from in-memory data using shrink-on-load.
+    public static func thumbnail(fromData data: Data, width: Int, height: Int) async throws -> VIPSImage {
+        try await Task.detached {
+            try Self.thumbnail(fromData: data, width: width, height: height)
+        }.value
+    }
+
+    /// Asynchronously create a thumbnail from in-memory data using shrink-on-load.
+    public static func thumbnail(fromData data: Data, size: CGSize) async throws -> VIPSImage {
+        try await Task.detached {
+            try Self.thumbnail(fromData: data, size: size)
+        }.value
+    }
 }

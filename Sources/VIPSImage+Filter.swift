@@ -59,4 +59,34 @@ extension VIPSImage {
         g_object_unref(gpointer(cannyOut))
         return VIPSImage(pointer: out)
     }
+
+    // MARK: - Async
+
+    /// Asynchronously apply a Gaussian blur to the image.
+    public func blurred(sigma: Double) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.blurred(sigma: sigma)
+        }.value
+    }
+
+    /// Asynchronously sharpen the image using an unsharp mask.
+    public func sharpened(sigma: Double) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.sharpened(sigma: sigma)
+        }.value
+    }
+
+    /// Asynchronously apply Sobel edge detection.
+    public func sobel() async throws -> VIPSImage {
+        try await Task.detached {
+            try self.sobel()
+        }.value
+    }
+
+    /// Asynchronously apply Canny edge detection.
+    public func canny(sigma: Double = 1.4) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.canny(sigma: sigma)
+        }.value
+    }
 }

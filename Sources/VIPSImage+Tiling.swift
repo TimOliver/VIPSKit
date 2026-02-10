@@ -138,4 +138,22 @@ extension VIPSImage {
         g_object_unref(gpointer(source))
         return VIPSImage(pointer: copied)
     }
+
+    // MARK: - Async
+
+    /// Asynchronously extract a rectangular region from an image file.
+    public static func extractedRegion(fromFile path: String,
+                                       x: Int, y: Int, width: Int, height: Int) async throws -> VIPSImage {
+        try await Task.detached {
+            try Self.extractRegion(fromFile: path, x: x, y: y, width: width, height: height)
+        }.value
+    }
+
+    /// Asynchronously extract a rectangular region from in-memory image data.
+    public static func extractedRegion(fromData data: Data,
+                                       x: Int, y: Int, width: Int, height: Int) async throws -> VIPSImage {
+        try await Task.detached {
+            try Self.extractRegion(fromData: data, x: x, y: y, width: width, height: height)
+        }.value
+    }
 }

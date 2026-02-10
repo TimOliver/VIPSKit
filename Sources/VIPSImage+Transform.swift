@@ -103,4 +103,34 @@ extension VIPSImage {
     public func smartCrop(to size: CGSize, interesting: VIPSInteresting = .attention) throws -> VIPSImage {
         try smartCrop(toWidth: Int(size.width), height: Int(size.height), interesting: interesting)
     }
+
+    // MARK: - Async
+
+    /// Asynchronously crop a rectangular region from the image.
+    public func cropped(x: Int, y: Int, width: Int, height: Int) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.crop(x: x, y: y, width: width, height: height)
+        }.value
+    }
+
+    /// Asynchronously crop a rectangular region from the image.
+    public func cropped(_ rect: CGRect) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.crop(rect)
+        }.value
+    }
+
+    /// Asynchronously perform a content-aware smart crop to the specified dimensions.
+    public func smartCropped(toWidth width: Int, height: Int, interesting: VIPSInteresting = .attention) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.smartCrop(toWidth: width, height: height, interesting: interesting)
+        }.value
+    }
+
+    /// Asynchronously perform a content-aware smart crop to the specified size.
+    public func smartCropped(to size: CGSize, interesting: VIPSInteresting = .attention) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.smartCrop(to: size, interesting: interesting)
+        }.value
+    }
 }

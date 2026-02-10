@@ -17,4 +17,13 @@ extension VIPSImage {
         }
         return VIPSImage(pointer: out)
     }
+
+    // MARK: - Async
+
+    /// Asynchronously rotate the image by an arbitrary angle in degrees.
+    public func rotated(byAngle degrees: Double) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.rotate(byAngle: degrees)
+        }.value
+    }
 }

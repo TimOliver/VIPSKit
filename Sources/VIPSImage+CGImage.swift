@@ -198,4 +198,27 @@ extension VIPSImage {
 
         return cgImage
     }
+
+    // MARK: - Async
+
+    /// Asynchronously create a `CGImage` from this image.
+    public func makeCGImage() async throws -> CGImage {
+        try await Task.detached {
+            try self.cgImage
+        }.value
+    }
+
+    /// Asynchronously decode an image file directly to a thumbnail-sized `CGImage`.
+    public static func thumbnailCGImage(fromFile path: String, width: Int, height: Int) async throws -> CGImage {
+        try await Task.detached {
+            try Self.thumbnailCGImage(fromFile: path, width: width, height: height)
+        }.value
+    }
+
+    /// Asynchronously decode an image file directly to a thumbnail-sized `CGImage`.
+    public static func thumbnailCGImage(fromFile path: String, size: CGSize) async throws -> CGImage {
+        try await Task.detached {
+            try Self.thumbnailCGImage(fromFile: path, size: size)
+        }.value
+    }
 }

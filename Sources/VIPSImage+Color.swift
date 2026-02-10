@@ -153,4 +153,62 @@ extension VIPSImage {
         g_object_unref(gpointer(satAdjusted))
         return VIPSImage(pointer: out)
     }
+
+    // MARK: - Async
+
+    /// Asynchronously convert the image to grayscale.
+    public func grayscaled() async throws -> VIPSImage {
+        try await Task.detached {
+            try self.grayscaled()
+        }.value
+    }
+
+    /// Asynchronously flatten the alpha channel against a solid background color.
+    public func flattened(background: VIPSColor) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.flatten(background: background)
+        }.value
+    }
+
+    /// Asynchronously invert the colors of the image.
+    public func inverted() async throws -> VIPSImage {
+        try await Task.detached {
+            try self.inverted()
+        }.value
+    }
+
+    /// Asynchronously adjust the brightness of the image.
+    public func adjustedBrightness(_ brightness: Double) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.adjustBrightness(brightness)
+        }.value
+    }
+
+    /// Asynchronously adjust the contrast of the image.
+    public func adjustedContrast(_ contrast: Double) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.adjustContrast(contrast)
+        }.value
+    }
+
+    /// Asynchronously adjust the color saturation.
+    public func adjustedSaturation(_ saturation: Double) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.adjustSaturation(saturation)
+        }.value
+    }
+
+    /// Asynchronously adjust the gamma curve of the image.
+    public func adjustedGamma(_ gamma: Double) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.adjustGamma(gamma)
+        }.value
+    }
+
+    /// Asynchronously apply brightness, contrast, and saturation adjustments in a single operation.
+    public func adjusted(brightness: Double = 0, contrast: Double = 1.0, saturation: Double = 1.0) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.adjust(brightness: brightness, contrast: contrast, saturation: saturation)
+        }.value
+    }
 }

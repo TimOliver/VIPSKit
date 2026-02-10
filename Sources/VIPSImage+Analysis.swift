@@ -233,4 +233,34 @@ extension VIPSImage {
         }
         return VIPSImage(pointer: out)
     }
+
+    // MARK: - Async
+
+    /// Asynchronously find the bounding box of non-background pixels.
+    public func findTrim(threshold: Double = 10.0, background: VIPSColor? = nil) async throws -> CGRect {
+        try await Task.detached {
+            try self.findTrim(threshold: threshold, background: background)
+        }.value
+    }
+
+    /// Asynchronously compute basic statistics across all bands of the image.
+    public func statistics() async throws -> VIPSImageStatistics {
+        try await Task.detached {
+            try self.statistics()
+        }.value
+    }
+
+    /// Asynchronously calculate the average color of the image.
+    public func averageColor() async throws -> VIPSColor {
+        try await Task.detached {
+            try self.averageColor()
+        }.value
+    }
+
+    /// Asynchronously detect the background color of the image.
+    public func detectedBackgroundColor(stripWidth: Int = 10) async throws -> VIPSColor {
+        try await Task.detached {
+            try self.detectBackgroundColor(stripWidth: stripWidth)
+        }.value
+    }
 }

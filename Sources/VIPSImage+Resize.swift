@@ -60,4 +60,41 @@ extension VIPSImage {
     public func resize(to size: CGSize) throws -> VIPSImage {
         try resize(toWidth: Int(size.width), height: Int(size.height))
     }
+
+    // MARK: - Async
+
+    /// Asynchronously resize the image to fit within the given dimensions while maintaining aspect ratio.
+    public func resizedToFit(width: Int, height: Int) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.resizeToFit(width: width, height: height)
+        }.value
+    }
+
+    /// Asynchronously resize the image to fit within the given size while maintaining aspect ratio.
+    public func resizedToFit(size: CGSize) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.resizeToFit(size: size)
+        }.value
+    }
+
+    /// Asynchronously resize the image by a scale factor.
+    public func resized(scale: Double, kernel: VIPSResizeKernel = .lanczos3) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.resize(scale: scale, kernel: kernel)
+        }.value
+    }
+
+    /// Asynchronously resize the image to exact dimensions.
+    public func resized(toWidth width: Int, height: Int) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.resize(toWidth: width, height: height)
+        }.value
+    }
+
+    /// Asynchronously resize the image to exact dimensions.
+    public func resized(to size: CGSize) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.resize(to: size)
+        }.value
+    }
 }

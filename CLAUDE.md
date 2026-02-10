@@ -309,6 +309,43 @@ VIPSImage.concurrency = 0  // Use all cores
 VIPSImage.shutdown()
 ```
 
+### Async Usage
+
+All I/O-bound and CPU-heavy operations have `async throws` variants that use `Task.detached` to move work off the calling actor. This is safe because `VIPSImage` is `@unchecked Sendable`.
+
+```swift
+// Async loading (static factories — Swift doesn't support async init)
+let image = try await VIPSImage.loaded(fromFile: path)
+let image = try await VIPSImage.loaded(data: imageData)
+let thumb = try await VIPSImage.thumbnail(fromFile: path, width: 200, height: 200)
+
+// Async resize (past-tense naming)
+let fitted = try await image.resizedToFit(width: 200, height: 200)
+let scaled = try await image.resized(scale: 0.5)
+let exact = try await image.resized(toWidth: 400, height: 300)
+
+// Async transform
+let cropped = try await image.cropped(x: 10, y: 10, width: 100, height: 100)
+let smart = try await image.smartCropped(toWidth: 400, height: 400)
+
+// Async color/filter
+let gray = try await image.grayscaled()
+let blurred = try await image.blurred(sigma: 2.0)
+let adjusted = try await image.adjusted(brightness: 0.1, contrast: 1.2, saturation: 1.1)
+
+// Async CGImage
+let cgImage = try await image.makeCGImage()
+let thumbCG = try await VIPSImage.thumbnailCGImage(fromFile: path, width: 200, height: 200)
+
+// Async export
+let jpegData = try await image.encoded(format: .jpeg, quality: 85)
+try await image.write(toFile: "/path/to/output.jpg")
+
+// Async analysis
+let bounds = try await image.findTrim()
+let bgColor = try await image.detectedBackgroundColor()
+```
+
 ## API Reference
 
 ### VIPSImage
@@ -414,6 +451,56 @@ VIPSImage.shutdown()
 | `iccProfile` | ICC color profile data |
 | `exifField(_:)` | Read parsed EXIF tag by name |
 
+#### Async Variants
+
+Most I/O-bound and CPU-heavy methods have `async throws` overloads using `Task.detached`. Naming convention: past tense for renamed variants, same name for already past-tense methods.
+
+| Async Method | Sync Equivalent |
+|--------|-------------|
+| `loaded(fromFile:)` | `init(contentsOfFile:)` |
+| `loaded(fromFileSequential:)` | `init(contentsOfFileSequential:)` |
+| `loaded(data:)` | `init(data:)` |
+| `thumbnail(fromFile:…)` | `thumbnail(fromFile:…)` |
+| `thumbnail(fromData:…)` | `thumbnail(fromData:…)` |
+| `imageInfo(atPath:)` | `imageInfo(atPath:)` |
+| `write(toFile:…)` | `write(toFile:…)` |
+| `encoded(format:quality:)` | `data(format:quality:)` |
+| `makeCGImage()` | `cgImage` property |
+| `thumbnailCGImage(fromFile:…)` | `thumbnailCGImage(fromFile:…)` |
+| `resizedToFit(width:height:)` | `resizeToFit(width:height:)` |
+| `resizedToFit(size:)` | `resizeToFit(size:)` |
+| `resized(scale:kernel:)` | `resize(scale:kernel:)` |
+| `resized(toWidth:height:)` | `resize(toWidth:height:)` |
+| `resized(to:)` | `resize(to:)` |
+| `cropped(x:y:width:height:)` | `crop(x:y:width:height:)` |
+| `cropped(_:)` | `crop(_:)` |
+| `smartCropped(toWidth:height:interesting:)` | `smartCrop(toWidth:height:interesting:)` |
+| `smartCropped(to:interesting:)` | `smartCrop(to:interesting:)` |
+| `rotated(byAngle:)` | `rotate(byAngle:)` |
+| `grayscaled()` | `grayscaled()` |
+| `flattened(background:)` | `flatten(background:)` |
+| `inverted()` | `inverted()` |
+| `adjustedBrightness(_:)` | `adjustBrightness(_:)` |
+| `adjustedContrast(_:)` | `adjustContrast(_:)` |
+| `adjustedSaturation(_:)` | `adjustSaturation(_:)` |
+| `adjustedGamma(_:)` | `adjustGamma(_:)` |
+| `adjusted(brightness:contrast:saturation:)` | `adjust(brightness:contrast:saturation:)` |
+| `blurred(sigma:)` | `blurred(sigma:)` |
+| `sharpened(sigma:)` | `sharpened(sigma:)` |
+| `sobel()` | `sobel()` |
+| `canny(sigma:)` | `canny(sigma:)` |
+| `composited(withOverlay:mode:x:y:)` | `composite(withOverlay:mode:x:y:)` |
+| `composited(withOverlay:mode:at:)` | `composite(withOverlay:mode:at:)` |
+| `composited(withOverlay:mode:)` | `composite(withOverlay:mode:)` |
+| `findTrim(threshold:background:)` | `findTrim(threshold:background:)` |
+| `statistics()` | `statistics()` |
+| `averageColor()` | `averageColor()` |
+| `detectedBackgroundColor(stripWidth:)` | `detectBackgroundColor(stripWidth:)` |
+| `histogramEqualized()` | `histogramEqualized()` |
+| `extractedRegion(fromFile:…)` | `extractRegion(fromFile:…)` |
+| `extractedRegion(fromData:…)` | `extractRegion(fromData:…)` |
+| `copiedToMemory()` | `copiedToMemory()` |
+
 ### VIPSImage.Cache
 
 | Method/Property | Description |
@@ -516,6 +603,10 @@ Default: VIPS concurrency = 1 (single-threaded per operation). Parallelize at th
 ### Thread Safety
 
 VIPSImage is `@unchecked Sendable`. Safe to use from multiple threads with each thread processing different images. The vips operation cache uses mutexes internally.
+
+### Async Pattern
+
+All async wrappers use the same `Task.detached` pattern to move work off the calling actor (critical for `@MainActor` callers). `VIPSImage` being `@unchecked Sendable` enables clean crossing of task boundaries. Naming uses past tense (`resize` → `resized`, `crop` → `cropped`). Methods already in past tense (`blurred`, `inverted`) get same-name async overloads differentiated by the `async` keyword. `init` → static factories (`loaded(fromFile:)`) since Swift doesn't support `async init`.
 
 ### Background Color Detection
 

@@ -186,6 +186,13 @@ public final class VIPSImage: @unchecked Sendable {
         return VIPSImage(pointer: out)
     }
 
+    /// Asynchronously copy the image pixels into a new contiguous memory block.
+    public func copiedToMemory() async throws -> VIPSImage {
+        try await Task.detached {
+            try self.copiedToMemory()
+        }.value
+    }
+
     // MARK: - Pixel Access
 
     /// A snapshot of raw pixel data, valid only within the `withPixelData` closure.

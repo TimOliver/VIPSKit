@@ -41,4 +41,27 @@ extension VIPSImage {
         let y = (height - overlay.height) / 2
         return try composite(withOverlay: overlay, mode: mode, x: x, y: y)
     }
+
+    // MARK: - Async
+
+    /// Asynchronously composite an overlay image on top of this image at the specified position.
+    public func composited(withOverlay overlay: VIPSImage, mode: VIPSBlendMode, x: Int, y: Int) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.composite(withOverlay: overlay, mode: mode, x: x, y: y)
+        }.value
+    }
+
+    /// Asynchronously composite an overlay image on top of this image at the specified point.
+    public func composited(withOverlay overlay: VIPSImage, mode: VIPSBlendMode, at point: CGPoint) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.composite(withOverlay: overlay, mode: mode, at: point)
+        }.value
+    }
+
+    /// Asynchronously composite an overlay image centered on top of this image.
+    public func composited(withOverlay overlay: VIPSImage, mode: VIPSBlendMode) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.composite(withOverlay: overlay, mode: mode)
+        }.value
+    }
 }
