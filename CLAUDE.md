@@ -26,6 +26,7 @@ VIPSKit is a pure Swift framework that wraps libvips for Apple platforms. The he
 - AVIF (decode-only via dav1d + libheif)
 - HEIF (libheif)
 - GIF (built-in)
+- TIFF (built-in)
 
 ## Architecture
 
@@ -83,8 +84,7 @@ VIPSKit/
 │   ├── VIPSImage+Draw.swift           # Drawing primitives (rect, line, circle, flood fill)
 │   ├── VIPSImage+Analysis.swift       # Statistics, trim, average color, background detection
 │   ├── VIPSImage+Metadata.swift       # EXIF/metadata access, MetadataProxy subscript
-│   ├── VIPSColor.swift                # RGB color type with ink(forBands:) helper
-│   ├── VIPSColor+Platform.swift       # CGColor/UIColor/NSColor interop
+│   ├── VIPSColor.swift                # RGB color type, ink(forBands:), CGColor/UIColor/NSColor interop
 │   ├── VIPSError.swift                # Error type
 │   ├── VIPSImageFormat.swift          # Format enum
 │   ├── VIPSImageStatistics.swift      # Statistics struct
@@ -120,9 +120,12 @@ VIPSKit/
 │   ├── VIPSImageAnalysisTests.swift
 │   ├── VIPSImageMetadataTests.swift
 │   ├── TestHost/                      # Minimal iOS app for Xcode test runner
-│   └── TestResources/superman.jpg
+│   └── TestResources/                 # Test images (superman.jpg, test.jpg, grayscale.jpg,
+│                                      #   rotated-3.jpg, rotated-6.jpg, test-rgb.png,
+│                                      #   test-rgba.png, tiny.png)
 ├── Scripts/
-│   └── configure-project.rb           # Generates VIPSKit.xcodeproj
+│   ├── configure-project.rb           # Generates VIPSKit.xcodeproj
+│   └── generate-test-images.swift     # Test image generator using CoreGraphics/ImageIO
 ├── Frameworks/
 │   └── vips.xcframework/              # Pre-built static lib (gitignored)
 └── VIPSKit.xcodeproj/                 # Generated Xcode project
@@ -257,9 +260,8 @@ let cgImage = try image.cgImage
 let uiImage = UIImage(cgImage: cgImage)
 
 // Direct thumbnail to CGImage (minimal peak memory)
-if let cgImage = try VIPSImage.thumbnailCGImage(fromFile: path, width: 200, height: 200) {
-    let uiImage = UIImage(cgImage: cgImage)
-}
+let thumbCG = try VIPSImage.thumbnailCGImage(fromFile: path, width: 200, height: 200)
+let thumbUI = UIImage(cgImage: thumbCG)
 
 // Export
 let jpegData = try image.data(format: .jpeg, quality: 85)
@@ -282,8 +284,11 @@ let bgColor = try image.detectBackgroundColor()
 let diff = try image1.subtract(image2)
 
 // Metadata
-let orientation = image.getString(named: "exif-ifd0-Orientation")
-image.metadata["my-custom-key"] = "value"  // Subscript access via MetadataProxy
+let orient = image.orientation                       // EXIF orientation (1-8)
+let make = image.exifField("Make")                   // e.g., "Canon"
+let pages = image.pageCount                          // Multi-page count
+let icc = image.iccProfile                           // Raw ICC data
+image.metadata["my-custom-key"] = "value"            // Subscript access via MetadataProxy
 
 // Raw pixel access (via PixelBuffer struct)
 try image.withPixelData { buffer in
@@ -313,14 +318,20 @@ VIPSImage.shutdown()
 | `initialize()` | Initialize libvips (call once at app start) |
 | `shutdown()` | Cleanup libvips (optional, at app termination) |
 | `width`, `height`, `bands`, `hasAlpha` | Image dimensions and channels |
+| `loaderName` | Internal vips loader name (e.g., `"jpegload"`) |
+| `sourceFormat` | Detected source format enum |
 | `init(contentsOfFile:)` | Load image from file path |
+| `init(contentsOfFileSequential:)` | Load with sequential (streaming) access |
 | `init(data:)` | Load image from Data |
 | `init(buffer:width:height:bands:)` | Create from raw pixel buffer |
-| `thumbnail(fromFile:width:height:)` | Shrink-on-load thumbnail |
-| `thumbnail(fromFile:size:)` | Shrink-on-load thumbnail (CGSize) |
+| `thumbnail(fromFile:width:height:)` | Shrink-on-load thumbnail from file |
+| `thumbnail(fromFile:size:)` | Shrink-on-load thumbnail from file (CGSize) |
+| `thumbnail(fromData:width:height:)` | Shrink-on-load thumbnail from Data |
+| `thumbnail(fromData:size:)` | Shrink-on-load thumbnail from Data (CGSize) |
 | `thumbnailCGImage(fromFile:width:height:)` | Thumbnail direct to CGImage |
 | `thumbnailCGImage(fromFile:size:)` | Thumbnail direct to CGImage (CGSize) |
 | `write(toFile:)` | Save to file (format from extension) |
+| `write(toFile:format:quality:)` | Save to file with explicit format |
 | `data(format:quality:)` | Export to Data |
 | `cgImage` | Throwing computed property → CGImage |
 | `resizeToFit(width:height:)` | Resize maintaining aspect ratio |
@@ -362,12 +373,14 @@ VIPSImage.shutdown()
 | `detectBackgroundColor(stripWidth:)` | Detect background via trim margins or prominent edge color → VIPSColor |
 | `subtract(_:)` | Pixel-wise subtraction |
 | `absolute()` | Absolute value of pixels |
+| `tileRects(tileWidth:tileHeight:)` | Calculate tile grid rectangles |
 | `numberOfStrips(withHeight:)` | Count horizontal strips |
 | `strip(atIndex:height:)` | Extract horizontal strip |
 | `extractRegion(fromFile:x:y:width:height:)` | Extract region from file |
-| `cacheData(format:quality:lossless:)` | Export for caching |
-| `writeToCache(file:format:quality:lossless:)` | Write cache file |
-| `memoryUsage()` | Current tracked memory |
+| `extractRegion(fromData:x:y:width:height:)` | Extract region from Data |
+| `memoryUsage` | Current tracked memory (static property) |
+| `memoryHighWater` | Peak tracked memory (static property) |
+| `resetMemoryHighWater()` | Reset peak memory counter |
 | `blank(width:height:bands:)` | Create blank (black) image |
 | `blank(size:bands:)` | Create blank image (CGSize) |
 | `drawRect(x:y:width:height:color:fill:)` | Draw rectangle |
@@ -382,6 +395,24 @@ VIPSImage.shutdown()
 | `pixelValues(at:)` | Read pixel values (CGPoint) → VIPSColor |
 | `imageInfo(atPath:)` | Get image info without full decode |
 | `metadata` | MetadataProxy for subscript access |
+| `metadataFields` | All metadata field names |
+| `hasMetadata(named:)` | Check if field exists |
+| `getString(named:)` | Get string metadata |
+| `getInt(named:)` | Get integer metadata |
+| `getDouble(named:)` | Get double metadata |
+| `getBlob(named:)` | Get binary blob metadata (EXIF, XMP, ICC) |
+| `setString(named:value:)` | Set string metadata |
+| `setInt(named:value:)` | Set integer metadata |
+| `setDouble(named:value:)` | Set double metadata |
+| `removeMetadata(named:)` | Remove a metadata field |
+| `orientation` | EXIF orientation tag (1-8) |
+| `xResolution`, `yResolution` | Resolution in pixels/mm |
+| `pageCount` | Number of pages (multi-page images) |
+| `pageHeight` | Single page height (multi-page images) |
+| `exifData` | Raw EXIF data blob |
+| `xmpData` | Raw XMP metadata blob |
+| `iccProfile` | ICC color profile data |
+| `exifField(_:)` | Read parsed EXIF tag by name |
 
 ### VIPSImage.Cache
 
@@ -437,7 +468,7 @@ VIPSImage.shutdown()
 
 | Type | Values |
 |------|--------|
-| `VIPSImageFormat` | `.unknown`, `.jpeg`, `.png`, `.webP`, `.heif`, `.avif`, `.jxl`, `.gif` |
+| `VIPSImageFormat` | `.unknown`, `.jpeg`, `.png`, `.webP`, `.heif`, `.avif`, `.jxl`, `.gif`, `.tiff` (also has `fileExtension` property) |
 | `VIPSResizeKernel` | `.nearest`, `.linear`, `.cubic`, `.lanczos2`, `.lanczos3` |
 | `VIPSBlendMode` | `.over`, `.multiply`, `.screen`, `.overlay`, `.add`, `.darken`, `.lighten`, `.softLight`, `.hardLight`, `.difference`, `.exclusion` |
 | `VIPSInteresting` | `.none`, `.centre`, `.entropy`, `.attention`, `.low`, `.high` |
