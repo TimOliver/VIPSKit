@@ -608,6 +608,8 @@ VIPSImage is `@unchecked Sendable`. Safe to use from multiple threads with each 
 
 All async wrappers use the same `Task.detached` pattern to move work off the calling actor (critical for `@MainActor` callers). `VIPSImage` being `@unchecked Sendable` enables clean crossing of task boundaries. Naming uses past tense (`resize` → `resized`, `crop` → `cropped`). Methods already in past tense (`blurred`, `inverted`) get same-name async overloads differentiated by the `async` keyword. `init` → static factories (`loaded(fromFile:)`) since Swift doesn't support `async init`.
 
+Each async method carries the same comprehensive doc comment as its sync counterpart (description, parameter docs, return docs), plus a standard note: "The work is performed off the calling actor via `Task.detached`."
+
 ### Background Color Detection
 
 `detectBackgroundColor(stripWidth:)` uses a two-step approach:

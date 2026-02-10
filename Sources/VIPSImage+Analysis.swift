@@ -236,28 +236,52 @@ extension VIPSImage {
 
     // MARK: - Async
 
-    /// Asynchronously find the bounding box of non-background pixels.
+    /// Find the bounding box of non-background pixels by detecting content margins.
+    /// Useful for trimming whitespace or uniform borders from an image.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameters:
+    ///   - threshold: How different a pixel must be from the background to count as
+    ///     content (default is 10.0)
+    ///   - background: An explicit background color. If `nil`, the background is auto-detected.
+    /// - Returns: A rectangle describing the bounding box of the content area
     public func findTrim(threshold: Double = 10.0, background: VIPSColor? = nil) async throws -> CGRect {
         try await Task.detached {
             try self.findTrim(threshold: threshold, background: background)
         }.value
     }
 
-    /// Asynchronously compute basic statistics across all bands of the image.
+    /// Compute basic statistics across all bands of the image.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Returns: A ``VIPSImageStatistics`` value containing the min, max, mean, and standard deviation
     public func statistics() async throws -> VIPSImageStatistics {
         try await Task.detached {
             try self.statistics()
         }.value
     }
 
-    /// Asynchronously calculate the average color of the image.
+    /// Calculate the average color of the image as per-band mean values.
+    /// For an RGB image, this returns a 3-band color `[R, G, B]`. For RGBA, `[R, G, B, A]`.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Returns: A ``VIPSColor`` containing the mean value for each band
     public func averageColor() async throws -> VIPSColor {
         try await Task.detached {
             try self.averageColor()
         }.value
     }
 
-    /// Asynchronously detect the background color of the image.
+    /// Detect the background color of the image.
+    ///
+    /// Uses a two-step approach:
+    /// 1. Attempts ``findTrim(threshold:background:)`` to locate content margins.
+    ///    If margins exist, samples from those margin areas for an accurate background color.
+    /// 2. If no margins are found (content fills to all edges), identifies the most
+    ///    prominent color along the image edges by quantizing pixels into color buckets
+    ///    and selecting the most frequent one.
+    ///
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameter stripWidth: The width of the edge strip to sample in pixels (default is 10).
+    ///   Used in step 2 when no trim margins are found.
+    /// - Returns: A ``VIPSColor`` representing the detected background color
     public func detectedBackgroundColor(stripWidth: Int = 10) async throws -> VIPSColor {
         try await Task.detached {
             try self.detectBackgroundColor(stripWidth: stripWidth)

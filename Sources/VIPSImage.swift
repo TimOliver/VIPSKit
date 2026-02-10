@@ -186,7 +186,11 @@ public final class VIPSImage: @unchecked Sendable {
         return VIPSImage(pointer: out)
     }
 
-    /// Asynchronously copy the image pixels into a new contiguous memory block.
+    /// Copy the image pixels into a new contiguous memory block, breaking
+    /// any lazy evaluation chain. This allows source images to be freed
+    /// even if downstream images still exist.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Returns: A new image with all pixels evaluated and stored in memory
     public func copiedToMemory() async throws -> VIPSImage {
         try await Task.detached {
             try self.copiedToMemory()
