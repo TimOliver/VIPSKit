@@ -225,10 +225,6 @@ int cvips_jxlsave_lossless(VipsImage *in, const char *filename) {
     return vips_jxlsave(in, filename, "lossless", TRUE, NULL);
 }
 
-int cvips_gifsave(VipsImage *in, const char *filename) {
-    return vips_gifsave(in, filename, NULL);
-}
-
 // =============================================================================
 // Histogram
 // =============================================================================
@@ -310,7 +306,7 @@ int cvips_draw_circle(VipsImage *image, double *ink, int n, int cx, int cy, int 
 }
 
 int cvips_draw_flood(VipsImage *image, double *ink, int n, int x, int y) {
-    return vips_draw_flood(image, ink, n, x, y, NULL);
+    return vips_draw_flood(image, ink, n, x, y, "equal", TRUE, NULL);
 }
 
 // =============================================================================
@@ -361,6 +357,3 @@ int cvips_jxlsave_buffer_lossless(VipsImage *in, void **buf, size_t *len) {
     return vips_jxlsave_buffer(in, buf, len, "lossless", TRUE, NULL);
 }
 
-int cvips_gifsave_buffer(VipsImage *in, void **buf, size_t *len) {
-    return vips_gifsave_buffer(in, buf, len, NULL);
-}

@@ -25,7 +25,7 @@ VIPSKit is a pure Swift framework that wraps libvips for Apple platforms. The he
 - JPEG-XL (libjxl)
 - AVIF (decode-only via dav1d + libheif — no encoder)
 - HEIF (decode-only via libheif — no encoder)
-- GIF (built-in)
+- GIF (decode-only, built-in — no encoder)
 - TIFF (built-in)
 
 ## Architecture
@@ -247,13 +247,14 @@ let cannyEdges = try image.canny(sigma: 1.4)
 // Composite (CGPoint overload available)
 let watermarked = try base.composite(withOverlay: overlay, mode: .over, x: 10, y: 10)
 
-// Drawing
+// Drawing (mutates in-place, chainable)
 let canvas = try VIPSImage.blank(width: 200, height: 200)
-let withRect = try canvas.drawRect(x: 10, y: 10, width: 50, height: 50,
-                                    color: VIPSColor(red: 255, green: 0, blue: 0), fill: true)
-let withLine = try canvas.drawLine(from: CGPoint(x: 0, y: 0), to: CGPoint(x: 99, y: 99),
-                                    color: .white)
-let withCircle = try canvas.drawCircle(cx: 50, cy: 50, radius: 30, color: .black, fill: true)
+try canvas
+    .drawRect(x: 10, y: 10, width: 50, height: 50,
+              color: VIPSColor(red: 255, green: 0, blue: 0), fill: true)
+    .drawLine(from: CGPoint(x: 0, y: 0), to: CGPoint(x: 99, y: 99),
+              color: .white)
+    .drawCircle(cx: 50, cy: 50, radius: 30, color: .black, fill: true)
 
 // Thumbnail (shrink-on-load, most memory efficient)
 let thumb = try VIPSImage.thumbnail(fromFile: path, width: 200, height: 200)
@@ -370,9 +371,9 @@ let bgColor = try await image.detectedBackgroundColor()
 | `thumbnail(fromData:size:)` | Shrink-on-load thumbnail from Data (CGSize) |
 | `thumbnailCGImage(fromFile:width:height:)` | Thumbnail direct to CGImage |
 | `thumbnailCGImage(fromFile:size:)` | Thumbnail direct to CGImage (CGSize) |
-| `write(toFile:)` | Save to file (format from extension). Supported: JPEG, PNG, WebP, JXL, GIF, TIFF |
-| `write(toFile:format:quality:)` | Save to file with explicit format. HEIF/AVIF not supported (decode-only) |
-| `data(format:quality:)` | Export to Data. HEIF/AVIF not supported (decode-only) |
+| `write(toFile:)` | Save to file (format from extension). Supported: JPEG, PNG, WebP, JXL, TIFF |
+| `write(toFile:format:quality:)` | Save to file with explicit format. HEIF/AVIF/GIF not supported (decode-only) |
+| `data(format:quality:)` | Export to Data. HEIF/AVIF/GIF not supported (decode-only) |
 | `cgImage` | Throwing computed property → CGImage |
 | `resizeToFit(width:height:)` | Resize maintaining aspect ratio |
 | `resizeToFit(size:)` | Resize maintaining aspect ratio (CGSize) |
@@ -423,12 +424,12 @@ let bgColor = try await image.detectedBackgroundColor()
 | `resetMemoryHighWater()` | Reset peak memory counter |
 | `blank(width:height:bands:)` | Create blank (black) image |
 | `blank(size:bands:)` | Create blank image (CGSize) |
-| `drawRect(x:y:width:height:color:fill:)` | Draw rectangle |
-| `drawLine(from:to:color:)` | Draw line (CGPoint) |
-| `drawCircle(cx:cy:radius:color:fill:)` | Draw circle |
-| `drawCircle(center:radius:color:fill:)` | Draw circle (CGPoint) |
-| `floodFill(x:y:color:)` | Flood fill region |
-| `floodFill(at:color:)` | Flood fill region (CGPoint) |
+| `drawRect(x:y:width:height:color:fill:)` | Draw rectangle (mutates in-place, chainable) |
+| `drawLine(from:to:color:)` | Draw line (mutates in-place, chainable) |
+| `drawCircle(cx:cy:radius:color:fill:)` | Draw circle (mutates in-place, chainable) |
+| `drawCircle(center:radius:color:fill:)` | Draw circle CGPoint (mutates in-place, chainable) |
+| `floodFill(x:y:color:)` | Flood fill connected region (mutates in-place, chainable) |
+| `floodFill(at:color:)` | Flood fill CGPoint (mutates in-place, chainable) |
 | `gravity(direction:width:height:extend:)` | Embed with gravity |
 | `gravity(direction:size:extend:)` | Embed with gravity (CGSize) |
 | `pixelValues(atX:y:)` | Read pixel values at coordinates → VIPSColor |
@@ -468,9 +469,9 @@ Most I/O-bound and CPU-heavy methods have `async throws` overloads using `Task.d
 | `thumbnail(fromData:width:height:)` | Shrink-on-load thumbnail from Data |
 | `thumbnail(fromData:size:)` | Shrink-on-load thumbnail from Data (CGSize) |
 | `imageInfo(atPath:)` | Get image dimensions and format without full decode |
-| `write(toFile:)` | Save to file (format inferred from extension). Supported: JPEG, PNG, WebP, JXL, GIF, TIFF |
-| `write(toFile:format:quality:)` | Save to file with explicit format and quality. HEIF/AVIF not supported (decode-only) |
-| `encoded(format:quality:)` | Export to Data (async name for `data(format:quality:)`). HEIF/AVIF not supported (decode-only) |
+| `write(toFile:)` | Save to file (format inferred from extension). Supported: JPEG, PNG, WebP, JXL, TIFF |
+| `write(toFile:format:quality:)` | Save to file with explicit format and quality. HEIF/AVIF/GIF not supported (decode-only) |
+| `encoded(format:quality:)` | Export to Data (async name for `data(format:quality:)`). HEIF/AVIF/GIF not supported (decode-only) |
 | `makeCGImage()` | Create CGImage via direct pixel transfer (async name for `cgImage` property) |
 | `thumbnailCGImage(fromFile:width:height:)` | Shrink-on-load thumbnail direct to CGImage |
 | `thumbnailCGImage(fromFile:size:)` | Shrink-on-load thumbnail direct to CGImage (CGSize) |

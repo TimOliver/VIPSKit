@@ -95,7 +95,6 @@ int cvips_webpsave(VipsImage *in, const char *filename, int quality);
 int cvips_webpsave_lossless(VipsImage *in, const char *filename);
 int cvips_jxlsave(VipsImage *in, const char *filename, int quality);
 int cvips_jxlsave_lossless(VipsImage *in, const char *filename);
-int cvips_gifsave(VipsImage *in, const char *filename);
 
 // =============================================================================
 // Histogram
@@ -169,6 +168,5 @@ int cvips_webpsave_buffer(VipsImage *in, void **buf, size_t *len, int quality);
 int cvips_webpsave_buffer_lossless(VipsImage *in, void **buf, size_t *len);
 int cvips_jxlsave_buffer(VipsImage *in, void **buf, size_t *len, int quality);
 int cvips_jxlsave_buffer_lossless(VipsImage *in, void **buf, size_t *len);
-int cvips_gifsave_buffer(VipsImage *in, void **buf, size_t *len);
 
 #endif /* CVIPS_H */

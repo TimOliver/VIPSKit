@@ -70,15 +70,13 @@ final class VIPSImageSavingTests: VIPSImageTestCase {
         XCTAssertTrue(isCodestream || isContainer, "Data should be JXL codestream or container")
     }
 
-    func testDataGIF() throws {
-        let image = createTestImage(width: 100, height: 100)
-        let data = try image.data(format: .gif)
-        XCTAssertGreaterThan(data.count, 0)
-        // GIF magic: "GIF8"
-        XCTAssertEqual(data[0], 0x47) // 'G'
-        XCTAssertEqual(data[1], 0x49) // 'I'
-        XCTAssertEqual(data[2], 0x46) // 'F'
-        XCTAssertEqual(data[3], 0x38) // '8'
+    func testDataGIFThrowsUnsupported() {
+        let image = createTestImage(width: 50, height: 50)
+        XCTAssertThrowsError(try image.data(format: .gif)) { error in
+            XCTAssertTrue(error is VIPSError)
+            let vipsError = error as! VIPSError
+            XCTAssertTrue(vipsError.message.contains("not supported"))
+        }
     }
 
     func testDataTIFF() throws {
@@ -169,14 +167,6 @@ final class VIPSImageSavingTests: VIPSImageTestCase {
         XCTAssertEqual(loaded.sourceFormat, .jxl)
     }
 
-    func testRoundtripGIF() throws {
-        let source = createTestImage(width: 100, height: 100)
-        let data = try source.data(format: .gif)
-        let loaded = try VIPSImage(data: data)
-        XCTAssertEqual(loaded.width, 100)
-        XCTAssertEqual(loaded.height, 100)
-        XCTAssertEqual(loaded.sourceFormat, .gif)
-    }
 
     func testRoundtripTIFF() throws {
         let source = createTestImage(width: 100, height: 100)
@@ -253,15 +243,6 @@ final class VIPSImageSavingTests: VIPSImageTestCase {
         XCTAssertEqual(loaded.sourceFormat, .tiff)
     }
 
-    func testWriteToFileGIF() throws {
-        let image = createTestImage(width: 50, height: 50)
-        let path = NSTemporaryDirectory() + "vipskit_test_write.gif"
-        defer { try? FileManager.default.removeItem(atPath: path) }
-        try image.write(toFile: path)
-        XCTAssertTrue(FileManager.default.fileExists(atPath: path))
-        let loaded = try VIPSImage(contentsOfFile: path)
-        XCTAssertEqual(loaded.sourceFormat, .gif)
-    }
 
     // MARK: - write(toFile:format:quality:) — Explicit Format Per Format
 
@@ -314,13 +295,10 @@ final class VIPSImageSavingTests: VIPSImageTestCase {
         XCTAssertEqual(loaded.sourceFormat, .jxl)
     }
 
-    func testWriteToFileFormatGIF() throws {
+    func testWriteToFileFormatGIFThrowsUnsupported() {
         let image = createTestImage(width: 50, height: 50)
         let path = NSTemporaryDirectory() + "vipskit_test_fmt.gif"
-        defer { try? FileManager.default.removeItem(atPath: path) }
-        try image.write(toFile: path, format: .gif)
-        let loaded = try VIPSImage(contentsOfFile: path)
-        XCTAssertEqual(loaded.sourceFormat, .gif)
+        XCTAssertThrowsError(try image.write(toFile: path, format: .gif))
     }
 
     func testWriteToFileFormatTIFF() throws {

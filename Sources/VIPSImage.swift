@@ -26,7 +26,10 @@ import AppKit
 public final class VIPSImage: @unchecked Sendable {
 
     /// The underlying libvips image pointer.
-    internal let pointer: UnsafeMutablePointer<VipsImage>
+    internal private(set) var pointer: UnsafeMutablePointer<VipsImage>
+
+    /// Whether this image's pixels are in a writable memory buffer.
+    private var isWritable = false
 
     // MARK: - Lifecycle
 
@@ -47,6 +50,18 @@ public final class VIPSImage: @unchecked Sendable {
 
     deinit {
         g_object_unref(gpointer(pointer))
+    }
+
+    /// Ensure the image pixels are in a writable memory buffer.
+    /// Called automatically before draw operations.
+    internal func ensureWritable() throws {
+        guard !isWritable else { return }
+        guard let copy = vips_image_copy_memory(pointer) else {
+            throw VIPSError.fromVips()
+        }
+        g_object_unref(gpointer(pointer))
+        pointer = copy
+        isWritable = true
     }
 
     // MARK: - Initialization

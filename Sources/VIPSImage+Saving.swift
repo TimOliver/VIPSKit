@@ -7,7 +7,7 @@ extension VIPSImage {
     // MARK: - File Saving
 
     /// Save the image to a file, inferring the format from the file extension.
-    /// Supported extensions include `.jpg`, `.png`, `.webp`, `.jxl`, `.gif`, and `.tif`.
+    /// Supported extensions include `.jpg`, `.png`, `.webp`, `.jxl`, and `.tif`.
     /// - Parameter path: The destination file path (the extension determines the format)
     public func write(toFile path: String) throws {
         guard cvips_write_to_file(pointer, path) == 0 else {
@@ -16,7 +16,7 @@ extension VIPSImage {
     }
 
     /// Save the image to a file with an explicit format and quality setting.
-    /// HEIF and AVIF encoding are not supported (decode-only); attempting to save
+    /// HEIF, AVIF, and GIF encoding are not supported (decode-only); attempting to save
     /// in those formats will throw an error.
     /// - Parameters:
     ///   - path: The destination file path
@@ -29,10 +29,10 @@ extension VIPSImage {
         case .png:     result = cvips_pngsave(pointer, path)
         case .webP:    result = cvips_webpsave(pointer, path, Int32(quality))
         case .jxl:     result = cvips_jxlsave(pointer, path, Int32(quality))
-        case .gif:     result = cvips_gifsave(pointer, path)
         case .tiff:    result = cvips_tiffsave(pointer, path)
         case .heif:    throw VIPSError("HEIF encoding is not supported (decode-only)")
         case .avif:    throw VIPSError("AVIF encoding is not supported (decode-only)")
+        case .gif:     throw VIPSError("GIF encoding is not supported (decode-only)")
         case .unknown: throw VIPSError("Unknown format for saving")
         }
         guard result == 0 else { throw VIPSError.fromVips() }
@@ -57,10 +57,10 @@ extension VIPSImage {
         case .png:     result = cvips_pngsave_buffer(pointer, &buffer, &length)
         case .webP:    result = cvips_webpsave_buffer(pointer, &buffer, &length, Int32(quality))
         case .jxl:     result = cvips_jxlsave_buffer(pointer, &buffer, &length, Int32(quality))
-        case .gif:     result = cvips_gifsave_buffer(pointer, &buffer, &length)
         case .tiff:    result = cvips_tiffsave_buffer(pointer, &buffer, &length)
         case .heif:    throw VIPSError("HEIF encoding is not supported (decode-only)")
         case .avif:    throw VIPSError("AVIF encoding is not supported (decode-only)")
+        case .gif:     throw VIPSError("GIF encoding is not supported (decode-only)")
         case .unknown: throw VIPSError("Unknown format for export")
         }
 
@@ -72,7 +72,7 @@ extension VIPSImage {
     // MARK: - Async
 
     /// Save the image to a file, inferring the format from the file extension.
-    /// Supported extensions include `.jpg`, `.png`, `.webp`, `.jxl`, `.gif`, and `.tif`.
+    /// Supported extensions include `.jpg`, `.png`, `.webp`, `.jxl`, and `.tif`.
     /// The work is performed off the calling actor via `Task.detached`.
     /// - Parameter path: The destination file path (the extension determines the format)
     public func write(toFile path: String) async throws {
