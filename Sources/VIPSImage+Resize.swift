@@ -63,35 +63,57 @@ extension VIPSImage {
 
     // MARK: - Async
 
-    /// Asynchronously resize the image to fit within the given dimensions while maintaining aspect ratio.
+    /// Resize the image to fit within the given dimensions while maintaining aspect ratio.
+    /// Uses high-quality shrink-on-load when possible for optimal performance.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameters:
+    ///   - width: The maximum width of the result
+    ///   - height: The maximum height of the result
+    /// - Returns: A new image that fits within the specified dimensions
     public func resizedToFit(width: Int, height: Int) async throws -> VIPSImage {
         try await Task.detached {
             try self.resizeToFit(width: width, height: height)
         }.value
     }
 
-    /// Asynchronously resize the image to fit within the given size while maintaining aspect ratio.
+    /// Resize the image to fit within the given size while maintaining aspect ratio.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameter size: The maximum size of the result
+    /// - Returns: A new image that fits within the specified size
     public func resizedToFit(size: CGSize) async throws -> VIPSImage {
         try await Task.detached {
             try self.resizeToFit(size: size)
         }.value
     }
 
-    /// Asynchronously resize the image by a scale factor.
+    /// Resize the image by a scale factor using the specified interpolation kernel.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameters:
+    ///   - scale: The scale factor to apply (e.g., 0.5 for half size, 2.0 for double size)
+    ///   - kernel: The interpolation kernel to use (default is ``VIPSResizeKernel/lanczos3``)
+    /// - Returns: A new image scaled by the given factor
     public func resized(scale: Double, kernel: VIPSResizeKernel = .lanczos3) async throws -> VIPSImage {
         try await Task.detached {
             try self.resize(scale: scale, kernel: kernel)
         }.value
     }
 
-    /// Asynchronously resize the image to exact dimensions.
+    /// Resize the image to exact dimensions, potentially changing the aspect ratio.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameters:
+    ///   - width: The target width in pixels
+    ///   - height: The target height in pixels
+    /// - Returns: A new image with the exact specified dimensions
     public func resized(toWidth width: Int, height: Int) async throws -> VIPSImage {
         try await Task.detached {
             try self.resize(toWidth: width, height: height)
         }.value
     }
 
-    /// Asynchronously resize the image to exact dimensions.
+    /// Resize the image to exact dimensions, potentially changing the aspect ratio.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameter size: The target size
+    /// - Returns: A new image with the exact specified dimensions
     public func resized(to size: CGSize) async throws -> VIPSImage {
         try await Task.detached {
             try self.resize(to: size)

@@ -67,21 +67,34 @@ extension VIPSImage {
 
     // MARK: - Async
 
-    /// Asynchronously save the image to a file, inferring the format from the file extension.
+    /// Save the image to a file, inferring the format from the file extension.
+    /// Supported extensions include `.jpg`, `.png`, `.webp`, `.heic`, `.avif`, `.jxl`, and `.gif`.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameter path: The destination file path (the extension determines the format)
     public func write(toFile path: String) async throws {
         try await Task.detached {
             try self.write(toFile: path)
         }.value
     }
 
-    /// Asynchronously save the image to a file with an explicit format and quality setting.
+    /// Save the image to a file with an explicit format and quality setting.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameters:
+    ///   - path: The destination file path
+    ///   - format: The image format to encode as
+    ///   - quality: The encoding quality (1-100). Ignored for PNG and GIF formats. (Default is 85)
     public func write(toFile path: String, format: VIPSImageFormat, quality: Int = 85) async throws {
         try await Task.detached {
             try self.write(toFile: path, format: format, quality: quality)
         }.value
     }
 
-    /// Asynchronously export the image as encoded data in the specified format.
+    /// Export the image as encoded data in the specified format.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameters:
+    ///   - format: The image format to encode as
+    ///   - quality: The encoding quality (1-100). Ignored for PNG and GIF formats. (Default is 85)
+    /// - Returns: The encoded image data
     public func encoded(format: VIPSImageFormat, quality: Int = 85) async throws -> Data {
         try await Task.detached {
             try self.data(format: format, quality: quality)

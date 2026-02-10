@@ -106,28 +106,53 @@ extension VIPSImage {
 
     // MARK: - Async
 
-    /// Asynchronously crop a rectangular region from the image.
+    /// Crop a rectangular region from the image.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameters:
+    ///   - x: The left edge of the crop area in pixels
+    ///   - y: The top edge of the crop area in pixels
+    ///   - width: The width of the crop area in pixels
+    ///   - height: The height of the crop area in pixels
+    /// - Returns: A new image containing only the cropped region
     public func cropped(x: Int, y: Int, width: Int, height: Int) async throws -> VIPSImage {
         try await Task.detached {
             try self.crop(x: x, y: y, width: width, height: height)
         }.value
     }
 
-    /// Asynchronously crop a rectangular region from the image.
+    /// Crop a rectangular region from the image.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameter rect: The crop rectangle
+    /// - Returns: A new image containing only the cropped region
     public func cropped(_ rect: CGRect) async throws -> VIPSImage {
         try await Task.detached {
             try self.crop(rect)
         }.value
     }
 
-    /// Asynchronously perform a content-aware smart crop to the specified dimensions.
+    /// Perform a content-aware smart crop to the specified dimensions.
+    /// Unlike a regular crop, this analyzes the image to keep the most
+    /// visually important region.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameters:
+    ///   - width: The target width in pixels
+    ///   - height: The target height in pixels
+    ///   - interesting: The strategy for selecting the interesting region
+    ///     (default is ``VIPSInteresting/attention``)
+    /// - Returns: A new image cropped to the target dimensions around the most interesting region
     public func smartCropped(toWidth width: Int, height: Int, interesting: VIPSInteresting = .attention) async throws -> VIPSImage {
         try await Task.detached {
             try self.smartCrop(toWidth: width, height: height, interesting: interesting)
         }.value
     }
 
-    /// Asynchronously perform a content-aware smart crop to the specified size.
+    /// Perform a content-aware smart crop to the specified size.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameters:
+    ///   - size: The target size
+    ///   - interesting: The strategy for selecting the interesting region
+    ///     (default is ``VIPSInteresting/attention``)
+    /// - Returns: A new image cropped to the target dimensions around the most interesting region
     public func smartCropped(to size: CGSize, interesting: VIPSInteresting = .attention) async throws -> VIPSImage {
         try await Task.detached {
             try self.smartCrop(to: size, interesting: interesting)

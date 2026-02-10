@@ -201,21 +201,39 @@ extension VIPSImage {
 
     // MARK: - Async
 
-    /// Asynchronously create a `CGImage` from this image.
+    /// Create a `CGImage` from this image by transferring pixel data directly
+    /// to CoreGraphics. This avoids the encode/decode cycle of converting
+    /// through an intermediate format like JPEG or PNG.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Returns: A `CGImage` representation of this image
     public func makeCGImage() async throws -> CGImage {
         try await Task.detached {
             try self.cgImage
         }.value
     }
 
-    /// Asynchronously decode an image file directly to a thumbnail-sized `CGImage`.
+    /// Decode an image file directly to a thumbnail-sized `CGImage` in one step.
+    /// This is the most memory-efficient path for generating display-ready thumbnails,
+    /// as the source image is decoded at a reduced resolution and the decode buffers
+    /// are released immediately after the `CGImage` is created.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameters:
+    ///   - path: The file path of the source image
+    ///   - width: The maximum width of the thumbnail
+    ///   - height: The maximum height of the thumbnail
+    /// - Returns: A `CGImage` thumbnail that fits within the specified dimensions
     public static func thumbnailCGImage(fromFile path: String, width: Int, height: Int) async throws -> CGImage {
         try await Task.detached {
             try Self.thumbnailCGImage(fromFile: path, width: width, height: height)
         }.value
     }
 
-    /// Asynchronously decode an image file directly to a thumbnail-sized `CGImage`.
+    /// Decode an image file directly to a thumbnail-sized `CGImage` in one step.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameters:
+    ///   - path: The file path of the source image
+    ///   - size: The maximum size of the thumbnail
+    /// - Returns: A `CGImage` thumbnail that fits within the specified size
     public static func thumbnailCGImage(fromFile path: String, size: CGSize) async throws -> CGImage {
         try await Task.detached {
             try Self.thumbnailCGImage(fromFile: path, size: size)
