@@ -23,8 +23,8 @@ VIPSKit is a pure Swift framework that wraps libvips for Apple platforms. The he
 - PNG (libpng)
 - WebP (libwebp)
 - JPEG-XL (libjxl)
-- AVIF (decode-only via dav1d + libheif)
-- HEIF (libheif)
+- AVIF (decode-only via dav1d + libheif — no encoder)
+- HEIF (decode-only via libheif — no encoder)
 - GIF (built-in)
 - TIFF (built-in)
 
@@ -370,9 +370,9 @@ let bgColor = try await image.detectedBackgroundColor()
 | `thumbnail(fromData:size:)` | Shrink-on-load thumbnail from Data (CGSize) |
 | `thumbnailCGImage(fromFile:width:height:)` | Thumbnail direct to CGImage |
 | `thumbnailCGImage(fromFile:size:)` | Thumbnail direct to CGImage (CGSize) |
-| `write(toFile:)` | Save to file (format from extension) |
-| `write(toFile:format:quality:)` | Save to file with explicit format |
-| `data(format:quality:)` | Export to Data |
+| `write(toFile:)` | Save to file (format from extension). Supported: JPEG, PNG, WebP, JXL, GIF, TIFF |
+| `write(toFile:format:quality:)` | Save to file with explicit format. HEIF/AVIF not supported (decode-only) |
+| `data(format:quality:)` | Export to Data. HEIF/AVIF not supported (decode-only) |
 | `cgImage` | Throwing computed property → CGImage |
 | `resizeToFit(width:height:)` | Resize maintaining aspect ratio |
 | `resizeToFit(size:)` | Resize maintaining aspect ratio (CGSize) |
@@ -468,9 +468,9 @@ Most I/O-bound and CPU-heavy methods have `async throws` overloads using `Task.d
 | `thumbnail(fromData:width:height:)` | Shrink-on-load thumbnail from Data |
 | `thumbnail(fromData:size:)` | Shrink-on-load thumbnail from Data (CGSize) |
 | `imageInfo(atPath:)` | Get image dimensions and format without full decode |
-| `write(toFile:)` | Save to file (format inferred from extension) |
-| `write(toFile:format:quality:)` | Save to file with explicit format and quality |
-| `encoded(format:quality:)` | Export to Data (async name for `data(format:quality:)`) |
+| `write(toFile:)` | Save to file (format inferred from extension). Supported: JPEG, PNG, WebP, JXL, GIF, TIFF |
+| `write(toFile:format:quality:)` | Save to file with explicit format and quality. HEIF/AVIF not supported (decode-only) |
+| `encoded(format:quality:)` | Export to Data (async name for `data(format:quality:)`). HEIF/AVIF not supported (decode-only) |
 | `makeCGImage()` | Create CGImage via direct pixel transfer (async name for `cgImage` property) |
 | `thumbnailCGImage(fromFile:width:height:)` | Shrink-on-load thumbnail direct to CGImage |
 | `thumbnailCGImage(fromFile:size:)` | Shrink-on-load thumbnail direct to CGImage (CGSize) |

@@ -40,26 +40,22 @@ final class VIPSImageSavingTests: VIPSImageTestCase {
         XCTAssertEqual(data[11], 0x50) // 'P'
     }
 
-    func testDataHEIF() throws {
-        let image = createTestImage(width: 100, height: 100)
-        let data = try image.data(format: .heif, quality: 80)
-        XCTAssertGreaterThan(data.count, 0)
-        // HEIF/AVIF ISOBMFF: "ftyp" at offset 4
-        XCTAssertEqual(data[4], 0x66) // 'f'
-        XCTAssertEqual(data[5], 0x74) // 't'
-        XCTAssertEqual(data[6], 0x79) // 'y'
-        XCTAssertEqual(data[7], 0x70) // 'p'
+    func testDataHEIFThrowsUnsupported() {
+        let image = createTestImage(width: 50, height: 50)
+        XCTAssertThrowsError(try image.data(format: .heif)) { error in
+            XCTAssertTrue(error is VIPSError)
+            let vipsError = error as! VIPSError
+            XCTAssertTrue(vipsError.message.contains("not supported"))
+        }
     }
 
-    func testDataAVIF() throws {
-        let image = createTestImage(width: 100, height: 100)
-        let data = try image.data(format: .avif, quality: 80)
-        XCTAssertGreaterThan(data.count, 0)
-        // AVIF uses ISOBMFF container: "ftyp" at offset 4
-        XCTAssertEqual(data[4], 0x66) // 'f'
-        XCTAssertEqual(data[5], 0x74) // 't'
-        XCTAssertEqual(data[6], 0x79) // 'y'
-        XCTAssertEqual(data[7], 0x70) // 'p'
+    func testDataAVIFThrowsUnsupported() {
+        let image = createTestImage(width: 50, height: 50)
+        XCTAssertThrowsError(try image.data(format: .avif)) { error in
+            XCTAssertTrue(error is VIPSError)
+            let vipsError = error as! VIPSError
+            XCTAssertTrue(vipsError.message.contains("not supported"))
+        }
     }
 
     func testDataJXL() throws {
@@ -120,20 +116,6 @@ final class VIPSImageSavingTests: VIPSImageTestCase {
         XCTAssertLessThan(lowQ.count, highQ.count)
     }
 
-    func testDataHEIFQualityAffectsSize() throws {
-        let image = createTestImage(width: 100, height: 100)
-        let lowQ = try image.data(format: .heif, quality: 10)
-        let highQ = try image.data(format: .heif, quality: 95)
-        XCTAssertLessThan(lowQ.count, highQ.count)
-    }
-
-    func testDataAVIFQualityAffectsSize() throws {
-        let image = createTestImage(width: 100, height: 100)
-        let lowQ = try image.data(format: .avif, quality: 10)
-        let highQ = try image.data(format: .avif, quality: 95)
-        XCTAssertLessThan(lowQ.count, highQ.count)
-    }
-
     func testDataJXLQualityAffectsSize() throws {
         let image = createTestImage(width: 100, height: 100)
         let lowQ = try image.data(format: .jxl, quality: 10)
@@ -176,25 +158,6 @@ final class VIPSImageSavingTests: VIPSImageTestCase {
         XCTAssertEqual(loaded.width, 100)
         XCTAssertEqual(loaded.height, 100)
         XCTAssertEqual(loaded.sourceFormat, .webP)
-    }
-
-    func testRoundtripHEIF() throws {
-        let source = createTestImage(width: 100, height: 100)
-        let data = try source.data(format: .heif, quality: 90)
-        let loaded = try VIPSImage(data: data)
-        XCTAssertEqual(loaded.width, 100)
-        XCTAssertEqual(loaded.height, 100)
-        XCTAssertEqual(loaded.sourceFormat, .heif)
-    }
-
-    func testRoundtripAVIF() throws {
-        let source = createTestImage(width: 100, height: 100)
-        let data = try source.data(format: .avif, quality: 90)
-        let loaded = try VIPSImage(data: data)
-        XCTAssertEqual(loaded.width, 100)
-        XCTAssertEqual(loaded.height, 100)
-        // AVIF is loaded by heifload, sourceFormat detects "av1" compression
-        XCTAssertEqual(loaded.sourceFormat, .avif)
     }
 
     func testRoundtripJXL() throws {
@@ -330,22 +293,16 @@ final class VIPSImageSavingTests: VIPSImageTestCase {
         XCTAssertEqual(loaded.sourceFormat, .webP)
     }
 
-    func testWriteToFileFormatHEIF() throws {
+    func testWriteToFileFormatHEIFThrowsUnsupported() {
         let image = createTestImage(width: 50, height: 50)
         let path = NSTemporaryDirectory() + "vipskit_test_fmt.heic"
-        defer { try? FileManager.default.removeItem(atPath: path) }
-        try image.write(toFile: path, format: .heif, quality: 80)
-        let loaded = try VIPSImage(contentsOfFile: path)
-        XCTAssertEqual(loaded.sourceFormat, .heif)
+        XCTAssertThrowsError(try image.write(toFile: path, format: .heif))
     }
 
-    func testWriteToFileFormatAVIF() throws {
+    func testWriteToFileFormatAVIFThrowsUnsupported() {
         let image = createTestImage(width: 50, height: 50)
         let path = NSTemporaryDirectory() + "vipskit_test_fmt.avif"
-        defer { try? FileManager.default.removeItem(atPath: path) }
-        try image.write(toFile: path, format: .avif, quality: 80)
-        let loaded = try VIPSImage(contentsOfFile: path)
-        XCTAssertEqual(loaded.sourceFormat, .avif)
+        XCTAssertThrowsError(try image.write(toFile: path, format: .avif))
     }
 
     func testWriteToFileFormatJXL() throws {
@@ -482,22 +439,6 @@ final class VIPSImageSavingTests: VIPSImageTestCase {
         let loaded = try VIPSImage(data: data)
         XCTAssertTrue(loaded.hasAlpha)
         XCTAssertEqual(loaded.bands, 4)
-    }
-
-    func testDataHEIFPreservesAlpha() throws {
-        let source = createTestImage(width: 50, height: 50, bands: 4)
-        XCTAssertTrue(source.hasAlpha)
-        let data = try source.data(format: .heif, quality: 90)
-        let loaded = try VIPSImage(data: data)
-        XCTAssertTrue(loaded.hasAlpha)
-    }
-
-    func testDataAVIFPreservesAlpha() throws {
-        let source = createTestImage(width: 50, height: 50, bands: 4)
-        XCTAssertTrue(source.hasAlpha)
-        let data = try source.data(format: .avif, quality: 90)
-        let loaded = try VIPSImage(data: data)
-        XCTAssertTrue(loaded.hasAlpha)
     }
 
     func testDataJXLPreservesAlpha() throws {

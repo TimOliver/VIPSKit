@@ -217,14 +217,6 @@ int cvips_webpsave_lossless(VipsImage *in, const char *filename) {
     return vips_webpsave(in, filename, "lossless", TRUE, NULL);
 }
 
-int cvips_heifsave(VipsImage *in, const char *filename, int quality) {
-    return vips_heifsave(in, filename, "Q", quality, NULL);
-}
-
-int cvips_avifsave(VipsImage *in, const char *filename, int quality) {
-    return vips_heifsave(in, filename, "Q", quality, "compression", VIPS_FOREIGN_HEIF_COMPRESSION_AV1, NULL);
-}
-
 int cvips_jxlsave(VipsImage *in, const char *filename, int quality) {
     return vips_jxlsave(in, filename, "Q", quality, NULL);
 }
@@ -359,14 +351,6 @@ int cvips_webpsave_buffer(VipsImage *in, void **buf, size_t *len, int quality) {
 
 int cvips_webpsave_buffer_lossless(VipsImage *in, void **buf, size_t *len) {
     return vips_webpsave_buffer(in, buf, len, "lossless", TRUE, NULL);
-}
-
-int cvips_heifsave_buffer(VipsImage *in, void **buf, size_t *len, int quality) {
-    return vips_heifsave_buffer(in, buf, len, "Q", quality, NULL);
-}
-
-int cvips_avifsave_buffer(VipsImage *in, void **buf, size_t *len, int quality) {
-    return vips_heifsave_buffer(in, buf, len, "Q", quality, "compression", VIPS_FOREIGN_HEIF_COMPRESSION_AV1, NULL);
 }
 
 int cvips_jxlsave_buffer(VipsImage *in, void **buf, size_t *len, int quality) {
