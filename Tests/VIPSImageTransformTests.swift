@@ -169,4 +169,34 @@ final class VIPSImageTransformTests: VIPSImageTestCase {
         XCTAssertEqual(cropped.width, 100)
         XCTAssertEqual(cropped.height, 100)
     }
+
+    // MARK: - Async
+
+    func testAsyncCropped() async throws {
+        let image = createTestImage(width: 200, height: 200)
+        let cropped = try await image.cropped(x: 50, y: 50, width: 100, height: 100)
+        XCTAssertEqual(cropped.width, 100)
+        XCTAssertEqual(cropped.height, 100)
+    }
+
+    func testAsyncCroppedCGRect() async throws {
+        let image = createTestImage(width: 200, height: 200)
+        let cropped = try await image.cropped(CGRect(x: 0, y: 0, width: 50, height: 50))
+        XCTAssertEqual(cropped.width, 50)
+        XCTAssertEqual(cropped.height, 50)
+    }
+
+    func testAsyncSmartCropped() async throws {
+        let image = createTestImage(width: 200, height: 200)
+        let cropped = try await image.smartCropped(toWidth: 100, height: 100, interesting: .centre)
+        XCTAssertEqual(cropped.width, 100)
+        XCTAssertEqual(cropped.height, 100)
+    }
+
+    func testAsyncSmartCroppedCGSize() async throws {
+        let image = createTestImage(width: 200, height: 200)
+        let cropped = try await image.smartCropped(to: CGSize(width: 100, height: 100), interesting: .centre)
+        XCTAssertEqual(cropped.width, 100)
+        XCTAssertEqual(cropped.height, 100)
+    }
 }

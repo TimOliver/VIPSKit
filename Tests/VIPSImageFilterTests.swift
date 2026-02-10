@@ -60,4 +60,33 @@ final class VIPSImageFilterTests: VIPSImageTestCase {
         let sharpened = try blurred.sharpened(sigma: 1.0)
         XCTAssertEqual(sharpened.width, 100)
     }
+
+    // MARK: - Async
+
+    func testAsyncBlurred() async throws {
+        let image = createTestImage(width: 100, height: 100)
+        let blurred = try await image.blurred(sigma: 2.0)
+        XCTAssertEqual(blurred.width, 100)
+        XCTAssertEqual(blurred.height, 100)
+    }
+
+    func testAsyncSharpened() async throws {
+        let image = createTestImage(width: 100, height: 100)
+        let sharpened = try await image.sharpened(sigma: 1.0)
+        XCTAssertEqual(sharpened.width, 100)
+    }
+
+    func testAsyncSobel() async throws {
+        let image = createTestImage(width: 100, height: 100)
+        let edges = try await image.sobel()
+        XCTAssertEqual(edges.width, 100)
+        XCTAssertEqual(edges.height, 100)
+    }
+
+    func testAsyncCanny() async throws {
+        let image = createTestImage(width: 100, height: 100)
+        let edges = try await image.canny(sigma: 1.4)
+        XCTAssertEqual(edges.width, 100)
+        XCTAssertEqual(edges.height, 100)
+    }
 }

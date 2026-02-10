@@ -209,4 +209,31 @@ final class VIPSImageSavingTests: VIPSImageTestCase {
         XCTAssertGreaterThan(pngData.count, 0)
         XCTAssertGreaterThan(webpData.count, 0)
     }
+
+    // MARK: - Async
+
+    func testAsyncWriteToFile() async throws {
+        let image = createTestImage(width: 100, height: 100)
+        let path = NSTemporaryDirectory() + "test_async_save.jpg"
+        try await image.write(toFile: path)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: path))
+        try? FileManager.default.removeItem(atPath: path)
+    }
+
+    func testAsyncWriteToFileWithFormat() async throws {
+        let image = createTestImage(width: 100, height: 100)
+        let path = NSTemporaryDirectory() + "test_async_save_explicit.png"
+        try await image.write(toFile: path, format: .png)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: path))
+        try? FileManager.default.removeItem(atPath: path)
+    }
+
+    func testAsyncEncoded() async throws {
+        let image = createTestImage(width: 100, height: 100)
+        let data = try await image.encoded(format: .jpeg, quality: 85)
+        XCTAssertGreaterThan(data.count, 0)
+        // Check JPEG magic bytes
+        XCTAssertEqual(data[0], 0xFF)
+        XCTAssertEqual(data[1], 0xD8)
+    }
 }

@@ -78,4 +78,29 @@ final class VIPSImageTilingTests: VIPSImageTestCase {
             XCTAssertGreaterThan(strip.height, 0)
         }
     }
+
+    // MARK: - Async
+
+    func testAsyncExtractedRegionFromFile() async throws {
+        guard let path = pathForTestResource("superman.jpg") else {
+            XCTFail("Test resource not found")
+            return
+        }
+        let info = try await VIPSImage.imageInfo(atPath: path)
+        let regionW = min(100, info.width)
+        let regionH = min(100, info.height)
+        let region = try await VIPSImage.extractedRegion(fromFile: path, x: 0, y: 0,
+                                                          width: regionW, height: regionH)
+        XCTAssertEqual(region.width, regionW)
+        XCTAssertEqual(region.height, regionH)
+    }
+
+    func testAsyncExtractedRegionFromData() async throws {
+        let source = createTestImage(width: 200, height: 200)
+        let data = try source.data(format: .png)
+        let region = try await VIPSImage.extractedRegion(fromData: data, x: 50, y: 50,
+                                                          width: 100, height: 100)
+        XCTAssertEqual(region.width, 100)
+        XCTAssertEqual(region.height, 100)
+    }
 }

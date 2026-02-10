@@ -453,53 +453,57 @@ let bgColor = try await image.detectedBackgroundColor()
 
 #### Async Variants
 
-Most I/O-bound and CPU-heavy methods have `async throws` overloads using `Task.detached`. Naming convention: past tense for renamed variants, same name for already past-tense methods.
+Most I/O-bound and CPU-heavy methods have `async throws` overloads using `Task.detached` to move work off the calling actor. Naming convention: past tense for renamed variants, same name for already past-tense methods.
 
-| Async Method | Sync Equivalent |
+| Method/Property | Description |
 |--------|-------------|
-| `loaded(fromFile:)` | `init(contentsOfFile:)` |
-| `loaded(fromFileSequential:)` | `init(contentsOfFileSequential:)` |
-| `loaded(data:)` | `init(data:)` |
-| `thumbnail(fromFile:…)` | `thumbnail(fromFile:…)` |
-| `thumbnail(fromData:…)` | `thumbnail(fromData:…)` |
-| `imageInfo(atPath:)` | `imageInfo(atPath:)` |
-| `write(toFile:…)` | `write(toFile:…)` |
-| `encoded(format:quality:)` | `data(format:quality:)` |
-| `makeCGImage()` | `cgImage` property |
-| `thumbnailCGImage(fromFile:…)` | `thumbnailCGImage(fromFile:…)` |
-| `resizedToFit(width:height:)` | `resizeToFit(width:height:)` |
-| `resizedToFit(size:)` | `resizeToFit(size:)` |
-| `resized(scale:kernel:)` | `resize(scale:kernel:)` |
-| `resized(toWidth:height:)` | `resize(toWidth:height:)` |
-| `resized(to:)` | `resize(to:)` |
-| `cropped(x:y:width:height:)` | `crop(x:y:width:height:)` |
-| `cropped(_:)` | `crop(_:)` |
-| `smartCropped(toWidth:height:interesting:)` | `smartCrop(toWidth:height:interesting:)` |
-| `smartCropped(to:interesting:)` | `smartCrop(to:interesting:)` |
-| `rotated(byAngle:)` | `rotate(byAngle:)` |
-| `grayscaled()` | `grayscaled()` |
-| `flattened(background:)` | `flatten(background:)` |
-| `inverted()` | `inverted()` |
-| `adjustedBrightness(_:)` | `adjustBrightness(_:)` |
-| `adjustedContrast(_:)` | `adjustContrast(_:)` |
-| `adjustedSaturation(_:)` | `adjustSaturation(_:)` |
-| `adjustedGamma(_:)` | `adjustGamma(_:)` |
-| `adjusted(brightness:contrast:saturation:)` | `adjust(brightness:contrast:saturation:)` |
-| `blurred(sigma:)` | `blurred(sigma:)` |
-| `sharpened(sigma:)` | `sharpened(sigma:)` |
-| `sobel()` | `sobel()` |
-| `canny(sigma:)` | `canny(sigma:)` |
-| `composited(withOverlay:mode:x:y:)` | `composite(withOverlay:mode:x:y:)` |
-| `composited(withOverlay:mode:at:)` | `composite(withOverlay:mode:at:)` |
-| `composited(withOverlay:mode:)` | `composite(withOverlay:mode:)` |
-| `findTrim(threshold:background:)` | `findTrim(threshold:background:)` |
-| `statistics()` | `statistics()` |
-| `averageColor()` | `averageColor()` |
-| `detectedBackgroundColor(stripWidth:)` | `detectBackgroundColor(stripWidth:)` |
-| `histogramEqualized()` | `histogramEqualized()` |
-| `extractedRegion(fromFile:…)` | `extractRegion(fromFile:…)` |
-| `extractedRegion(fromData:…)` | `extractRegion(fromData:…)` |
-| `copiedToMemory()` | `copiedToMemory()` |
+| `loaded(fromFile:)` | Load image from file path (static factory for `init(contentsOfFile:)`) |
+| `loaded(fromFileSequential:)` | Load with sequential (streaming) access (static factory for `init(contentsOfFileSequential:)`) |
+| `loaded(data:)` | Load image from Data (static factory for `init(data:)`) |
+| `thumbnail(fromFile:width:height:)` | Shrink-on-load thumbnail from file |
+| `thumbnail(fromFile:size:)` | Shrink-on-load thumbnail from file (CGSize) |
+| `thumbnail(fromData:width:height:)` | Shrink-on-load thumbnail from Data |
+| `thumbnail(fromData:size:)` | Shrink-on-load thumbnail from Data (CGSize) |
+| `imageInfo(atPath:)` | Get image dimensions and format without full decode |
+| `write(toFile:)` | Save to file (format inferred from extension) |
+| `write(toFile:format:quality:)` | Save to file with explicit format and quality |
+| `encoded(format:quality:)` | Export to Data (async name for `data(format:quality:)`) |
+| `makeCGImage()` | Create CGImage via direct pixel transfer (async name for `cgImage` property) |
+| `thumbnailCGImage(fromFile:width:height:)` | Shrink-on-load thumbnail direct to CGImage |
+| `thumbnailCGImage(fromFile:size:)` | Shrink-on-load thumbnail direct to CGImage (CGSize) |
+| `resizedToFit(width:height:)` | Resize maintaining aspect ratio |
+| `resizedToFit(size:)` | Resize maintaining aspect ratio (CGSize) |
+| `resized(scale:kernel:)` | Scale by factor with interpolation kernel |
+| `resized(toWidth:height:)` | Resize to exact dimensions |
+| `resized(to:)` | Resize to exact dimensions (CGSize) |
+| `cropped(x:y:width:height:)` | Crop rectangular region |
+| `cropped(_:)` | Crop rectangular region (CGRect) |
+| `smartCropped(toWidth:height:interesting:)` | Content-aware crop keeping most important region |
+| `smartCropped(to:interesting:)` | Content-aware crop (CGSize) |
+| `rotated(byAngle:)` | Rotate by arbitrary angle with black corner fill |
+| `grayscaled()` | Convert to grayscale (single-band luminance) |
+| `flattened(background:)` | Flatten alpha channel against a VIPSColor background |
+| `inverted()` | Invert colors (photographic negative) |
+| `adjustedBrightness(_:)` | Adjust brightness (-1.0 to 1.0) |
+| `adjustedContrast(_:)` | Adjust contrast (0.5 to 2.0) |
+| `adjustedSaturation(_:)` | Adjust saturation via LCH chroma scaling (0 to 2.0) |
+| `adjustedGamma(_:)` | Adjust gamma curve |
+| `adjusted(brightness:contrast:saturation:)` | Combined brightness/contrast/saturation in one pass |
+| `blurred(sigma:)` | Gaussian blur |
+| `sharpened(sigma:)` | Sharpen via unsharp mask |
+| `sobel()` | Sobel edge detection |
+| `canny(sigma:)` | Canny edge detection (8-bit output) |
+| `composited(withOverlay:mode:x:y:)` | Composite with blend mode at position |
+| `composited(withOverlay:mode:at:)` | Composite with blend mode at CGPoint |
+| `composited(withOverlay:mode:)` | Composite with blend mode, overlay centered |
+| `findTrim(threshold:background:)` | Find content bounding box by detecting margins |
+| `statistics()` | Image statistics (min, max, mean, stddev) |
+| `averageColor()` | Per-band mean values → VIPSColor |
+| `detectedBackgroundColor(stripWidth:)` | Detect background via trim margins or prominent edge color → VIPSColor |
+| `histogramEqualized()` | Equalize histogram for improved contrast |
+| `extractedRegion(fromFile:x:y:width:height:)` | Extract region from file without full decode |
+| `extractedRegion(fromData:x:y:width:height:)` | Extract region from Data without full decode |
+| `copiedToMemory()` | Break lazy evaluation chain, copy pixels to contiguous memory |
 
 ### VIPSImage.Cache
 
@@ -570,6 +574,28 @@ Most I/O-bound and CPU-heavy methods have `async throws` overloads using `Task.d
 | `max` | Maximum pixel value |
 | `mean` | Mean pixel value |
 | `standardDeviation` | Standard deviation |
+
+## Coding Conventions
+
+### Documentation Comments
+
+Every public method and property must have a comprehensive Swift doc comment including:
+- A description of what the operation does (not just the method name restated)
+- `- Parameter` entries for every parameter, with type/range info where relevant
+- `- Returns:` describing what is returned
+- Any important behavioral notes (e.g., memory implications, format limitations)
+
+Example of the expected style:
+```swift
+/// Resize the image to fit within the given dimensions while maintaining aspect ratio.
+/// Uses high-quality shrink-on-load when possible for optimal performance.
+/// - Parameters:
+///   - width: The maximum width of the result
+///   - height: The maximum height of the result
+/// - Returns: A new image that fits within the specified dimensions
+```
+
+When adding new methods to CLAUDE.md's API Reference tables, each entry's Description column should be a concise but informative summary (not just "see sync version" or a bare method name restatement).
 
 ## Architecture Notes
 

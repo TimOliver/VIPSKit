@@ -69,4 +69,41 @@ final class VIPSImageResizeTests: VIPSImageTestCase {
         XCTAssertEqual(step2.width, 50)
         XCTAssertEqual(step2.height, 50)
     }
+
+    // MARK: - Async
+
+    func testAsyncResizedToFit() async throws {
+        let image = createTestImage(width: 200, height: 100)
+        let resized = try await image.resizedToFit(width: 50, height: 50)
+        XCTAssertEqual(resized.width, 50)
+        XCTAssertEqual(resized.height, 25)
+    }
+
+    func testAsyncResizedToFitCGSize() async throws {
+        let image = createTestImage(width: 200, height: 100)
+        let resized = try await image.resizedToFit(size: CGSize(width: 50, height: 50))
+        XCTAssertEqual(resized.width, 50)
+        XCTAssertEqual(resized.height, 25)
+    }
+
+    func testAsyncResizedByScale() async throws {
+        let image = createTestImage(width: 100, height: 100)
+        let resized = try await image.resized(scale: 0.5)
+        XCTAssertEqual(resized.width, 50)
+        XCTAssertEqual(resized.height, 50)
+    }
+
+    func testAsyncResizedToExact() async throws {
+        let image = createTestImage(width: 100, height: 100)
+        let resized = try await image.resized(toWidth: 200, height: 50)
+        XCTAssertEqual(resized.width, 200)
+        XCTAssertEqual(resized.height, 50)
+    }
+
+    func testAsyncResizedToCGSize() async throws {
+        let image = createTestImage(width: 100, height: 100)
+        let resized = try await image.resized(to: CGSize(width: 200, height: 50))
+        XCTAssertEqual(resized.width, 200)
+        XCTAssertEqual(resized.height, 50)
+    }
 }

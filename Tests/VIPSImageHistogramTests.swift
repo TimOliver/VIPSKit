@@ -26,4 +26,14 @@ final class VIPSImageHistogramTests: VIPSImageTestCase {
         XCTAssertEqual(equalized.width, 80)
         XCTAssertEqual(equalized.height, 80)
     }
+
+    // MARK: - Async
+
+    func testAsyncHistogramEqualized() async throws {
+        let image = createTestImage(width: 100, height: 100)
+        let equalized = try await image.histogramEqualized()
+        XCTAssertEqual(equalized.width, 100)
+        XCTAssertEqual(equalized.height, 100)
+        XCTAssertEqual(equalized.bands, image.bands)
+    }
 }
