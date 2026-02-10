@@ -41,7 +41,7 @@ vips-cocoa (separate repo)              VIPSKit (this repo)
                                        │           ├── CVIPS.h
                                        │           ├── module.modulemap
                                        │           └── vips.h (umbrella header)
-                                       ├── Tests/*.swift (19 test files)
+                                       ├── Tests/*.swift (22 test files)
                                        ├── Scripts/configure-project.rb (Xcode project generator)
                                        └── build.sh (xcframework builder)
 ```
@@ -119,6 +119,9 @@ VIPSKit/
 │   ├── VIPSImageDrawTests.swift
 │   ├── VIPSImageAnalysisTests.swift
 │   ├── VIPSImageMetadataTests.swift
+│   ├── VIPSColorTests.swift
+│   ├── VIPSErrorTests.swift
+│   ├── VIPSImageFormatTests.swift
 │   ├── TestHost/                      # Minimal iOS app for Xcode test runner
 │   └── TestResources/                 # Test images (superman.jpg, test.jpg, grayscale.jpg,
 │                                      #   rotated-3.jpg, rotated-6.jpg, test-rgb.png,
