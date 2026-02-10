@@ -1,0 +1,9 @@
+module vips [system] {
+    header "vips.h"
+    export *
+}
+
+module CVIPS {
+    header "CVIPS.h"
+    export *
+}

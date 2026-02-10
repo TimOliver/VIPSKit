@@ -1,20 +1,21 @@
-# vips-cocoa
+# VIPSKit
 
-Build system for compiling libvips as a universal XCFramework for iOS, iOS Simulator, and Mac Catalyst.
+Swift wrapper for [libvips](https://www.libvips.org) image processing, providing an idiomatic Swift API over a pre-built static `vips.xcframework` from [vips-cocoa](https://github.com/TimOliver/vips-cocoa).
 
 ## Overview
 
-This project automates building libvips and all its dependencies for Apple platforms, producing a single `VIPSKit.xcframework` with an Objective-C wrapper for easy integration into Swift/Objective-C projects.
+VIPSKit is a pure Swift framework that wraps libvips for Apple platforms. The heavy lifting (compiling libvips + 17 dependencies) is handled by the separate [vips-cocoa](https://github.com/TimOliver/vips-cocoa) project, which produces a static `vips.xcframework`. VIPSKit imports that xcframework and provides a clean, type-safe Swift API.
 
 ## Supported Platforms
 
-| Platform | Architectures | SDK |
-|----------|--------------|-----|
-| iOS Device | arm64 | iphoneos |
-| iOS Simulator | arm64, x86_64 | iphonesimulator |
-| Mac Catalyst | arm64, x86_64 | macosx (with -macabi target) |
-
-- **Minimum deployment target:** iOS 15.0
+| Platform | Architectures | Min Version |
+|----------|--------------|-------------|
+| iOS Device | arm64 | 15.0 |
+| iOS Simulator | arm64, x86_64 | 15.0 |
+| Mac Catalyst | arm64, x86_64 | 15.0 |
+| macOS | arm64, x86_64 | 12.0 |
+| visionOS | arm64 | 1.0 |
+| visionOS Simulator | arm64 | 1.0 |
 
 ## Image Format Support
 
@@ -26,217 +27,175 @@ This project automates building libvips and all its dependencies for Apple platf
 - HEIF (libheif)
 - GIF (built-in)
 
-## Dependencies (Build Order)
+## Architecture
 
-### Tier 1 - No dependencies
-1. **expat** (2.7.3) - XML parser
-2. **libffi** (3.5.2) - Foreign function interface
-3. **pcre2** (10.47) - Regular expressions
-4. **libjpeg-turbo** (3.1.3) - JPEG codec with SIMD
-5. **libpng** (1.6.54) - PNG codec
-6. **brotli** (1.2.0) - Compression library
-7. **highway** (1.3.0) - SIMD library
+```
+vips-cocoa (separate repo)              VIPSKit (this repo)
+├── Builds libvips + 17 deps    →      ├── Package.swift (SPM, depends on vips-cocoa)
+└── vips.xcframework (static)          ├── Sources/
+                                       │   ├── *.swift (Swift wrapper, public API)
+                                       │   └── Internal/
+                                       │       ├── CVIPS.c (C shim for variadic funcs)
+                                       │       └── include/
+                                       │           ├── CVIPS.h
+                                       │           ├── module.modulemap
+                                       │           └── vips.h (umbrella header)
+                                       ├── Tests/*.swift (19 test files)
+                                       ├── Scripts/configure-project.rb (Xcode project generator)
+                                       └── build.sh (xcframework builder)
+```
 
-### Tier 2 - Depends on Tier 1
-8. **glib** (2.87.1) - Core utility library (needs libffi, pcre2)
-9. **libwebp** (1.6.0) - WebP codec
-10. **dav1d** (1.5.1) - AV1 decoder
+### Why a C Shim (CVIPS)?
 
-### Tier 3 - Depends on Tier 2
-11. **libjxl** (0.11.1) - JPEG-XL codec (needs brotli, highway)
-12. **libheif** (1.21.2) - HEIF/AVIF container (needs dav1d)
+Nearly all libvips operations are variadic C functions (NULL-terminated key-value pairs like `vips_thumbnail(path, &out, width, "height", height, NULL)`). **Swift cannot call variadic C functions.** The CVIPS shim provides ~50 non-variadic one-liner wrappers that Swift calls instead. Non-variadic vips functions (`vips_image_get_width`, `g_object_unref`, etc.) are called directly from Swift.
 
-### Final
-13. **libvips** (8.18.0) - Image processing library
+### Module Map
+
+`Sources/Internal/include/module.modulemap` defines two Clang modules:
+- `vips` — umbrella for the libvips C headers (from vips.xcframework)
+- `CVIPS` — the variadic function shim
+
+Swift source files use `internal import vips` and `internal import CVIPS` to keep these as implementation details, not exposed in the public API.
 
 ## Project Structure
 
 ```
-vips-cocoa/
-├── CLAUDE.md                   # This file
-├── build.sh                    # Main build orchestrator
+VIPSKit/
+├── CLAUDE.md
+├── Package.swift                      # SPM package definition
+├── build.sh                           # Builds VIPSKit.xcframework
+├── Sources/
+│   ├── VIPSImage.swift                # Main class, lifecycle, Cache namespace, PixelBuffer, concurrency
+│   ├── VIPSImage+Loading.swift        # File/data loading, thumbnails, imageInfo
+│   ├── VIPSImage+Saving.swift         # File/data export
+│   ├── VIPSImage+Resize.swift         # Resize operations
+│   ├── VIPSImage+Transform.swift      # Crop, flip, smart crop
+│   ├── VIPSImage+Rotate.swift         # Rotation operations
+│   ├── VIPSImage+Color.swift          # Grayscale, adjustments, invert, flatten
+│   ├── VIPSImage+Filter.swift         # Blur, sharpen, edge detection
+│   ├── VIPSImage+CGImage.swift        # CGImage creation (cgImage property, thumbnailCGImage)
+│   ├── VIPSImage+Composite.swift      # Image compositing
+│   ├── VIPSImage+Tiling.swift         # Strip/region extraction
+│   ├── VIPSImage+Band.swift           # Alpha, premultiply, band operations
+│   ├── VIPSImage+Histogram.swift      # Histogram equalization
+│   ├── VIPSImage+Pixel.swift          # Raw pixel value access
+│   ├── VIPSImage+Embed.swift          # Gravity/embed operations
+│   ├── VIPSImage+Draw.swift           # Drawing primitives (rect, line, circle, flood fill)
+│   ├── VIPSImage+Analysis.swift       # Statistics, trim, average color, background detection
+│   ├── VIPSImage+Metadata.swift       # EXIF/metadata access, MetadataProxy subscript
+│   ├── VIPSColor.swift                # RGB color type with ink(forBands:) helper
+│   ├── VIPSColor+Platform.swift       # CGColor/UIColor/NSColor interop
+│   ├── VIPSError.swift                # Error type
+│   ├── VIPSImageFormat.swift          # Format enum
+│   ├── VIPSImageStatistics.swift      # Statistics struct
+│   ├── VIPSResizeKernel.swift         # Kernel enum (with vipsValue)
+│   ├── VIPSBlendMode.swift            # Blend mode enum (with vipsValue)
+│   ├── VIPSInteresting.swift          # Smart crop strategy enum (with vipsValue)
+│   ├── VIPSExtendMode.swift           # Extend mode enum (with vipsValue)
+│   ├── VIPSCompassDirection.swift     # Compass direction enum (with vipsValue)
+│   └── Internal/
+│       ├── CVIPS.c                    # C shim implementation
+│       └── include/
+│           ├── CVIPS.h                # C shim header
+│           ├── module.modulemap       # Clang module definitions
+│           └── vips.h                 # Umbrella header → <vips/vips.h>
+├── Tests/
+│   ├── VIPSImageTestCase.swift        # Base test class with helpers
+│   ├── VIPSImageCoreTests.swift
+│   ├── VIPSImageLoadingTests.swift
+│   ├── VIPSImageSavingTests.swift
+│   ├── VIPSImageResizeTests.swift
+│   ├── VIPSImageTransformTests.swift
+│   ├── VIPSImageRotateTests.swift
+│   ├── VIPSImageColorTests.swift
+│   ├── VIPSImageFilterTests.swift
+│   ├── VIPSImageCGImageTests.swift
+│   ├── VIPSImageCompositeTests.swift
+│   ├── VIPSImageTilingTests.swift
+│   ├── VIPSImageHistogramTests.swift
+│   ├── VIPSImageBandTests.swift
+│   ├── VIPSImagePixelTests.swift
+│   ├── VIPSImageEmbedTests.swift
+│   ├── VIPSImageDrawTests.swift
+│   ├── VIPSImageAnalysisTests.swift
+│   ├── VIPSImageMetadataTests.swift
+│   ├── TestHost/                      # Minimal iOS app for Xcode test runner
+│   └── TestResources/superman.jpg
 ├── Scripts/
-│   ├── env.sh                  # Environment, paths, versions
-│   ├── utils.sh                # Common build functions
-│   ├── download-sources.sh     # Download all source tarballs
-│   ├── build-expat.sh
-│   ├── build-libffi.sh
-│   ├── build-pcre2.sh
-│   ├── build-libjpeg-turbo.sh
-│   ├── build-libpng.sh
-│   ├── build-brotli.sh
-│   ├── build-highway.sh
-│   ├── build-glib.sh
-│   ├── build-libwebp.sh
-│   ├── build-dav1d.sh
-│   ├── build-libjxl.sh
-│   ├── build-libheif.sh
-│   ├── build-libvips.sh
-│   ├── create-xcframework.sh   # Creates final xcframework
-│   ├── cross-files/            # Meson cross-compilation files
-│   │   ├── ios.ini
-│   │   ├── ios-sim-arm64.ini
-│   │   ├── ios-sim-x86_64.ini
-│   │   ├── catalyst-arm64.ini
-│   │   └── catalyst-x86_64.ini
-│   └── toolchains/             # CMake toolchain files
-│       └── ios.toolchain.cmake # From leetal/ios-cmake
-├── Sources/                    # Project source code
-│   ├── VIPSImage.h             # Public header
-│   └── VIPSImage.m             # Implementation
-├── Vendor/                     # Downloaded source archives
-├── build/
-│   ├── output/                 # Build artifacts (per lib/target)
-│   └── staging/                # Installed libs (per lib/target)
-└── VIPSKit.xcframework/        # Final output (after build)
+│   └── configure-project.rb           # Generates VIPSKit.xcodeproj
+├── Frameworks/
+│   └── vips.xcframework/              # Pre-built static lib (gitignored)
+└── VIPSKit.xcodeproj/                 # Generated Xcode project
 ```
 
-## Building
+## Integration
+
+### Swift Package Manager (Recommended)
+
+Add to your `Package.swift`:
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/TimOliver/VIPSKit.git", from: "1.0.0"),
+]
+```
+
+Or in Xcode: File > Add Package Dependencies, enter the repository URL.
+
+VIPSKit automatically pulls in the pre-built `vips.xcframework` from vips-cocoa via SPM binary targets.
+
+### XCFramework (Manual)
+
+Build the xcframework:
+
+```bash
+# Copy static vips.xcframework from vips-cocoa first
+cp -R ~/Developer/vips-cocoa/build/xcframeworks/ios/static/vips.xcframework Frameworks/
+
+# Generate Xcode project and build xcframework
+ruby Scripts/configure-project.rb
+./build.sh
+```
+
+Then drag `VIPSKit.xcframework` into your Xcode project, set "Embed & Sign".
+
+## Development Setup
 
 ### Prerequisites
 
 - Xcode with command-line tools
-- Homebrew packages: `brew install meson ninja cmake nasm glib`
-  - `nasm` is required for dav1d assembly
-  - `glib` provides glib-mkenums for building target glib
+- Ruby with `xcodeproj` gem: `gem install xcodeproj`
+- Static `vips.xcframework` in `Frameworks/` (from vips-cocoa)
 
-### Full Build
+### Xcode Development
 
 ```bash
-./build.sh
+# Copy vips.xcframework
+cp -R ~/Developer/vips-cocoa/build/xcframeworks/ios/static/vips.xcframework Frameworks/
+
+# Generate project
+ruby Scripts/configure-project.rb
+
+# Open and run tests
+open VIPSKit.xcodeproj  # ⌘U to run tests
+```
+
+### SPM Development
+
+```bash
+swift build          # Build
+swift test           # Run tests (requires test resources)
 ```
 
 ### Build Options
 
 ```bash
-./build.sh --clean          # Clean all build artifacts first
-./build.sh --skip-download  # Skip downloading sources (use existing)
-./build.sh --jobs 8         # Set parallel job count
-./build.sh -f               # Rebuild framework only (fast)
+./build.sh           # Build VIPSKit.xcframework (iOS, Simulator, Catalyst)
+./build.sh --clean   # Clean first
+./build.sh --fast    # Build for current platform only
 ```
 
-### Build Individual Libraries
-
-```bash
-./Scripts/build-libpng.sh   # Build just libpng
-```
-
-## Xcode Development Setup
-
-The project includes an Xcode workspace for development, debugging, and testing. This allows you to:
-- Edit VIPSImage wrapper code with full syntax highlighting and code completion
-- Set breakpoints in both the Objective-C wrapper and libvips C source code
-- Run unit tests that build everything from source (not the xcframework)
-
-### Quick Start (Pre-built Dependencies)
-
-For most users, just clone and build:
-
-```bash
-git clone https://github.com/anthropics/VIPSKit.git
-cd VIPSKit
-./Scripts/bootstrap.sh   # Downloads pre-built libraries + libvips source
-open VIPSKit.xcodeproj   # Open in Xcode, press ⌘U to run tests
-```
-
-The bootstrap script downloads:
-- Pre-built static libraries from GitHub releases (~100MB)
-- libvips source code for debugging (~20MB)
-
-Xcode will also run bootstrap automatically on first build if dependencies are missing.
-
-### Building from Source (Optional)
-
-If you need to modify dependencies or build for different architectures:
-
-```bash
-./build.sh               # Build all dependencies from source
-ruby Scripts/add-libvips-target.rb  # Configure Xcode project
-```
-
-### Project Structure
-
-The Ruby script (`Scripts/add-libvips-target.rb`) creates:
-- **VIPSKit** - Static library target containing:
-  - All libvips C/C++ source files (~350 files)
-  - All VIPSImage Objective-C wrapper files (~11 files)
-- **VIPSTests** - Unit test target configured to:
-  - Depend on and link against VIPSKit
-  - Link against all pre-built static library dependencies
-  - Run bootstrap automatically if dependencies are missing
-
-### Running Tests
-
-Open `VIPSKit.xcodeproj` in Xcode and run tests with ⌘U. Tests build libvips and the wrapper from source, enabling full debugging.
-
-### Debugging
-
-1. Open `VIPSKit.xcodeproj` in Xcode
-2. Set breakpoints in any source file:
-   - `Sources/VIPSImage*.m` - Objective-C wrapper
-   - `Vendor/vips-*/libvips/**/*.c` - libvips internals
-3. Run tests (⌘U) - execution stops at breakpoints
-4. Use Xcode's debugger to inspect variables, step through code, etc.
-
-### Generated Files
-
-The Xcode build requires files generated by the shell build:
-
-| File | Source | Purpose |
-|------|--------|---------|
-| `Vendor/libvips-generated/config.h` | Meson configure | Feature detection macros |
-| `Vendor/libvips-generated/vipsmarshal.c` | glib-genmarshal | GObject signal marshalling |
-| `Vendor/libvips-generated/vipsmarshal.h` | glib-genmarshal | Marshal function declarations |
-| `Vendor/libvips-generated/enumtypes.c` | glib-mkenums | GObject enum types |
-| `Vendor/libvips-generated/enumtypes.h` | glib-mkenums | Enum type declarations |
-
-These are copied from the build output during `./build.sh`. If you see "file not found" errors, run `./build.sh` first.
-
-### Xcode Build Limitations
-
-**Highway SIMD is disabled** in the Xcode build. Highway's `*_hwy.cpp` files use a special `foreach_target.h` include mechanism that generates multiple architecture-specific implementations - this doesn't work with Xcode's standard compilation. The production `build.sh` still builds Highway properly.
-
-Impact: Some operations (JXL encode/decode, certain resize kernels) may be slightly slower when running from Xcode vs the production framework. Functional behavior is identical.
-
-### Project Structure (Xcode)
-
-```
-VIPSKit.xcodeproj
-├── VIPSKit (static library target)
-│   ├── Sources/VIPSImage*.m          # Objective-C wrapper
-│   ├── Vendor/vips-*/libvips/        # libvips C/C++ sources
-│   └── Vendor/libvips-generated/     # Generated config/marshal files
-├── VIPSTests (unit test target)
-│   └── Tests/*.swift                  # Swift unit tests
-└── (links pre-built static libs from build/staging/)
-```
-
-## Output
-
-The build produces `VIPSKit.xcframework` in the project root:
-
-```
-VIPSKit.xcframework/
-├── Info.plist
-├── ios-arm64/
-│   └── VIPSKit.framework/
-│       ├── VIPSKit                 # Dynamic library
-│       ├── Headers/VIPSKit.h       # VIPSImage public header
-│       ├── Modules/module.modulemap
-│       └── Info.plist
-├── ios-arm64_x86_64-simulator/
-│   └── VIPSKit.framework/
-└── ios-arm64_x86_64-maccatalyst/
-    └── VIPSKit.framework/
-```
-
-## Integration
-
-1. Drag `VIPSKit.xcframework` into your Xcode project
-2. Add to "Frameworks, Libraries, and Embedded Content"
-3. Set "Embed" to "Embed & Sign"
-
-### Swift Usage
+## Swift Usage
 
 ```swift
 import VIPSKit
@@ -244,690 +203,301 @@ import VIPSKit
 // Initialize once at app start
 try VIPSImage.initialize()
 
-// Get image info without loading pixels (fast, low memory)
-var width: Int = 0
-var height: Int = 0
-var format: VIPSImageFormat = .unknown
-try VIPSImage.getImageInfo(atPath: path, width: &width, height: &height, format: &format)
-print("Image is \(width)x\(height), format: \(format)")
-
-// Load image from file (full load for processing)
+// Load image
 let image = try VIPSImage(contentsOfFile: path)
-
-// Load image from Data
 let image = try VIPSImage(data: imageData)
 
-// Get image properties
+// Properties
 print("Size: \(image.width)x\(image.height)")
 print("Bands: \(image.bands), hasAlpha: \(image.hasAlpha)")
-print("Format: \(image.sourceFormat), loader: \(image.loaderName ?? "unknown")")
 
-// Resize to fit (maintains aspect ratio) - high quality
+// Resize (CGSize overloads available for all)
 let fitted = try image.resizeToFit(width: 200, height: 200)
-
-// Resize by scale factor
 let scaled = try image.resize(scale: 0.5)
+let exact = try image.resize(toWidth: 400, height: 300)
 
-// Resize to exact dimensions
-let resized = try image.resize(toWidth: 400, height: 300)
-
-// Crop region
+// Transform
 let cropped = try image.crop(x: 10, y: 10, width: 100, height: 100)
-
-// Rotate (90, 180, 270 degrees)
+let cropped2 = try image.crop(CGRect(x: 10, y: 10, width: 100, height: 100))
 let rotated = try image.rotate(byDegrees: 90)
+let flipped = try image.flippedHorizontally()
+let oriented = try image.autoRotated()
+let smart = try image.smartCrop(toWidth: 400, height: 400, interesting: .attention)
 
-// Flip
-let flippedH = try image.flipHorizontal()
-let flippedV = try image.flipVertical()
-
-// Auto-rotate based on EXIF
-let oriented = try image.autoRotate()
-
-// Smart crop - content-aware cropping that finds interesting regions
-let smartCropped = try image.smartCrop(toWidth: 400, height: 400, interesting: .attention)
-// Strategies: .attention (edges/skin/colors), .entropy, .centre, .low, .high
-
-// Composite images (watermarks, overlays)
-let watermarked = try baseImage.composite(withOverlay: watermark, mode: .over, x: 10, y: 10)
-let centered = try baseImage.composite(withOverlay: logo, mode: .over)  // Centers overlay
-// Blend modes: .over, .multiply, .screen, .overlay, .darken, .lighten, .add, etc.
-
-// Color adjustments
-let brighter = try image.adjustBrightness(0.2)       // -1.0 to 1.0
-let highContrast = try image.adjustContrast(1.5)    // 0.5 to 2.0
-let saturated = try image.adjustSaturation(1.3)     // 0 = grayscale, 1.0 = normal
-let gammaCorrected = try image.adjustGamma(2.2)     // < 1 lightens, > 1 darkens
-let inverted = try image.invert()
-
-// Combined color adjustment (more efficient)
+// Color
+let gray = try image.grayscaled()
+let brighter = try image.adjustBrightness(0.2)
 let adjusted = try image.adjust(brightness: 0.1, contrast: 1.2, saturation: 1.1)
+let inverted = try image.inverted()
+let gammaCorrected = try image.adjustGamma(2.2)
+let flattened = try image.flatten(background: .white)
 
-// Edge detection
-let edges = try image.sobel()                        // Fast edge detection
-let cannyEdges = try image.canny(sigma: 1.4)        // Sophisticated edge detection
+// Filter
+let blurred = try image.blurred(sigma: 2.0)
+let sharpened = try image.sharpened(sigma: 1.0)
+let edges = try image.sobel()
+let cannyEdges = try image.canny(sigma: 1.4)
 
-// Convert to grayscale
-let gray = try image.grayscale()
+// Composite (CGPoint overload available)
+let watermarked = try base.composite(withOverlay: overlay, mode: .over, x: 10, y: 10)
 
-// Flatten alpha against background
-let flattened = try image.flatten(red: 255, green: 255, blue: 255)
+// Drawing
+let canvas = try VIPSImage.blank(width: 200, height: 200)
+let withRect = try canvas.drawRect(x: 10, y: 10, width: 50, height: 50,
+                                    color: VIPSColor(red: 255, green: 0, blue: 0), fill: true)
+let withLine = try canvas.drawLine(from: CGPoint(x: 0, y: 0), to: CGPoint(x: 99, y: 99),
+                                    color: .white)
+let withCircle = try canvas.drawCircle(cx: 50, cy: 50, radius: 30, color: .black, fill: true)
 
-// Apply blur
-let blurred = try image.blur(sigma: 2.0)
+// Thumbnail (shrink-on-load, most memory efficient)
+let thumb = try VIPSImage.thumbnail(fromFile: path, width: 200, height: 200)
 
-// Sharpen
-let sharpened = try image.sharpen(sigma: 1.0)
+// CGImage (zero-copy for display)
+let cgImage = try image.cgImage
+let uiImage = UIImage(cgImage: cgImage)
 
-// Export to Data
-let jpegData = try image.data(format: .jpeg, quality: 85)
-let pngData = try image.data(format: .png, quality: 0)
-let webpData = try image.data(format: .webP, quality: 80)
-let heifData = try image.data(format: .heif, quality: 85)
-let avifData = try image.data(format: .avif, quality: 80)
-let jxlData = try image.data(format: .jxl, quality: 90)
-
-// Save to file
-try image.write(toFile: "/path/to/output.jpg")
-try image.write(toFile: "/path/to/output.png", format: .png, quality: 0)
-
-// Create CGImage directly (most efficient for display)
-if let cgImage = try image.createCGImage() {
+// Direct thumbnail to CGImage (minimal peak memory)
+if let cgImage = try VIPSImage.thumbnailCGImage(fromFile: path, width: 200, height: 200) {
     let uiImage = UIImage(cgImage: cgImage)
-    // Use the image...
-    // CGImage is automatically released when cgImage goes out of scope
 }
-
-// BEST: Decode directly to thumbnail CGImage (minimal peak memory)
-// This is the most memory-efficient path for batch thumbnail generation
-if let cgImage = try VIPSImage.createThumbnail(fromFile: path, width: 200, height: 200) {
-    let uiImage = UIImage(cgImage: cgImage)
-    // Decode buffers already released - only thumbnail pixels in memory
-}
-
-// Process very large images (e.g., 500x30000) in strips
-let stripHeight = 1000
-let numStrips = image.numberOfStrips(withHeight: stripHeight)
-for i in 0..<numStrips {
-    let strip = try image.strip(atIndex: i, height: stripHeight)
-    // Process each strip independently...
-}
-
-// Or extract a region directly from file (most memory efficient)
-let region = try VIPSImage.extractRegion(fromFile: path, x: 0, y: 5000, width: 500, height: 1000)
-
-// Get tile coordinates for splitting image into grid
-let tiles = image.tileRects(withTileWidth: 256, tileHeight: 256)
-for tileRect in tiles {
-    let rect = tileRect.cgRectValue
-    let tile = try image.crop(x: Int(rect.origin.x), y: Int(rect.origin.y),
-                               width: Int(rect.width), height: Int(rect.height))
-    // Process tile...
-}
-
-// Cache processed images (default: lossless WebP, ~30% smaller than PNG)
-let cacheData = try thumbnail.cacheData()  // Lossless WebP
-try thumbnail.writeToCache(file: "/path/to/cache/thumb")  // Auto-adds .webp
-
-// Cache with explicit format control
-let webpLossless = try thumbnail.cacheData(format: .webP, quality: 0, lossless: true)
-let webpLossy = try thumbnail.cacheData(format: .webP, quality: 85, lossless: false)
-let jxlLossless = try thumbnail.cacheData(format: .jxl, quality: 0, lossless: true)
-let png = try thumbnail.cacheData(format: .png, quality: 0, lossless: true)  // PNG always lossless
-
-// Write cache files with format control (auto-appends correct extension)
-try thumbnail.writeToCache(file: "/path/to/cache/thumb", format: .webP, quality: 80, lossless: false)
-try thumbnail.writeToCache(file: "/path/to/cache/thumb", format: .jxl, quality: 0, lossless: true)
-
-// Memory management - break reference chain after resizing
-let resized = try image.resizeToFit(width: 200, height: 200)
-let copied = try resized.copyToMemory()  // Allows source to be freed
-// Now 'image' can be released without keeping pixel data in memory
-
-// Clear operation cache to free memory
-VIPSImage.clearCache()
-
-// Monitor memory usage
-print("VIPS memory: \(VIPSImage.memoryUsage()) bytes")
-
-// Adjust cache for memory-constrained environments
-VIPSImage.setCacheMaxOperations(50)  // Reduce from default 100
-VIPSImage.setCacheMaxMemory(25 * 1024 * 1024)  // Reduce to 25MB
-
-// Access raw pixel data (zero-copy block-based API)
-// Useful for custom analysis like histogram computation, etc.
-let thumb = try VIPSImage.thumbnail(fromFile: path, width: 64, height: 64)
-try thumb.withPixelData { data, width, height, bytesPerRow, bands in
-    // data is UInt8 pointer, valid only within this block
-    // bands is 3 (RGB) or 4 (RGBA)
-    for y in 0..<height {
-        let row = data + y * bytesPerRow
-        for x in 0..<width {
-            let pixel = row + x * bands
-            let r = pixel[0], g = pixel[1], b = pixel[2]
-            // Analyze pixels...
-        }
-    }
-}
-// Memory automatically freed after block returns
-
-// Find content bounds (trim whitespace/margins)
-let bounds = try image.findTrim()  // Auto-detects background, returns CGRect
-let contentWidth = bounds.width
-let contentHeight = bounds.height
-let marginLeft = bounds.origin.x
-let marginTop = bounds.origin.y
-
-// With custom threshold (how different from background to count as content)
-let bounds = try image.findTrim(threshold: 20.0)
-
-// With explicit background color (RGB values 0-255)
-let bounds = try image.findTrim(threshold: 10.0, background: [255, 255, 255])
-
-// Use case: zoom to content by cropping margins
-let content = try image.crop(x: Int(bounds.origin.x), y: Int(bounds.origin.y),
-                              width: Int(bounds.width), height: Int(bounds.height))
-
-// Get average color of an image (per-band means)
-let avgColor = try image.averageColor()  // Returns [R, G, B] or [R, G, B, A]
-print("Average color: R=\(avgColor[0]), G=\(avgColor[1]), B=\(avgColor[2])")
-
-// Detect background color by sampling image edges
-// Perfect for setting image viewer background to match image margins
-let bgColor = try image.detectBackgroundColor()  // Samples 10px edge strip
-let bgColorWide = try image.detectBackgroundColor(stripWidth: 20)  // Custom width
-
-// Use case: set viewer background to match image margins
-let bounds = try image.findTrim()
-if bounds.origin.x > 0 || bounds.origin.y > 0 {  // Has margins
-    let bgColor = try image.detectBackgroundColor()
-    // Convert to UIColor: UIColor(red: bgColor[0]/255, green: bgColor[1]/255, blue: bgColor[2]/255, alpha: 1)
-}
-
-// Image arithmetic - compare two images
-let diff = try image1.subtract(image2)      // Pixel-wise subtraction
-let absDiff = try diff.absolute()           // Absolute value of differences
-let stats = try absDiff.statistics()        // Get mean, min, max, stddev
-print("Mean difference: \(stats.mean)")     // Low mean = similar images
-
-// Example: compare edge strips for similarity
-let strip1 = try img1.crop(x: img1.width - 10, y: 0, width: 10, height: img1.height)
-let strip2 = try img2.crop(x: 0, y: 0, width: 10, height: img2.height)
-let diff = try strip1.grayscale().subtract(strip2.grayscale())
-let stats = try diff.absolute().statistics()
-let similarity = 1.0 - (stats.mean / 128.0)  // 0-1 score
-
-// Cleanup at app termination (optional)
-VIPSImage.shutdown()
-```
-
-### Objective-C Usage
-
-```objc
-@import VIPSKit;
-
-// Initialize
-NSError *error;
-[VIPSImage initializeWithError:&error];
-
-// Load image
-VIPSImage *image = [VIPSImage imageWithContentsOfFile:path error:&error];
-VIPSImage *image = [VIPSImage imageWithData:data error:&error];
-
-// Properties
-NSLog(@"Size: %ldx%ld", image.width, image.height);
-
-// Process
-VIPSImage *resized = [image resizeToFitWidth:200 height:200 error:&error];
-VIPSImage *rotated = [image rotateByDegrees:90 error:&error];
-
-// Smart crop - content-aware
-VIPSImage *smartCropped = [image smartCropToWidth:400 height:400
-                                      interesting:VIPSInterestingAttention error:&error];
-
-// Composite (watermarks, overlays)
-VIPSImage *watermarked = [baseImage compositeWithOverlay:watermark
-                                                    mode:VIPSBlendModeOver
-                                                       x:10 y:10 error:&error];
-
-// Color adjustments
-VIPSImage *brighter = [image adjustBrightness:0.2 error:&error];
-VIPSImage *adjusted = [image adjustBrightness:0.1 contrast:1.2 saturation:1.1 error:&error];
-VIPSImage *inverted = [image invertWithError:&error];
-
-// Edge detection
-VIPSImage *edges = [image sobelWithError:&error];
-VIPSImage *cannyEdges = [image cannyWithSigma:1.4 error:&error];
 
 // Export
-NSData *jpegData = [image dataWithFormat:VIPSImageFormatJPEG quality:85 error:&error];
-[image writeToFile:@"/path/to/output.jpg" error:&error];
+let jpegData = try image.data(format: .jpeg, quality: 85)
+let webpData = try image.data(format: .webP, quality: 80)
+try image.write(toFile: "/path/to/output.jpg")
 
-// Create CGImage directly (most efficient for display)
-CGImageRef cgImage = [image createCGImageWithError:&error];
-if (cgImage) {
-    UIImage *uiImage = [UIImage imageWithCGImage:cgImage];
-    CGImageRelease(cgImage);  // Must release when done
+// Tiling
+let strips = image.numberOfStrips(withHeight: 1000)
+for i in 0..<strips {
+    let strip = try image.strip(atIndex: i, height: 1000)
+}
+let region = try VIPSImage.extractRegion(fromFile: path, x: 0, y: 0, width: 500, height: 500)
+
+// Analysis
+let bounds = try image.findTrim(threshold: 20.0)
+let boundsExplicit = try image.findTrim(threshold: 5.0, background: VIPSColor(red: 255, green: 255, blue: 255))
+let stats = try image.statistics()
+let avgColor = try image.averageColor()
+let bgColor = try image.detectBackgroundColor()
+let diff = try image1.subtract(image2)
+
+// Metadata
+let orientation = image.getString(named: "exif-ifd0-Orientation")
+image.metadata["my-custom-key"] = "value"  // Subscript access via MetadataProxy
+
+// Raw pixel access (via PixelBuffer struct)
+try image.withPixelData { buffer in
+    // buffer.data, buffer.width, buffer.height, buffer.bytesPerRow, buffer.bands
 }
 
-// BEST: Decode directly to thumbnail CGImage (minimal peak memory)
-CGImageRef thumbCG = [VIPSImage createThumbnailFromFile:path
-                                                  width:200
-                                                 height:200
-                                                  error:&error];
-if (thumbCG) {
-    UIImage *thumbnail = [UIImage imageWithCGImage:thumbCG];
-    CGImageRelease(thumbCG);
-}
+// Memory management
+let copied = try image.copiedToMemory()  // Break lazy reference chain
+VIPSImage.Cache.clear()
+VIPSImage.Cache.maxMemory = 25 * 1024 * 1024
 
-// Cache processed images (default: lossless WebP)
-NSData *cacheData = [image cacheDataWithError:&error];
-[image writeToCacheFile:@"/path/to/cache/thumb" error:&error];  // Auto-adds .webp
+// Cache configuration
+VIPSImage.Cache.maxOperations = 100
+VIPSImage.Cache.maxFiles = 100
+VIPSImage.concurrency = 0  // Use all cores
 
-// Cache with explicit format control
-NSData *webpData = [image cacheDataWithFormat:VIPSImageFormatWebP quality:85 lossless:NO error:&error];
-NSData *jxlData = [image cacheDataWithFormat:VIPSImageFormatJXL quality:0 lossless:YES error:&error];
-[image writeToCacheFile:@"/path/to/cache/thumb" format:VIPSImageFormatWebP quality:80 lossless:NO error:&error];
-
-// Access raw pixel data (zero-copy block-based API)
-VIPSImage *thumb = [VIPSImage thumbnailFromFile:path width:64 height:64 error:&error];
-[thumb withPixelData:^(const uint8_t *data, NSInteger width, NSInteger height,
-                       NSInteger bytesPerRow, NSInteger bands) {
-    // data is valid only within this block
-    for (NSInteger y = 0; y < height; y++) {
-        const uint8_t *row = data + y * bytesPerRow;
-        for (NSInteger x = 0; x < width; x++) {
-            const uint8_t *pixel = row + x * bands;
-            uint8_t r = pixel[0], g = pixel[1], b = pixel[2];
-            // Analyze pixels...
-        }
-    }
-} error:&error];
-// Memory automatically freed after block returns
-
-// Find content bounds (trim whitespace/margins)
-CGRect bounds = [image findTrimWithError:&error];  // Auto-detects background
-CGFloat contentWidth = bounds.size.width;
-CGFloat marginLeft = bounds.origin.x;
-
-// With custom threshold
-CGRect bounds = [image findTrimWithThreshold:20.0 error:&error];
-
-// With explicit background color
-CGRect bounds = [image findTrimWithThreshold:10.0
-                                  background:@[@255, @255, @255]
-                                       error:&error];
-
-// Get average color of an image (per-band means)
-NSArray<NSNumber *> *avgColor = [image averageColorWithError:&error];
-NSLog(@"Average color: R=%@, G=%@, B=%@", avgColor[0], avgColor[1], avgColor[2]);
-
-// Detect background color by sampling image edges
-NSArray<NSNumber *> *bgColor = [image detectBackgroundColorWithError:&error];
-NSArray<NSNumber *> *bgColorWide = [image detectBackgroundColorWithStripWidth:20 error:&error];
-
-// Use case: set viewer background to match image margins
-CGRect bounds = [image findTrimWithError:&error];
-if (bounds.origin.x > 0 || bounds.origin.y > 0) {  // Has margins
-    NSArray<NSNumber *> *bgColor = [image detectBackgroundColorWithError:&error];
-    // Convert to UIColor
-    UIColor *backgroundColor = [UIColor colorWithRed:bgColor[0].doubleValue/255.0
-                                               green:bgColor[1].doubleValue/255.0
-                                                blue:bgColor[2].doubleValue/255.0
-                                               alpha:1.0];
-}
-
-// Image arithmetic - compare two images
-VIPSImage *diff = [image1 subtract:image2 error:&error];
-VIPSImage *absDiff = [diff absoluteWithError:&error];
-VIPSImageStatistics *stats = [absDiff statisticsWithError:&error];
-NSLog(@"Mean difference: %f", stats.mean);
-
-// Shutdown
-[VIPSImage shutdown];
+// Cleanup
+VIPSImage.shutdown()
 ```
 
 ## API Reference
 
-### VIPSImage Class
+### VIPSImage
 
-| Method | Description |
+| Method/Property | Description |
 |--------|-------------|
-| `+initialize` | Initialize libvips (call once at app start) |
-| `+shutdown` | Cleanup libvips (optional, call at app termination) |
-| `+getImageInfoAtPath:width:height:format:error:` | Get dimensions without loading pixels |
-| `+imageWithContentsOfFile:error:` | Load image from file path |
-| `+imageWithContentsOfFileSequential:error:` | Load with streaming (row-by-row) |
-| `+thumbnailFromFile:width:height:error:` | Shrink-on-load thumbnail (low memory) |
-| `+thumbnailFromData:width:height:error:` | Shrink-on-load thumbnail from NSData (low memory) |
-| `+createThumbnailFromFile:width:height:error:` | Decode directly to CGImage (minimal memory) |
-| `+imageWithData:error:` | Load image from NSData |
-| `+imageWithBuffer:width:height:bands:error:` | Create from raw pixel buffer |
+| `initialize()` | Initialize libvips (call once at app start) |
+| `shutdown()` | Cleanup libvips (optional, at app termination) |
 | `width`, `height`, `bands`, `hasAlpha` | Image dimensions and channels |
-| `sourceFormat` | Detected source format (VIPSImageFormat enum) |
-| `loaderName` | Raw loader name (e.g., "jpegload", "pngload") |
-| `-writeToFile:error:` | Save to file (format from extension) |
-| `-writeToFile:format:quality:error:` | Save with explicit format |
-| `-dataWithFormat:quality:error:` | Export to NSData |
-| `-createCGImageWithError:` | Create CGImage (most efficient for display) |
-| `-resizeToFitWidth:height:error:` | Resize maintaining aspect ratio (high quality) |
-| `-resizeWithScale:error:` | Scale by factor |
-| `-resizeToWidth:height:error:` | Resize to exact dimensions |
-| `-cropWithX:y:width:height:error:` | Crop region |
-| `-rotateByDegrees:error:` | Rotate 90/180/270 degrees |
-| `-flipHorizontalWithError:` | Mirror horizontally |
-| `-flipVerticalWithError:` | Mirror vertically |
-| `-autoRotateWithError:` | Apply EXIF orientation |
-| `-smartCropToWidth:height:interesting:error:` | Content-aware smart crop |
-| `-compositeWithOverlay:mode:x:y:error:` | Composite with blend mode at position |
-| `-compositeWithOverlay:mode:error:` | Composite centered with blend mode |
-| `-grayscaleWithError:` | Convert to grayscale |
-| `-flattenWithRed:green:blue:error:` | Flatten alpha to background |
-| `-invertWithError:` | Invert colors (negative) |
-| `-adjustBrightness:error:` | Adjust brightness (-1.0 to 1.0) |
-| `-adjustContrast:error:` | Adjust contrast (0.5 to 2.0) |
-| `-adjustSaturation:error:` | Adjust saturation (0 to 2.0) |
-| `-adjustGamma:error:` | Adjust gamma curve |
-| `-adjustBrightness:contrast:saturation:error:` | Combined adjustment (efficient) |
-| `-blurWithSigma:error:` | Gaussian blur |
-| `-sharpenWithSigma:error:` | Sharpen |
-| `-sobelWithError:` | Sobel edge detection |
-| `-cannyWithSigma:error:` | Canny edge detection |
-| `-copyToMemoryWithError:` | Copy pixels to memory, breaking lazy chain |
-| `-withPixelData:error:` | Zero-copy block-based access to raw 8-bit pixel data |
-| `-findTrimWithError:` | Find bounding box of content (auto-detect background) |
-| `-findTrimWithThreshold:error:` | Find content bounds with custom threshold |
-| `-findTrimWithThreshold:background:error:` | Find content bounds with explicit background color |
-| `-statisticsWithError:` | Get image statistics (min, max, mean, stddev) |
-| `-averageColorWithError:` | Get per-band mean values [R, G, B] or [R, G, B, A] |
-| `-detectBackgroundColorWithError:` | Detect background color by sampling 10px edge strip |
-| `-detectBackgroundColorWithStripWidth:error:` | Detect background with custom edge strip width |
-| `-subtract:error:` | Pixel-wise subtraction (self - other) |
-| `-absoluteWithError:` | Absolute value of each pixel |
-| `-tileRectsWithTileWidth:tileHeight:` | Calculate tile rects for dividing image |
-| `-numberOfStripsWithHeight:` | Number of horizontal strips for given height |
-| `-stripAtIndex:height:error:` | Extract horizontal strip by index |
-| `+extractRegionFromFile:x:y:width:height:error:` | Extract region from file (memory efficient) |
-| `+extractRegionFromData:x:y:width:height:error:` | Extract region from NSData (memory efficient) |
-| `-cacheDataWithError:` | Export as lossless WebP for caching |
-| `-cacheDataWithFormat:quality:lossless:error:` | Export with explicit format control |
-| `-writeToCacheFile:error:` | Write lossless WebP cache file |
-| `-writeToCacheFile:format:quality:lossless:error:` | Write cache file with format control |
+| `init(contentsOfFile:)` | Load image from file path |
+| `init(data:)` | Load image from Data |
+| `init(buffer:width:height:bands:)` | Create from raw pixel buffer |
+| `thumbnail(fromFile:width:height:)` | Shrink-on-load thumbnail |
+| `thumbnail(fromFile:size:)` | Shrink-on-load thumbnail (CGSize) |
+| `thumbnailCGImage(fromFile:width:height:)` | Thumbnail direct to CGImage |
+| `thumbnailCGImage(fromFile:size:)` | Thumbnail direct to CGImage (CGSize) |
+| `write(toFile:)` | Save to file (format from extension) |
+| `data(format:quality:)` | Export to Data |
+| `cgImage` | Throwing computed property → CGImage |
+| `resizeToFit(width:height:)` | Resize maintaining aspect ratio |
+| `resizeToFit(size:)` | Resize maintaining aspect ratio (CGSize) |
+| `resize(scale:kernel:)` | Scale by factor |
+| `resize(toWidth:height:)` | Resize to exact dimensions |
+| `resize(to:)` | Resize to exact dimensions (CGSize) |
+| `crop(x:y:width:height:)` | Crop region |
+| `crop(_ rect:)` | Crop region (CGRect) |
+| `rotate(byDegrees:)` | Rotate 90/180/270 degrees |
+| `flippedHorizontally()` | Mirror horizontally |
+| `flippedVertically()` | Mirror vertically |
+| `autoRotated()` | Apply EXIF orientation |
+| `smartCrop(toWidth:height:interesting:)` | Content-aware crop |
+| `smartCrop(to:interesting:)` | Content-aware crop (CGSize) |
+| `composite(withOverlay:mode:x:y:)` | Composite with blend mode |
+| `composite(withOverlay:mode:at:)` | Composite with blend mode (CGPoint) |
+| `grayscaled()` | Convert to grayscale |
+| `flatten(background:)` | Flatten alpha to VIPSColor background |
+| `inverted()` | Invert colors |
+| `adjustBrightness(_:)` | Adjust brightness (-1.0 to 1.0) |
+| `adjustContrast(_:)` | Adjust contrast (0.5 to 2.0) |
+| `adjustSaturation(_:)` | Adjust saturation (0 to 2.0) |
+| `adjustGamma(_:)` | Adjust gamma curve |
+| `adjust(brightness:contrast:saturation:)` | Combined adjustment |
+| `blurred(sigma:)` | Gaussian blur |
+| `sharpened(sigma:)` | Sharpen |
+| `sobel()` | Sobel edge detection |
+| `canny(sigma:)` | Canny edge detection |
+| `histogramEqualized()` | Equalize histogram |
+| `addingAlpha()` | Add alpha band |
+| `premultiplied()` | Premultiply alpha |
+| `unpremultiplied()` | Unpremultiply alpha |
+| `copiedToMemory()` | Break lazy reference chain |
+| `withPixelData(_:)` | Zero-copy raw pixel access (PixelBuffer) |
+| `findTrim(threshold:background:)` | Find content bounding box |
+| `statistics()` | Image statistics (min, max, mean, stddev) |
+| `averageColor()` | Per-band mean values → VIPSColor |
+| `detectBackgroundColor(stripWidth:)` | Detect background via trim margins or prominent edge color → VIPSColor |
+| `subtract(_:)` | Pixel-wise subtraction |
+| `absolute()` | Absolute value of pixels |
+| `numberOfStrips(withHeight:)` | Count horizontal strips |
+| `strip(atIndex:height:)` | Extract horizontal strip |
+| `extractRegion(fromFile:x:y:width:height:)` | Extract region from file |
+| `cacheData(format:quality:lossless:)` | Export for caching |
+| `writeToCache(file:format:quality:lossless:)` | Write cache file |
+| `memoryUsage()` | Current tracked memory |
+| `blank(width:height:bands:)` | Create blank (black) image |
+| `blank(size:bands:)` | Create blank image (CGSize) |
+| `drawRect(x:y:width:height:color:fill:)` | Draw rectangle |
+| `drawLine(from:to:color:)` | Draw line (CGPoint) |
+| `drawCircle(cx:cy:radius:color:fill:)` | Draw circle |
+| `drawCircle(center:radius:color:fill:)` | Draw circle (CGPoint) |
+| `floodFill(x:y:color:)` | Flood fill region |
+| `floodFill(at:color:)` | Flood fill region (CGPoint) |
+| `gravity(direction:width:height:extend:)` | Embed with gravity |
+| `gravity(direction:size:extend:)` | Embed with gravity (CGSize) |
+| `pixelValues(atX:y:)` | Read pixel values at coordinates → VIPSColor |
+| `pixelValues(at:)` | Read pixel values (CGPoint) → VIPSColor |
+| `imageInfo(atPath:)` | Get image info without full decode |
+| `metadata` | MetadataProxy for subscript access |
 
-### Memory Management (Class Methods)
+### VIPSImage.Cache
 
-| Method | Description |
+| Method/Property | Description |
 |--------|-------------|
-| `+clearCache` | Clear operation cache, free memory |
-| `+setCacheMaxOperations:` | Set max cached operations (0 to disable) |
-| `+setCacheMaxMemory:` | Set max cache memory in bytes |
-| `+setCacheMaxFiles:` | Set max open files in cache |
-| `+memoryUsage` | Current tracked memory in bytes |
-| `+memoryHighWater` | Peak tracked memory in bytes |
-| `+resetMemoryHighWater` | Reset peak memory tracking |
-| `+setConcurrency:` | Set vips thread pool size (affects JXL, etc.) |
-| `+concurrency` | Get current vips thread pool size |
+| `Cache.maxOperations` | Max cached operations (read-write) |
+| `Cache.maxMemory` | Max cache memory in bytes (read-write) |
+| `Cache.maxFiles` | Max cached files (read-write) |
+| `Cache.clear()` | Clear operation cache |
+
+### VIPSImage.concurrency
+
+| Property | Description |
+|----------|-------------|
+| `concurrency` | VIPS concurrency level (read-write, 0 = all cores) |
+
+### VIPSColor
+
+| Member | Description |
+|--------|-------------|
+| `values` | Raw per-band `[Double]` values (0.0–255.0 for 8-bit) |
+| `red`, `green`, `blue` | Per-component `Double` accessors |
+| `alpha` | Optional alpha `Double` (nil if < 4 bands) |
+| `init(red:green:blue:)` | Create color from UInt8 components |
+| `init(values:)` | Create from per-band `[Double]` values |
+| `.white` | Pure white constant |
+| `.black` | Pure black constant |
+| `subscript(position:)` | Band value by index (`RandomAccessCollection`) |
+| `init?(cgColor:)` | Create from CGColor (converts to sRGB, failable) |
+| `cgColor` | Export as CGColor in sRGB color space |
+| `init?(uiColor:)` | Create from UIColor (iOS/visionOS/Catalyst only) |
+| `uiColor` | Export as UIColor (iOS/visionOS/Catalyst only) |
+| `init?(nsColor:)` | Create from NSColor (macOS only, non-Catalyst) |
+| `nsColor` | Export as NSColor (macOS only, non-Catalyst) |
+
+### PixelBuffer
+
+| Property | Description |
+|----------|-------------|
+| `data` | `UnsafePointer<UInt8>` to pixel data |
+| `width` | Image width in pixels |
+| `height` | Image height in pixels |
+| `bytesPerRow` | Row stride in bytes |
+| `bands` | Number of bands/channels |
+
+### MetadataProxy
+
+| Member | Description |
+|--------|-------------|
+| `subscript(key: String) -> String?` | Get/set string metadata by key |
+
+### Enums
+
+| Type | Values |
+|------|--------|
+| `VIPSImageFormat` | `.unknown`, `.jpeg`, `.png`, `.webP`, `.heif`, `.avif`, `.jxl`, `.gif` |
+| `VIPSResizeKernel` | `.nearest`, `.linear`, `.cubic`, `.lanczos2`, `.lanczos3` |
+| `VIPSBlendMode` | `.over`, `.multiply`, `.screen`, `.overlay`, `.add`, `.darken`, `.lighten`, `.softLight`, `.hardLight`, `.difference`, `.exclusion` |
+| `VIPSInteresting` | `.none`, `.centre`, `.entropy`, `.attention`, `.low`, `.high` |
+| `VIPSExtendMode` | `.black`, `.copy`, `.repeat`, `.mirror`, `.white`, `.background` |
+| `VIPSCompassDirection` | `.centre`, `.north`, `.east`, `.south`, `.west`, `.northEast`, `.southEast`, `.southWest`, `.northWest` |
 
 ### VIPSImageStatistics
 
 | Property | Description |
 |----------|-------------|
-| `min` | Minimum pixel value across all bands |
-| `max` | Maximum pixel value across all bands |
-| `mean` | Mean pixel value across all bands |
-| `standardDeviation` | Standard deviation across all bands |
-
-### Image Formats
-
-| Format | Constant | Notes |
-|--------|----------|-------|
-| Unknown | `VIPSImageFormatUnknown` | Format not detected (-1) |
-| JPEG | `VIPSImageFormatJPEG` | Quality 1-100 |
-| PNG | `VIPSImageFormatPNG` | Quality ignored |
-| WebP | `VIPSImageFormatWebP` | Quality 1-100 |
-| HEIF | `VIPSImageFormatHEIF` | Quality 1-100 |
-| AVIF | `VIPSImageFormatAVIF` | Quality 1-100 |
-| JPEG-XL | `VIPSImageFormatJXL` | Quality 1-100 |
-| GIF | `VIPSImageFormatGIF` | Quality ignored |
-
-### Resize Kernels
-
-| Kernel | Constant | Use Case |
-|--------|----------|----------|
-| Nearest | `VIPSResizeKernelNearest` | Pixel art, fastest |
-| Linear | `VIPSResizeKernelLinear` | Fast, acceptable quality |
-| Cubic | `VIPSResizeKernelCubic` | Good quality |
-| Lanczos2 | `VIPSResizeKernelLanczos2` | High quality |
-| Lanczos3 | `VIPSResizeKernelLanczos3` | Best quality (default) |
-
-### Smart Crop Strategies
-
-| Strategy | Constant | Description |
-|----------|----------|-------------|
-| None | `VIPSInterestingNone` | Don't look for interesting areas |
-| Centre | `VIPSInterestingCentre` | Crop from center |
-| Entropy | `VIPSInterestingEntropy` | Maximize entropy (detail) |
-| Attention | `VIPSInterestingAttention` | Detect edges, skin tones, saturated colors |
-| Low | `VIPSInterestingLow` | Crop from low coordinate |
-| High | `VIPSInterestingHigh` | Crop from high coordinate |
-
-### Blend Modes
-
-| Mode | Constant | Description |
-|------|----------|-------------|
-| Over | `VIPSBlendModeOver` | Standard alpha compositing (most common) |
-| Multiply | `VIPSBlendModeMultiply` | Darken by multiplying colors |
-| Screen | `VIPSBlendModeScreen` | Lighten (inverse of multiply) |
-| Overlay | `VIPSBlendModeOverlay` | Multiply or screen based on base |
-| Add | `VIPSBlendModeAdd` | Add colors together |
-| Darken | `VIPSBlendModeDarken` | Keep darker pixels |
-| Lighten | `VIPSBlendModeLighten` | Keep lighter pixels |
-| Soft Light | `VIPSBlendModeSoftLight` | Subtle contrast adjustment |
-| Hard Light | `VIPSBlendModeHardLight` | Strong contrast adjustment |
-| Difference | `VIPSBlendModeDifference` | Absolute difference |
-| Exclusion | `VIPSBlendModeExclusion` | Similar to difference, lower contrast |
+| `min` | Minimum pixel value |
+| `max` | Maximum pixel value |
+| `mean` | Mean pixel value |
+| `standardDeviation` | Standard deviation |
 
 ## Architecture Notes
 
-### Lazy Evaluation and Memory Management
+### Internal Implementation
 
-libvips uses lazy evaluation - operations don't compute pixels until output is needed. This provides efficiency but has memory implications:
+- `VIPSImage` wraps an `UnsafeMutablePointer<VipsImage>` (NOT `OpaquePointer` — VipsImage is imported as a concrete C struct through the module map)
+- `g_object_ref`/`g_object_unref` require `gpointer()` casts
+- `vips_init()` is called directly (the `VIPS_INIT` macro is not callable from Swift)
+- Uses `internal import` (Swift 5.9+ `AccessLevelOnImport`) to hide C types from public API
+- Enums have `internal var vipsValue` computed properties that map to C counterparts via `rawValue`, eliminating switch boilerplate
 
-```
-// Problem: source image stays in memory
-let source = try VIPSImage(contentsOfFile: largeImage)  // ~50MB decoded
-let thumb = try source.thumbnail(width: 200, height: 200)  // Creates pipeline
-// Both source AND thumb data may be in memory due to reference chain
-```
+### VIPSColor and Ink Conversion
 
-**Solutions:**
+`VIPSColor` stores per-band `Double` values internally (via `values: [Double]`), used both as input (drawing, flatten) and output (averageColor, pixelValues, detectBackgroundColor). Conforms to `RandomAccessCollection` for subscript/iteration. `init(red: UInt8, ...)` converts to Double storage; `init(values:)` takes raw band data. `red`/`green`/`blue` accessors return `Double`. For drawing, `ink(forBands:)` converts to a `[Double]` array matching the image's band count:
+- 1-band: luminance approximation `0.2126*R + 0.7152*G + 0.0722*B`
+- 3-band: `[R, G, B]`
+- 4-band: `[R, G, B, 255.0]` (fully opaque)
 
-1. **Copy to memory** - breaks the reference chain:
-```swift
-let thumb = try source.thumbnail(width: 200, height: 200)
-let copied = try thumb.copyToMemory()  // Forces evaluation, breaks chain
-source = nil  // Now source can be fully freed
-```
+### Lazy Evaluation
 
-2. **Adjust cache limits** for memory-constrained environments:
-```swift
-VIPSImage.setCacheMaxOperations(0)  // Disable operation cache
-VIPSImage.setCacheMaxMemory(50 * 1024 * 1024)  // Or limit to 50MB
-```
+libvips uses lazy evaluation — operations build a pipeline that only executes when output is needed. Use `copiedToMemory()` to break reference chains and free source images early.
 
-3. **Monitor memory**:
-```swift
-print("VIPS using: \(VIPSImage.memoryUsage() / 1024 / 1024)MB")
-```
+### Threading
 
-### Threading and Batch Processing
+Default: VIPS concurrency = 1 (single-threaded per operation). Parallelize at the application layer with `DispatchQueue.concurrentPerform`. For single large images, use `VIPSImage.concurrency = 0` for all cores.
 
-**Defaults are optimized for batch processing (set on initialize):**
-- VIPS concurrency: 1 thread
-- Operation cache: enabled (100 ops, 50MB, 10 files) - auto-evicts based on limits
+### CGImage Export
 
-```swift
-// Just initialize - defaults are already optimal for batch processing
-try VIPSImage.initialize()
-
-// For thumbnails, use shrink-on-load (decodes at reduced resolution):
-let thumb = try VIPSImage.thumbnail(fromFile: path, width: 200, height: 200)
-// This is MUCH more memory efficient than loading full image then resizing
-
-// Parallelize at your application layer:
-DispatchQueue.concurrentPerform(iterations: images.count) { i in
-    let thumb = try? VIPSImage.thumbnail(fromFile: images[i], width: 200, height: 200)
-    // process...
-}
-```
-
-**For single-image processing** (maximum speed for one large image):
-```swift
-VIPSImage.setConcurrency(0)  // Auto-detect (all cores)
-```
-
-**Memory optimization tips:**
-- Use `thumbnailFromFile:` instead of loading then thumbnailing
-- Use `createThumbnailFromFile:` for the most memory-efficient thumbnail-to-display path
-- Release images promptly (set to nil)
-- Use `copyToMemory` to break lazy reference chains
-- Single-threaded default prevents per-thread buffer allocation
-
-### Format-Specific Memory Characteristics
-
-Different formats have different memory profiles when thumbnailing:
-
-| Format | Shrink-on-Load | Peak Memory Notes |
-|--------|---------------|-------------------|
-| JPEG | Yes (8x, 4x, 2x) | Excellent - decodes directly at reduced resolution |
-| PNG | No | Full decode required, then resize |
-| WebP | Limited | Partial shrink-on-load support |
-| AVIF | No | Full AV1 frame decode required |
-| JXL | No | Full decode required (inherent to format) |
-| HEIF | No | Full decode required |
-| GIF | No | Full decode required |
-
-**JPEG-XL Memory:** JXL does not support true shrink-on-load. Unlike JPEG which can decode DCT coefficients at reduced resolution, JXL's architecture requires decoding significant portions of the image regardless of target size. A 6000x3300 JXL will require ~500MB peak memory during decode even when thumbnailing. For memory-constrained batch processing of large JXL files, consider:
-- Decoding one JXL at a time (don't parallelize JXL decodes)
-- Using `createThumbnailFromFile:` to release decode buffers immediately after CGImage creation
-- Storing source images in JPEG format if memory is critical
-
-**AVIF Memory:** AVIF uses the dav1d AV1 decoder which allocates frame buffers. For a 4K AVIF, expect ~100-150MB peak during decode.
-
-### CGImage Export (Zero-Copy Display)
-
-The `createCGImage` method provides the most efficient path for displaying images:
-
-```
-VIPSImage → vips_image_write_to_memory → CGDataProvider → CGImage → UIImage
-```
-
-This avoids the encode/decode cycle that would occur with:
-```
-VIPSImage → JPEG/PNG encode → NSData → UIImage decode → CGImage (slower)
-```
-
-The pixel data is transferred directly from libvips memory to CoreGraphics with a single copy. The `CGDataProvider` release callback automatically frees the vips memory when the CGImage is deallocated.
-
-### Xcode Debugger Quick Look
-
-VIPSImage supports Xcode's Quick Look feature via `debugQuickLookObject`. When debugging:
-
-1. Set a breakpoint after creating/processing a VIPSImage
-2. Hover over the variable and click the eye icon (or press spacebar)
-3. Xcode displays a visual preview of the image
-
-This uses runtime lookup for UIImage to avoid compile-time UIKit dependencies while still providing visual debugging. If CGImage creation fails, it falls back to showing dimensions and band count as text.
+`cgImage` (throwing computed property) transfers pixels directly from libvips to CoreGraphics via `CGDataProvider`, avoiding encode/decode overhead. The `CGDataProvider` release callback frees vips memory when the CGImage is deallocated.
 
 ### Thread Safety
 
-VIPSImage is safe to use from multiple threads concurrently, with each thread processing different images:
+VIPSImage is `@unchecked Sendable`. Safe to use from multiple threads with each thread processing different images. The vips operation cache uses mutexes internally.
 
-```swift
-// Safe: parallel processing of different images
-DispatchQueue.concurrentPerform(iterations: images.count) { i in
-    let image = try? VIPSImage(contentsOfFile: images[i])
-    let thumb = try? image?.resizeToFit(width: 200, height: 200)
-    // process...
-}
-```
+### Background Color Detection
 
-The vips operation cache uses mutexes to protect concurrent access. Each VIPSImage instance is independent.
+`detectBackgroundColor(stripWidth:)` uses a two-step approach:
 
-**Note:** `vips_concurrency_set(1)` means each individual vips operation runs single-threaded internally, but multiple operations on different images can run in parallel from your app's threads.
+1. **Trim-based** — calls `findTrim()` to detect content margins. If the content rect is inset from the image bounds on any side (e.g., a white spine on a comic page), it samples from those margin areas using a pixel-count-weighted average across all margin strips.
+2. **Prominent edge color** (fallback) — when no trim margins exist (content fills to all edges), it reads raw pixels from edge strips via `withPixelData`, quantizes each pixel's RGB into color buckets (step size 32 → 8 levels per channel, 512 buckets), and returns the average actual color of the most frequent bucket. This finds the dominant edge color rather than the average, which avoids content colors pulling the result off.
 
-### Why a Dynamic Framework with Wrapper?
+### vips_cache_drop_all Bug (Workaround)
 
-1. **License compliance**: libvips is LGPL, requiring dynamic linking for proprietary apps
-2. **Header complexity**: libvips depends on glib which has complex header structures that don't work well with Clang modules
-3. **Clean API**: The Objective-C wrapper provides a simple, idiomatic API without exposing internal complexity
-
-### Build Approach
-
-1. All 13 dependencies are compiled as static libraries for each target architecture
-2. The Objective-C wrapper (`VIPSImage.m`) is compiled against these static libraries
-3. Everything is linked into a single dynamic library (`VIPSKit.framework/VIPSKit`)
-4. Only `VIPSImage.h` is exposed as the public header
-5. The framework is packaged as an xcframework for multi-platform distribution
-
-### Cross-Compilation
-
-- **CMake builds** use `Scripts/toolchains/ios.toolchain.cmake` from leetal/ios-cmake
-- **Meson builds** use custom cross-files in `Scripts/cross-files/`
-- **Autotools builds** use configure flags with appropriate CC/CFLAGS
-
-### Target Identifiers
-
-| Target ID | Description |
-|-----------|-------------|
-| `ios` | iOS Device arm64 |
-| `ios-sim-arm64` | iOS Simulator arm64 |
-| `ios-sim-x86_64` | iOS Simulator x86_64 |
-| `catalyst-arm64` | Mac Catalyst arm64 |
-| `catalyst-x86_64` | Mac Catalyst x86_64 |
-
-## Troubleshooting
-
-### Build fails with "glib-mkenums not found"
-```bash
-brew install glib
-```
-
-### Build fails with "nasm not found" (dav1d)
-```bash
-brew install nasm
-```
-
-### libjxl build fails with "Please run deps.sh"
-The build script automatically runs `deps.sh` to fetch libjxl's third-party dependencies. If this fails, run manually:
-```bash
-cd Vendor/libjxl-*/
-./deps.sh
-```
-
-### Undefined symbols for architecture
-Check that all dependencies built successfully for the failing target. The build scripts create static libraries in `build/staging/<library>/<target>/lib/`.
-
-### Framework not loading at runtime
-Ensure "Embed & Sign" is selected in Xcode's "Frameworks, Libraries, and Embedded Content" section.
-
-### vips_cache_drop_all bug (fixed)
-
-**Symptom:** Crash in `g_hash_table_lookup()` called from `vips_cache_operation_buildp()` after calling `clearCache`.
-
-**Root cause:** The libvips function `vips_cache_drop_all()` destroys the hash table entirely via `VIPS_FREEF(g_hash_table_unref, vips_cache_table)`, which sets `vips_cache_table = NULL`. Subsequent operations call `g_hash_table_lookup(vips_cache_table, ...)` with a NULL pointer, causing a crash. This is a bug in libvips - `vips_cache_drop_all()` is only meant to be called at shutdown.
-
-**Solution:** VIPSKit's `clearCache` method uses a safe workaround: temporarily set `vips_cache_set_max(0)` to trigger LRU eviction of all cached operations, then restore the original limit. This clears the cache without destroying the hash table.
-
-## Cleaning
-
-```bash
-./build.sh --clean              # Clean and rebuild
-rm -rf build VIPSKit.xcframework   # Manual clean
-```
+`Cache.clear()` does NOT call `vips_cache_drop_all()` (which crashes by destroying the hash table). Instead it temporarily sets `vips_cache_set_max(0)` to evict all entries, then restores the limit.
 
 ## License
 
 - libvips: LGPL-2.1
-- Dependencies have various open-source licenses (MIT, BSD, etc.)
-- This build system: MIT
+- VIPSKit: MIT
