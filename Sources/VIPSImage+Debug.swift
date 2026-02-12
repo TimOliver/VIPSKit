@@ -7,7 +7,8 @@ extension VIPSImage: CustomDebugStringConvertible {
 
     public var debugDescription: String {
         var lines: [String] = []
-        lines.append("VIPSImage: \(width)x\(height) pixels, \(bands) band\(bands == 1 ? "" : "s")\(hasAlpha ? " (with alpha)" : "")")
+        let address = Unmanaged.passUnretained(self).toOpaque()
+        lines.append("<VIPSImage: \(address)> \(width)x\(height) pixels, \(bands) band\(bands == 1 ? "" : "s")\(hasAlpha ? " (with alpha)" : "")")
 
         // Source format and loader
         let format = sourceFormat
