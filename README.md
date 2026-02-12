@@ -1,26 +1,28 @@
 # VIPSKit
 
-`VIPSKit` is an XCFramework distribution of [libvips](https://github.com/libvips/libvips), the fast image processing library, for iOS. It includes an Objective-C wrapper that provides a clean, idiomatic API for Swift and Objective-C projects.
+`VIPSKit` is a pure Swift wrapper for [libvips](https://github.com/libvips/libvips), the fast image processing library, for Apple platforms. The heavy lifting (compiling libvips + 17 dependencies) is handled by the separate [vips-cocoa](https://github.com/TimOliver/vips-cocoa) project, which produces a static `vips.xcframework`. VIPSKit imports that xcframework and provides a clean, type-safe Swift API.
 
 libvips is known for being exceptionally fast and memory-efficient, using a streaming architecture that processes images incrementally rather than loading entire images into memory. This makes it ideal for processing large images or batch thumbnail generation on mobile devices.
 
 # Features
 
-* Pre-built universal XCFramework for iOS devices (arm64), iOS Simulator (arm64, x86_64), and Mac Catalyst (arm64, x86_64).
-* Clean Objective-C wrapper with full Swift compatibility.
-* Supports JPEG, PNG, WebP, HEIF, AVIF, JPEG-XL, and GIF formats.
-* Memory-efficient shrink-on-load thumbnailing for JPEG images.
+* Pure Swift API with full async/await support.
+* Supports iOS 15+, macOS 12+, and visionOS 1.0+.
+* Image format support for JPEG, PNG, WebP, JPEG-XL, TIFF, HEIF, AVIF, and GIF.
+* Memory-efficient shrink-on-load thumbnailing for JPEG, WebP, and HEIF images.
 * Smart content-aware cropping using attention detection.
 * Image compositing with 25+ blend modes for watermarks and overlays.
 * Color adjustments (brightness, contrast, saturation, gamma).
-* Edge detection (Sobel, Canny algorithms).
+* Gaussian blur, sharpening, and edge detection (Sobel, Canny).
+* Drawing primitives (rectangles, lines, circles, flood fill).
+* Image analysis (trim detection, statistics, average/background color).
+* Full EXIF, XMP, and ICC metadata access.
 * Efficient tiling and region extraction for very large images.
 * Direct CGImage export for zero-copy display.
-* Flexible caching API with lossless WebP support.
 
 # Examples
 
-`VIPSKit` features a simple, chainable API that handles all the complexity of libvips internally.
+`VIPSKit` features a simple, expressive API that handles all the complexity of libvips internally.
 
 ```swift
 import VIPSKit
@@ -48,95 +50,104 @@ let jpegData = try image.data(format: .jpeg, quality: 85)
 try image.write(toFile: "/path/to/output.jpg")
 
 // Create CGImage directly for display (most efficient)
-if let cgImage = try image.createCGImage() {
-    let uiImage = UIImage(cgImage: cgImage)
-}
+let cgImage = try image.cgImage
+let uiImage = UIImage(cgImage: cgImage)
 ```
 
-For Objective-C:
+All I/O and CPU-heavy operations also have async variants:
 
-```objc
-@import VIPSKit;
+```swift
+// Async loading
+let image = try await VIPSImage.loaded(fromFile: path)
+let thumb = try await VIPSImage.thumbnail(fromFile: path, width: 200, height: 200)
 
-[VIPSImage initializeWithError:nil];
+// Async processing
+let resized = try await image.resizedToFit(width: 800, height: 600)
+let blurred = try await image.blurred(sigma: 2.0)
 
-VIPSImage *image = [VIPSImage imageWithContentsOfFile:path error:&error];
-VIPSImage *thumbnail = [image resizeToFitWidth:200 height:200 error:&error];
-NSData *jpegData = [thumbnail dataWithFormat:VIPSImageFormatJPEG quality:85 error:&error];
+// Async export
+let data = try await image.encoded(format: .webP, quality: 80)
 ```
 
 # Requirements
 
-`VIPSKit` requires iOS 15.0 and above. The framework is written in Objective-C but imports seamlessly into Swift.
+`VIPSKit` supports the following platforms:
+
+| Platform | Architectures | Min Version |
+|----------|--------------|-------------|
+| iOS | arm64 | 15.0 |
+| iOS Simulator | arm64, x86_64 | 15.0 |
+| Mac Catalyst | arm64, x86_64 | 15.0 |
+| macOS | arm64, x86_64 | 12.0 |
+| visionOS | arm64 | 1.0 |
+| visionOS Simulator | arm64 | 1.0 |
 
 # Installation
 
-## Manual Installation
+## Swift Package Manager (Recommended)
 
-1. Download or build `VIPSKit.xcframework`
-2. Drag it into your Xcode project
-3. Add to "Frameworks, Libraries, and Embedded Content"
-4. Set "Embed" to "Embed & Sign"
+Add to your `Package.swift`:
 
-## Swift Package Manager
+```swift
+dependencies: [
+    .package(url: "https://github.com/TimOliver/VIPSKit.git", from: "1.0.0"),
+]
+```
 
-*Coming soon*
+Or in Xcode: File > Add Package Dependencies, enter the repository URL.
+
+VIPSKit automatically pulls in the pre-built `vips.xcframework` from vips-cocoa via SPM binary targets.
+
+## XCFramework (Manual)
+
+1. Build `VIPSKit.xcframework` (see [Building from Source](#building-from-source) below).
+2. Drag it into your Xcode project.
+3. Add to "Frameworks, Libraries, and Embedded Content".
+4. Set "Embed" to "Embed & Sign".
 
 # Development
 
-Want to contribute, debug, or just explore the code? VIPSKit includes full source-level debugging support.
+### Prerequisites
+
+- Xcode with command-line tools
+- Ruby with `xcodeproj` gem: `gem install xcodeproj`
+- Static `vips.xcframework` in `Frameworks/` (from [vips-cocoa](https://github.com/TimOliver/vips-cocoa))
 
 ### Quick Start
 
 ```bash
-git clone https://github.com/anthropics/VIPSKit.git
-cd VIPSKit
-./Scripts/bootstrap.sh   # Downloads pre-built libraries + libvips source
-open VIPSKit.xcodeproj   # Open in Xcode
+# Copy vips.xcframework from vips-cocoa
+cp -R ~/Developer/vips-cocoa/build/xcframeworks/ios/static/vips.xcframework Frameworks/
+
+# Generate Xcode project
+ruby Scripts/configure-project.rb
+
+# Open and run tests (⌘U)
+open VIPSKit.xcodeproj
 ```
 
-Press ⌘U to run tests. You can set breakpoints in both the Objective-C wrapper (`Sources/`) and the libvips C code (`Vendor/vips-*/libvips/`).
-
-### Requirements
+### SPM Development
 
 ```bash
-gem install xcodeproj     # For Xcode project configuration
+swift build          # Build
+swift test           # Run tests
 ```
 
 # Building from Source
 
-To build the XCFramework from source (instead of using pre-built libraries):
-
-### Prerequisites
-
-```bash
-brew install meson ninja cmake nasm glib
-```
-
-### Build
+Build the `VIPSKit.xcframework`:
 
 ```bash
 ./build.sh
 ```
 
-This will download all sources, cross-compile for all target platforms, and produce `VIPSKit.xcframework` in the project root.
+This archives for iOS, iOS Simulator, and Mac Catalyst, then produces `VIPSKit.xcframework` in the project root.
 
 ### Build Options
 
 ```bash
-./build.sh --clean          # Clean all build artifacts first
-./build.sh --skip-download  # Skip downloading sources
-./build.sh --jobs 8         # Set parallel job count
-./build.sh -f               # Rebuild framework only (fast)
-```
-
-### Creating a Pre-built Release
-
-After building, create a tarball for GitHub releases:
-
-```bash
-./Scripts/package-prebuilt.sh 1.0.0
-# Creates vipskit-prebuilt-1.0.0.tar.gz
+./build.sh --clean   # Clean build artifacts first
+./build.sh --fast    # Build for current platform only (skip archiving)
 ```
 
 # Supported Image Formats
@@ -146,10 +157,11 @@ After building, create a tarball for GitHub releases:
 | JPEG | Yes | Yes | libjpeg-turbo with SIMD |
 | PNG | Yes | Yes | libpng |
 | WebP | Yes | Yes | Lossy and lossless |
-| HEIF | Yes | Yes | libheif |
-| AVIF | Yes | No | Decode via dav1d |
 | JPEG-XL | Yes | Yes | libjxl |
-| GIF | Yes | Yes | Built-in |
+| TIFF | Yes | Yes | Built-in |
+| HEIF | Yes | No | Decode via libheif |
+| AVIF | Yes | No | Decode via dav1d + libheif |
+| GIF | Yes | No | Decode only, built-in |
 
 # Why libvips?
 
@@ -161,12 +173,10 @@ libvips uses a different approach: it streams pixels through a pipeline, process
 
 `VIPSKit` was created by [Tim Oliver](http://twitter.com/TimOliverAU) as a component of [iComics](http://icomics.net).
 
-libvips is developed by [John Googin-Cupples](https://github.com/jcupitt) and contributors.
+libvips is developed by [John Cupitt](https://github.com/jcupitt) and contributors.
 
 # License
 
 `VIPSKit` wrapper code is available under the MIT license.
 
-libvips is licensed under the LGPL-2.1. As `VIPSKit` dynamically links libvips, your app can use any license compatible with dynamic linking to LGPL libraries.
-
-Please see the [LICENSE](LICENSE) file for more information.
+libvips is licensed under the LGPL-2.1. VIPSKit statically links libvips into the framework binary; see [LICENSE](LICENSE) for details.
