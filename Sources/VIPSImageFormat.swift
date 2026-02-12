@@ -19,6 +19,21 @@ public enum VIPSImageFormat: Int, Sendable {
     /// TIFF format (lossless, quality parameter ignored)
     case tiff
 
+    /// A human-readable label for this format, suitable for debug output.
+    internal var debugLabel: String {
+        switch self {
+        case .unknown: return "Unknown"
+        case .jpeg:    return "JPEG"
+        case .png:     return "PNG"
+        case .webP:    return "WebP"
+        case .heif:    return "HEIF"
+        case .avif:    return "AVIF"
+        case .jxl:     return "JPEG XL"
+        case .gif:     return "GIF"
+        case .tiff:    return "TIFF"
+        }
+    }
+
     /// The standard file extension associated with this format, or `nil` for unknown formats.
     public var fileExtension: String? {
         switch self {
