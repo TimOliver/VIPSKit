@@ -42,6 +42,7 @@
 		228C22B82F399D1000AC49DD /* VIPSCompassDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228C22B72F399D1000AC49DD /* VIPSCompassDirection.swift */; };
 		228C22BA2F39A8E100AC49DD /* VIPSColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228C22B92F39A8E100AC49DD /* VIPSColor.swift */; };
 		228D9782E89A00B6F01A2F48 /* VIPSImage+Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF91BD4031D82D3FE01D625 /* VIPSImage+Filter.swift */; };
+		22DC48172F3D9D5B00AC42C2 /* VIPSImage+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DC48162F3D9D5B00AC42C2 /* VIPSImage+Debug.swift */; };
 		2EF17BEDD7720B8EC99C1970 /* VIPSImage+Resize.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7876F56ADD9B5C468A66A5 /* VIPSImage+Resize.swift */; };
 		318D5D55B52D6CB5CD54AE70 /* VIPSBlendMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D12D4470697739421961F6 /* VIPSBlendMode.swift */; };
 		3BC89ED315333B6C0E1A1056 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCAC46B5C992D66C24214432 /* Foundation.framework */; };
@@ -135,6 +136,7 @@
 		228C22B52F399D0000AC49DD /* VIPSExtendMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VIPSExtendMode.swift; sourceTree = "<group>"; };
 		228C22B72F399D1000AC49DD /* VIPSCompassDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VIPSCompassDirection.swift; sourceTree = "<group>"; };
 		228C22B92F39A8E100AC49DD /* VIPSColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VIPSColor.swift; sourceTree = "<group>"; };
+		22DC48162F3D9D5B00AC42C2 /* VIPSImage+Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Debug.swift"; sourceTree = "<group>"; };
 		2FD5B293FFBC996D346324E8 /* VIPSImage+Color.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Color.swift"; sourceTree = "<group>"; };
 		366B89A5C0650E56760C1E84 /* module.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		4357A2666A07BB66C8C67469 /* main.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -232,6 +234,7 @@
 				2FD5B293FFBC996D346324E8 /* VIPSImage+Color.swift */,
 				DC38C3D7422B092B392436CB /* VIPSImage+Composite.swift */,
 				228C22A92F399CC000AC49DD /* VIPSImage+Draw.swift */,
+				22DC48162F3D9D5B00AC42C2 /* VIPSImage+Debug.swift */,
 				228C22AB2F399CC500AC49DD /* VIPSImage+Embed.swift */,
 				EEF91BD4031D82D3FE01D625 /* VIPSImage+Filter.swift */,
 				228C22AD2F399CCB00AC49DD /* VIPSImage+Histogram.swift */,
@@ -518,6 +521,7 @@
 				184A80034DF4F85E18D9E97B /* VIPSImage+Analysis.swift in Sources */,
 				93452ACF054D529CBD16B7DE /* VIPSImage+CGImage.swift in Sources */,
 				5589A4D72510AF3321137053 /* VIPSImage+Color.swift in Sources */,
+				22DC48172F3D9D5B00AC42C2 /* VIPSImage+Debug.swift in Sources */,
 				AC4FFC11048CD17ABA549736 /* VIPSImage+Composite.swift in Sources */,
 				228D9782E89A00B6F01A2F48 /* VIPSImage+Filter.swift in Sources */,
 				829B86766358CBE145F5F4DC /* VIPSImage+Loading.swift in Sources */,
