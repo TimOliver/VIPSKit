@@ -81,6 +81,10 @@ fw.build_configurations.each do |config|
 
     'SUPPORTED_PLATFORMS' => 'iphoneos iphonesimulator macosx',
     'SUPPORTS_MACCATALYST' => 'YES',
+
+    # Suppress "module map is missing" warning for private headers
+    # (CVIPS.h is Private but intentionally not exposed as a clang module)
+    'MODULEMAP_PRIVATE_FILE' => '',
   })
 
   if config.name == 'Debug'
@@ -109,7 +113,7 @@ fw.source_build_phase.add_file_reference(cvips_c)
 # CVIPS.h as Private header (visible to Swift in same target, not public)
 headers_phase = fw.headers_build_phase
 build_file = headers_phase.add_file_reference(cvips_h)
-build_file.settings = { 'ATTRIBUTES' => ['Project'] }
+build_file.settings = { 'ATTRIBUTES' => ['Private'] }
 
 # Swift source files (at Sources/ root)
 swift_files = Dir.glob(File.join(ROOT, 'Sources/*.swift')).sort
@@ -197,6 +201,10 @@ tests.build_configurations.each do |config|
     'BUNDLE_LOADER' => '$(TEST_HOST)',
     'SUPPORTED_PLATFORMS' => 'iphoneos iphonesimulator',
 
+    # Disable PNG optimization — Xcode converts PNGs to Apple's CgBI format
+    # which is not readable by standard PNG decoders (including libpng/vips)
+    'COMPRESS_PNG_FILES' => 'NO',
+
     # Tests need module map paths to resolve @testable import of internal imports
     'SWIFT_INCLUDE_PATHS' => [
       '$(inherited)',
@@ -232,11 +240,17 @@ test_files.each do |path|
 end
 
 # Add test resources
+# Only add superman.jpg to the resource build phase — other test images are
+# found via the #filePath fallback in VIPSImageTestCase.pathForTestResource.
+# This avoids Xcode's PNG optimization (CgBI conversion) which produces files
+# that standard libpng/vips cannot read.
 resources_group = tests_group.new_group('TestResources', 'TestResources')
 resource_files = Dir.glob(File.join(ROOT, 'Tests/TestResources/*')).reject { |f| File.basename(f) == '.gitkeep' }
 resource_files.each do |path|
   ref = resources_group.new_reference(File.basename(path))
-  tests.resources_build_phase.add_file_reference(ref)
+  if File.basename(path) == 'superman.jpg'
+    tests.resources_build_phase.add_file_reference(ref)
+  end
 end
 
 # ===========================================================================

@@ -3,108 +3,96 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		027C67F918232AA8F569E72E /* Tests/VIPSImageColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB7A2C208BBEAE6A766C1D3 /* Tests/VIPSImageColorTests.swift */; };
-		047B08E6CAA7DC74D6CD035B /* Tests/VIPSImageRotateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0609AD3769A4995E566C3B3E /* Tests/VIPSImageRotateTests.swift */; };
-		07B2A70DD794356A2246D603 /* Tests/VIPSImageTilingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5FFBCABC89C34E523742FD /* Tests/VIPSImageTilingTests.swift */; };
-		0A77BD7BD13ABD0D07C9629A /* test.tiff in Resources */ = {isa = PBXBuildFile; fileRef = C5FB693C0AFA4AF578BE9091 /* test.tiff */; };
-		0ABC0A0B3F466AE5817B39CD /* superman.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7797A7A39E08EADC9B056352 /* superman.jpg */; };
-		0AE1E2A7A298DAB216E82057 /* VIPSImage+Analysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = C771BB7EC29F17ADCAB73FBF /* VIPSImage+Analysis.swift */; };
-		0B585ECFB01B9FBB8BE68923 /* VIPSImage+Saving.swift in Sources */ = {isa = PBXBuildFile; fileRef = 750AB21DC358B1287DF8FD35 /* VIPSImage+Saving.swift */; };
-		10C99341DCF9C6CEF991D0A7 /* Tests/VIPSImageDrawTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4844EC96CEA0ECDDD0207E6 /* Tests/VIPSImageDrawTests.swift */; };
-		1ABE12B078D400BCF22D5CDC /* VIPSImage+Rotate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11862BA392A692FC78ECAFA0 /* VIPSImage+Rotate.swift */; };
-		1B7BD59D62406EFFDA4BBDF1 /* VIPSImage+Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33260D79AFABE29B4B69B67 /* VIPSImage+Filter.swift */; };
-		1FBF3E3EEDB3ED9C95CC39AE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E4968C5AB6E7A1947649C2B7 /* AppDelegate.m */; };
-		229967F32F3E1DA600878EF6 /* vips-static in Frameworks */ = {isa = PBXBuildFile; productRef = DF216C003195F6DBB3B004E4 /* vips-static */; };
-		229967F42F3E1DA600878EF6 /* vips-static in Frameworks */ = {isa = PBXBuildFile; productRef = 63E6E2354288B41DF5C31C34 /* vips-static */; };
-		2CAA6BB597E7DCE9735D066F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A52E01BB21DCE573DF1F8ADE /* main.m */; };
-		2D947FA9B18502819B2E2090 /* Tests/VIPSImageFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24FF00E33A1F96D9986D44C1 /* Tests/VIPSImageFilterTests.swift */; };
-		3196AFFF26D8D5DBAAEC5A64 /* Tests/VIPSImageCompositeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1222CB09F3633C06D88ADF73 /* Tests/VIPSImageCompositeTests.swift */; };
-		374EABDD39725BC5ECEE40E2 /* test-rgb.png in Resources */ = {isa = PBXBuildFile; fileRef = E247B845BC724A6FDA63A57C /* test-rgb.png */; };
-		3FC0122123A5193351361D31 /* VIPSImage+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50FA72FA90F0139493F3AF3F /* VIPSImage+Debug.swift */; };
-		48A06982D33D4B600A03832C /* VIPSImage+Loading.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46D15816C5CE6957703DBB3 /* VIPSImage+Loading.swift */; };
-		4EA996B44E086F1057C0CF41 /* Tests/VIPSImageEmbedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967EFB1FED21A066CAC86B60 /* Tests/VIPSImageEmbedTests.swift */; };
-		55027D533B6305EC5C7046D7 /* Tests/VIPSImageCoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05197A4C1D403742E2586989 /* Tests/VIPSImageCoreTests.swift */; };
-		5763CD00057C34D5DD45248B /* VIPSImageFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CC9B667A6972FB86775BD3A /* VIPSImageFormat.swift */; };
-		5E4C99162CAE5A082B6780C0 /* CVIPS.c in Sources */ = {isa = PBXBuildFile; fileRef = 1841E1E8B1A0DF9653EC2EFC /* CVIPS.c */; };
-		5EAA6CA54AAD80C64A69EFB4 /* VIPSImage+CGImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16B23D87AA8AAE56218EC24 /* VIPSImage+CGImage.swift */; };
-		6132D5B2CEB8C3000F2A6376 /* test-rgba.png in Resources */ = {isa = PBXBuildFile; fileRef = 1B9E57C0E400644B24DBFDB0 /* test-rgba.png */; };
-		66E230619603B5F2063EED20 /* Tests/VIPSImageHistogramTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C784A6A17012674739C325 /* Tests/VIPSImageHistogramTests.swift */; };
-		673447A67A72C48ECBA5F00D /* Tests/VIPSImageCGImageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11DA6D67AF92CD0056776AF5 /* Tests/VIPSImageCGImageTests.swift */; };
-		6B73783BD57DE6C5C5ABBF09 /* VIPSImage+Tiling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2482F2976631285D050BA1C6 /* VIPSImage+Tiling.swift */; };
-		72EC43043A01A2200652CC1B /* VIPSImage+Histogram.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2530C305B995F020063CA63 /* VIPSImage+Histogram.swift */; };
-		7868A8AD32480DFF2F28C048 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78FF20C2EAB823448EB1C49A /* Foundation.framework */; };
-		7D2C88C2F7FA0CB2D6BC8915 /* VIPSImage+Composite.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9537883C2442DEDD61ABC12 /* VIPSImage+Composite.swift */; };
-		7E4062EE5DE0DA892AD618FD /* rotated-6.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 5083002281B3A312ABB94DF8 /* rotated-6.jpg */; };
-		7EA1371DC845EC6376691979 /* VIPSCompassDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F47D5CB2489459D05FB1302 /* VIPSCompassDirection.swift */; };
-		7EF30727BEECDEAE62A19023 /* VIPSKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 207592D03BC89089A16DD404 /* VIPSKit.framework */; };
-		87DA0D27CBF4D000A9AEE6A6 /* VIPSImage+Resize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03950C573FB96FA9EE9D7212 /* VIPSImage+Resize.swift */; };
-		89C7DCC72CBABF0EBFA38805 /* test.gif in Resources */ = {isa = PBXBuildFile; fileRef = 39F45BBCCBCEB6363414BE9D /* test.gif */; };
-		8A38681665C59F34E49FB1FD /* VIPSImage+Metadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0E7D9B92D46456AA066377D /* VIPSImage+Metadata.swift */; };
-		90E4FDC2F809720A537BB409 /* VIPSError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A60A1694F40BD9501F19495 /* VIPSError.swift */; };
-		97B8713C43B367DC9D406822 /* VIPSImage+Band.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C14C9E257B79DEA74B92971 /* VIPSImage+Band.swift */; };
-		986071A122C8FA77C7A5B316 /* Tests/VIPSImageResizeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02F025B1607D224DF47FFF3 /* Tests/VIPSImageResizeTests.swift */; };
-		9A816856E55BD36BB3374505 /* Tests/VIPSImageLoadingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3362CF3DE2A728780864FE76 /* Tests/VIPSImageLoadingTests.swift */; };
-		9B1A9AB8458FC533EE9A4967 /* Tests/VIPSImageAnalysisTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B432A01BA4079724016A1635 /* Tests/VIPSImageAnalysisTests.swift */; };
-		9BB146CFC7771D528B421173 /* VIPSImageStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7097DBB3AF9E3A4C0BBD9C37 /* VIPSImageStatistics.swift */; };
-		A7F3CC780E3ED97DEAFEF199 /* Tests/VIPSImageTransformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0CF1BAC55263343EF4EE00B /* Tests/VIPSImageTransformTests.swift */; };
-		A8E2346B8376B9ADCEC0D41A /* Tests/VIPSImageBandTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44EE3748F4AC559CCA6D13B /* Tests/VIPSImageBandTests.swift */; };
-		ADBE52489036F8DED8683E67 /* VIPSExtendMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DB0556B8393454B3EA3DCEA /* VIPSExtendMode.swift */; };
-		AE331EFEE5648380E9E10C2F /* VIPSImage+Draw.swift in Sources */ = {isa = PBXBuildFile; fileRef = D800F5DAD34B7C83864E59AF /* VIPSImage+Draw.swift */; };
-		AEB5760AAE4A6324000389FB /* CVIPS.h in Headers */ = {isa = PBXBuildFile; fileRef = DC378D08B18BCEC188C2B72F /* CVIPS.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		B07B4660FB0164DFB08E108D /* Tests/VIPSImageSavingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0C8060317AC09D8499B4CC /* Tests/VIPSImageSavingTests.swift */; };
-		B30F9652453FA340AC832476 /* VIPSKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 207592D03BC89089A16DD404 /* VIPSKit.framework */; };
-		B5333DCF082EFB3EA23E3DF5 /* grayscale.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1698017E40D4159D83ADD478 /* grayscale.jpg */; };
-		B5B3BA7B64BA1528F35436EE /* VIPSImage+Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B81CACC81CD44D38F6214E /* VIPSImage+Transform.swift */; };
-		BC0AAAFEFA555235DD04CB55 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A6581895DBF25A1225BF4B9 /* LaunchScreen.storyboard */; };
-		C9165106BA64509EC25A5583 /* VIPSBlendMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5764896E974E993835E1CAD3 /* VIPSBlendMode.swift */; };
-		C9D9AB2007F1416F39AB0CB5 /* VIPSColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F84A4F07B5806D6F23BF579A /* VIPSColor.swift */; };
-		CBC795687B54F9FE16302F3F /* VIPSImage+Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C33FD822F1D16128217658A /* VIPSImage+Color.swift */; };
-		CDB88F32C258BAFA909ECFCE /* tiny.png in Resources */ = {isa = PBXBuildFile; fileRef = 80733085580414EAEE0AD225 /* tiny.png */; };
-		CF0DFAF57E3FFFD06A357F10 /* Tests/VIPSImageMetadataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC4C243CC000E8FA0398497F /* Tests/VIPSImageMetadataTests.swift */; };
-		D20AD89A84249789586A42AD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78FF20C2EAB823448EB1C49A /* Foundation.framework */; };
-		D23C63FFB0482692E42F5692 /* VIPSKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 207592D03BC89089A16DD404 /* VIPSKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		D539195A24CB42C5418721B6 /* VIPSResizeKernel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1FB826CAD001A2A70FB2139 /* VIPSResizeKernel.swift */; };
-		DA56B6741901403F44914FC8 /* VIPSInteresting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46DF0C3DE2023C975EF5632E /* VIPSInteresting.swift */; };
-		DC9F8D3A2A36A5DAA7F68748 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78FF20C2EAB823448EB1C49A /* Foundation.framework */; };
-		DFBE86BC95DCDE5BE74369C3 /* VIPSImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1EBC5DA78195C45924653DA /* VIPSImage.swift */; };
-		E6D8B595E9E23D91CFC9EB8D /* test.webp in Resources */ = {isa = PBXBuildFile; fileRef = 813B08E15A0D7B6CD17BDC5B /* test.webp */; };
-		E794CD9985F014CE9F770BE0 /* test.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 80DE8E876AEB01D6A7CA9032 /* test.jpg */; };
-		ECC1119DCBA0EE4F042531CB /* VIPSImage+Embed.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3C28846C6636A8B83C3734 /* VIPSImage+Embed.swift */; };
-		EE5B49B9995200E37339CD0C /* VIPSImage+Pixel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63D5C180E2ED282986AF199 /* VIPSImage+Pixel.swift */; };
-		F4B6B169A67D7D7BC36ED85F /* rotated-3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C01F53552B11815524ED4E07 /* rotated-3.jpg */; };
-		F8E73B62DDC6DF9912B556E8 /* Tests/VIPSImageTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCF8E5436EAD5FC65774E69 /* Tests/VIPSImageTestCase.swift */; };
-		FE53C10D21E678DE985D77F9 /* Tests/VIPSImagePixelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EC312882221BD28DE688DFF /* Tests/VIPSImagePixelTests.swift */; };
+		032EBA46AE06E3BF411E697D /* VIPSKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67901F0E78866C0C44EBEE97 /* VIPSKit.framework */; };
+		037C4EB88620892C9F403681 /* VIPSImagePixelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6EB747EB2C699F854428559 /* VIPSImagePixelTests.swift */; };
+		046AB7979CB3FE31EEC3F32E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E17FCDF6328AC5538D210E5 /* main.m */; };
+		1A1E2B1E434671224DCECA9A /* VIPSBlendMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6915C9030BF2BFFEB23EB0E3 /* VIPSBlendMode.swift */; };
+		1CB93BFA050930DC38B10167 /* VIPSImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE08D52CE376D30C12F99C9 /* VIPSImage.swift */; };
+		20CB809E5CEEF4C01F1D0A6E /* VIPSImageHistogramTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74019BBB9B8291C5C74678E0 /* VIPSImageHistogramTests.swift */; };
+		2321C61B25E27B95066F3CFD /* VIPSImage+Pixel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 339EF8ECF4B1F2F8FF0E1B6E /* VIPSImage+Pixel.swift */; };
+		24F8941490AF95F2EAC4926C /* VIPSImageBandTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B395A8D62FB0B944C37FD8F2 /* VIPSImageBandTests.swift */; };
+		29D8C51F18752DD8A20B1103 /* VIPSImage+Embed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3B03542E5CB1438A369807 /* VIPSImage+Embed.swift */; };
+		2C31A4F6A427C175CA413912 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC086BC98FE6355C5D409A30 /* Foundation.framework */; };
+		3387A65967D23A5685769938 /* VIPSImage+Resize.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFBC83ECCD722E596DAA8DA8 /* VIPSImage+Resize.swift */; };
+		34F9FD6EDF07AB358EFF5106 /* VIPSInteresting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D8E9152658E704E8B763D82 /* VIPSInteresting.swift */; };
+		37561C03118325123A4B6C1A /* VIPSExtendMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FCBAEF92E6A6AF98D02CEF /* VIPSExtendMode.swift */; };
+		3BCF765B9F82C40F44173DB1 /* VIPSKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67901F0E78866C0C44EBEE97 /* VIPSKit.framework */; };
+		3C97D6D1DE30723137F0BD39 /* CVIPS.c in Sources */ = {isa = PBXBuildFile; fileRef = 07A6C19623E9BDE3EC3C9D76 /* CVIPS.c */; };
+		472C21395FEB8C0154579676 /* VIPSImage+Rotate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DFCF5970DCEAEC3B9B9CD4E /* VIPSImage+Rotate.swift */; };
+		4A3F6A498941601F0D282084 /* CVIPS.h in Headers */ = {isa = PBXBuildFile; fileRef = 2141A4D8BF9D0751B6E8FD2A /* CVIPS.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		549158C6FAE3FE06D1E50628 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D9AF2E551E1639EA1723161 /* AppDelegate.m */; };
+		56E2255A1EF3D08BD25612BA /* VIPSImage+Tiling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 407107D75540F0A3E419B559 /* VIPSImage+Tiling.swift */; };
+		5D6BDEF4C5B82F655DA8966E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC086BC98FE6355C5D409A30 /* Foundation.framework */; };
+		644DCA79F9678CCE59CF266C /* VIPSImage+Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E4C743603E17CEAB1C6E00 /* VIPSImage+Filter.swift */; };
+		663317755777181059F76785 /* VIPSImage+Histogram.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F8EE88EE8F33DF45E6C7C2 /* VIPSImage+Histogram.swift */; };
+		670CBCCAAAFC2648D96A2E74 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3695D49904EDCB7424FE9439 /* LaunchScreen.storyboard */; };
+		685BB53BD16D393372FBC964 /* VIPSImage+Analysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D30D5A41C760999833D811 /* VIPSImage+Analysis.swift */; };
+		7840472D7C74607765FDDFE5 /* VIPSImageDrawTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199DAC1767FD9C8471B17BD7 /* VIPSImageDrawTests.swift */; };
+		7F1463FF33A93588B2AF1130 /* VIPSImageCompositeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0F18F53C444F72C185B491 /* VIPSImageCompositeTests.swift */; };
+		81657B137220387CA83AA009 /* VIPSImageFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58E227B5216C57A233E47E3 /* VIPSImageFilterTests.swift */; };
+		82F6C2932B69835E4D70EE83 /* VIPSImage+Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6DFCEE4E7327287B4AB424 /* VIPSImage+Transform.swift */; };
+		88A7F67A5E9031612CD86388 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC086BC98FE6355C5D409A30 /* Foundation.framework */; };
+		89A1C2FC1203D18F2A6D564D /* VIPSImageAnalysisTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 809EE48B2264EA7C46302AFC /* VIPSImageAnalysisTests.swift */; };
+		90039903329B030B4836624F /* VIPSResizeKernel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 476FFA83BFB6EEA9AD15D993 /* VIPSResizeKernel.swift */; };
+		9082A8999251B053588D9DD2 /* VIPSColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A848E668551E7ADE66DD20 /* VIPSColor.swift */; };
+		95C9259DA0D8742953442372 /* VIPSImageTransformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABEA923BC6F6F3A3AE264268 /* VIPSImageTransformTests.swift */; };
+		9C67D2D59735F3BEE56FFEB8 /* VIPSImageMetadataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 289CE697387F96A703B962E3 /* VIPSImageMetadataTests.swift */; };
+		9CC9E3548AFA5292EF2F71EF /* VIPSImage+Band.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C4E3BB8A84D09D80FD986D /* VIPSImage+Band.swift */; };
+		9FF3908008987AD1A3EC0DEA /* VIPSImageEmbedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62556E1E7253B40B8D47603 /* VIPSImageEmbedTests.swift */; };
+		A12EDA0D295DCB4F3FA92224 /* VIPSImage+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AFF054246E904F12E59235 /* VIPSImage+Debug.swift */; };
+		A687685A0B52C86205B93872 /* VIPSImageFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB955A19AA2A2680628B71B2 /* VIPSImageFormat.swift */; };
+		AD207C4F190A3475D358F09F /* VIPSImage+Loading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 335216E09A9FB84409E34F3A /* VIPSImage+Loading.swift */; };
+		AE3042DF5BD81FF9767374B8 /* VIPSImageSavingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EDBE1FF94EFFAFB2CE6FC25 /* VIPSImageSavingTests.swift */; };
+		B0326836DF857BF61362D712 /* VIPSImageCoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD58AD9AD691B699FBB1586 /* VIPSImageCoreTests.swift */; };
+		B703ABFEBAFF2548F3E6C252 /* VIPSImage+Saving.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1FBCE01B7E363B46A13ECE1 /* VIPSImage+Saving.swift */; };
+		BC3E102FC2A0B66F23E5F0B3 /* VIPSImageResizeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B57EB1FF38B450495EF2A60F /* VIPSImageResizeTests.swift */; };
+		BF6D01DE882D1B01986F4ECA /* VIPSImageCGImageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBE795E7F2FB167F3EA2F51 /* VIPSImageCGImageTests.swift */; };
+		C11DF05AE07B5DF61DD2B3BF /* VIPSImage+Draw.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365A53BC6417ACEAD3C5E6B3 /* VIPSImage+Draw.swift */; };
+		C811B7CE4FDDFBD8EE9AEA51 /* VIPSError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F76030C944BEB81EC4DD449 /* VIPSError.swift */; };
+		D12870340A463D2D525BF0E2 /* VIPSImageTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1408683981037D0F696F24BC /* VIPSImageTestCase.swift */; };
+		D887AEA15483F81D910CB490 /* VIPSImageTilingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DA05DAB20FB2D1E2DA5FF01 /* VIPSImageTilingTests.swift */; };
+		D8C8DBAF99179E58293FD1A5 /* VIPSImageLoadingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2BEBA1AE0FB2AF772F6EEDF /* VIPSImageLoadingTests.swift */; };
+		DD2BF208FE20CE320BD0BD9E /* VIPSImage+Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30D1B1A436DA20CAD6D65647 /* VIPSImage+Color.swift */; };
+		DEFBF003135F88E16C7D83E4 /* VIPSImageRotateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA32C0F4C3FB9A5AC5F27352 /* VIPSImageRotateTests.swift */; };
+		DFE57E0EC2A088728E9ECBAA /* VIPSKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 67901F0E78866C0C44EBEE97 /* VIPSKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E494CCE2225533832C6D4996 /* VIPSImage+Composite.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBFCCFC3353058262562C9A /* VIPSImage+Composite.swift */; };
+		E733EBDC15A664C9827016B8 /* superman.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8E6766BFB4C032B9CAA02B70 /* superman.jpg */; };
+		E748916325731E3E2AEA1BFE /* VIPSImageStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC00075181F16FC40195953 /* VIPSImageStatistics.swift */; };
+		E9DD01787180ADC5BCEDFDD4 /* VIPSCompassDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54BBFC6670B26559999B69AF /* VIPSCompassDirection.swift */; };
+		EBA86053B18606309E487747 /* VIPSImageColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C70015767C31114E714597F2 /* VIPSImageColorTests.swift */; };
+		F4B2CD7836D24BB3CD9C97CE /* VIPSImage+Metadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B322C95778D92EFEA2AC0E /* VIPSImage+Metadata.swift */; };
+		FF3602E90F7AEEDCD6644CC3 /* VIPSImage+CGImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71EA1C2FD59253A4126CFC1 /* VIPSImage+CGImage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		3C83D46C21507C3A3838D331 /* PBXContainerItemProxy */ = {
+		1783ABAC840369A1B153A6EA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 486065EF188C65E9E9EF3662 /* Project object */;
+			containerPortal = 2F7702CA9F6816565A6136EC /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = FF750F8DEEBDB388AD3355EC;
+			remoteGlobalIDString = D65A10C7BC0CA7173219E89B;
 			remoteInfo = VIPSTestHost;
 		};
-		796C6308757B571E6FC9C639 /* PBXContainerItemProxy */ = {
+		C436FD4243DC1D35782BB81B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 486065EF188C65E9E9EF3662 /* Project object */;
+			containerPortal = 2F7702CA9F6816565A6136EC /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 2FD537B17DA3627ED6DF4A4C;
+			remoteGlobalIDString = FC438BE406E719A53D423BFA;
 			remoteInfo = VIPSKit;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		B69B9BFDC106A7C910A84D4F /* Embed Frameworks */ = {
+		8728B893EACB84EF67906E3E /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				D23C63FFB0482692E42F5692 /* VIPSKit.framework in Embed Frameworks */,
+				DFE57E0EC2A088728E9ECBAA /* VIPSKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -112,288 +100,332 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		03950C573FB96FA9EE9D7212 /* VIPSImage+Resize.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Resize.swift"; sourceTree = "<group>"; };
-		05197A4C1D403742E2586989 /* Tests/VIPSImageCoreTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageCoreTests.swift; sourceTree = SOURCE_ROOT; };
-		0609AD3769A4995E566C3B3E /* Tests/VIPSImageRotateTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageRotateTests.swift; sourceTree = SOURCE_ROOT; };
-		0A6581895DBF25A1225BF4B9 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
-		11862BA392A692FC78ECAFA0 /* VIPSImage+Rotate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Rotate.swift"; sourceTree = "<group>"; };
-		11DA6D67AF92CD0056776AF5 /* Tests/VIPSImageCGImageTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageCGImageTests.swift; sourceTree = SOURCE_ROOT; };
-		1222CB09F3633C06D88ADF73 /* Tests/VIPSImageCompositeTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageCompositeTests.swift; sourceTree = SOURCE_ROOT; };
-		1698017E40D4159D83ADD478 /* grayscale.jpg */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.jpeg; path = grayscale.jpg; sourceTree = "<group>"; };
-		1841E1E8B1A0DF9653EC2EFC /* CVIPS.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = CVIPS.c; sourceTree = "<group>"; };
-		19C784A6A17012674739C325 /* Tests/VIPSImageHistogramTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageHistogramTests.swift; sourceTree = SOURCE_ROOT; };
-		1B9E57C0E400644B24DBFDB0 /* test-rgba.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = "test-rgba.png"; sourceTree = "<group>"; };
-		207592D03BC89089A16DD404 /* VIPSKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VIPSKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		2482F2976631285D050BA1C6 /* VIPSImage+Tiling.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Tiling.swift"; sourceTree = "<group>"; };
-		24FF00E33A1F96D9986D44C1 /* Tests/VIPSImageFilterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageFilterTests.swift; sourceTree = SOURCE_ROOT; };
-		2CCF8E5436EAD5FC65774E69 /* Tests/VIPSImageTestCase.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageTestCase.swift; sourceTree = SOURCE_ROOT; };
-		30E1711AAEFFDCFEE34FFD67 /* module.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = module.modulemap; sourceTree = "<group>"; };
-		3362CF3DE2A728780864FE76 /* Tests/VIPSImageLoadingTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageLoadingTests.swift; sourceTree = SOURCE_ROOT; };
-		39F45BBCCBCEB6363414BE9D /* test.gif */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.gif; path = test.gif; sourceTree = "<group>"; };
-		3F47D5CB2489459D05FB1302 /* VIPSCompassDirection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VIPSCompassDirection.swift; sourceTree = "<group>"; };
-		46DF0C3DE2023C975EF5632E /* VIPSInteresting.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VIPSInteresting.swift; sourceTree = "<group>"; };
-		4A60A1694F40BD9501F19495 /* VIPSError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VIPSError.swift; sourceTree = "<group>"; };
-		5083002281B3A312ABB94DF8 /* rotated-6.jpg */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.jpeg; path = "rotated-6.jpg"; sourceTree = "<group>"; };
-		50FA72FA90F0139493F3AF3F /* VIPSImage+Debug.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Debug.swift"; sourceTree = "<group>"; };
-		54B81CACC81CD44D38F6214E /* VIPSImage+Transform.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Transform.swift"; sourceTree = "<group>"; };
-		5764896E974E993835E1CAD3 /* VIPSBlendMode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VIPSBlendMode.swift; sourceTree = "<group>"; };
-		7097DBB3AF9E3A4C0BBD9C37 /* VIPSImageStatistics.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VIPSImageStatistics.swift; sourceTree = "<group>"; };
-		750AB21DC358B1287DF8FD35 /* VIPSImage+Saving.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Saving.swift"; sourceTree = "<group>"; };
-		7797A7A39E08EADC9B056352 /* superman.jpg */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.jpeg; path = superman.jpg; sourceTree = "<group>"; };
-		78FF20C2EAB823448EB1C49A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		7B5FFBCABC89C34E523742FD /* Tests/VIPSImageTilingTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageTilingTests.swift; sourceTree = SOURCE_ROOT; };
-		7C33FD822F1D16128217658A /* VIPSImage+Color.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Color.swift"; sourceTree = "<group>"; };
-		80733085580414EAEE0AD225 /* tiny.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = tiny.png; sourceTree = "<group>"; };
-		80DE8E876AEB01D6A7CA9032 /* test.jpg */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.jpeg; path = test.jpg; sourceTree = "<group>"; };
-		813B08E15A0D7B6CD17BDC5B /* test.webp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file; path = test.webp; sourceTree = "<group>"; };
-		8CC9B667A6972FB86775BD3A /* VIPSImageFormat.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VIPSImageFormat.swift; sourceTree = "<group>"; };
-		8DB0556B8393454B3EA3DCEA /* VIPSExtendMode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VIPSExtendMode.swift; sourceTree = "<group>"; };
-		967EFB1FED21A066CAC86B60 /* Tests/VIPSImageEmbedTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageEmbedTests.swift; sourceTree = SOURCE_ROOT; };
-		9778A824CEBF3F0158DD4D7E /* AppDelegate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		9C14C9E257B79DEA74B92971 /* VIPSImage+Band.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Band.swift"; sourceTree = "<group>"; };
-		9EC312882221BD28DE688DFF /* Tests/VIPSImagePixelTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImagePixelTests.swift; sourceTree = SOURCE_ROOT; };
-		A1FB826CAD001A2A70FB2139 /* VIPSResizeKernel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VIPSResizeKernel.swift; sourceTree = "<group>"; };
-		A2530C305B995F020063CA63 /* VIPSImage+Histogram.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Histogram.swift"; sourceTree = "<group>"; };
-		A52E01BB21DCE573DF1F8ADE /* main.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		A63D5C180E2ED282986AF199 /* VIPSImage+Pixel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Pixel.swift"; sourceTree = "<group>"; };
-		B0CF1BAC55263343EF4EE00B /* Tests/VIPSImageTransformTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageTransformTests.swift; sourceTree = SOURCE_ROOT; };
-		B0E7D9B92D46456AA066377D /* VIPSImage+Metadata.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Metadata.swift"; sourceTree = "<group>"; };
-		B33260D79AFABE29B4B69B67 /* VIPSImage+Filter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Filter.swift"; sourceTree = "<group>"; };
-		B362170FEF62D40771E630DE /* VIPSTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VIPSTestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B432A01BA4079724016A1635 /* Tests/VIPSImageAnalysisTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageAnalysisTests.swift; sourceTree = SOURCE_ROOT; };
-		C01F53552B11815524ED4E07 /* rotated-3.jpg */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.jpeg; path = "rotated-3.jpg"; sourceTree = "<group>"; };
-		C44EE3748F4AC559CCA6D13B /* Tests/VIPSImageBandTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageBandTests.swift; sourceTree = SOURCE_ROOT; };
-		C46D15816C5CE6957703DBB3 /* VIPSImage+Loading.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Loading.swift"; sourceTree = "<group>"; };
-		C4844EC96CEA0ECDDD0207E6 /* Tests/VIPSImageDrawTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageDrawTests.swift; sourceTree = SOURCE_ROOT; };
-		C5FB693C0AFA4AF578BE9091 /* test.tiff */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.tiff; path = test.tiff; sourceTree = "<group>"; };
-		C771BB7EC29F17ADCAB73FBF /* VIPSImage+Analysis.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Analysis.swift"; sourceTree = "<group>"; };
-		CA0C8060317AC09D8499B4CC /* Tests/VIPSImageSavingTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageSavingTests.swift; sourceTree = SOURCE_ROOT; };
-		D1EBC5DA78195C45924653DA /* VIPSImage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VIPSImage.swift; sourceTree = "<group>"; };
-		D800F5DAD34B7C83864E59AF /* VIPSImage+Draw.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Draw.swift"; sourceTree = "<group>"; };
-		D9537883C2442DEDD61ABC12 /* VIPSImage+Composite.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Composite.swift"; sourceTree = "<group>"; };
-		DC378D08B18BCEC188C2B72F /* CVIPS.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CVIPS.h; sourceTree = "<group>"; };
-		DCB7A2C208BBEAE6A766C1D3 /* Tests/VIPSImageColorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageColorTests.swift; sourceTree = SOURCE_ROOT; };
-		E02F025B1607D224DF47FFF3 /* Tests/VIPSImageResizeTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageResizeTests.swift; sourceTree = SOURCE_ROOT; };
-		E247B845BC724A6FDA63A57C /* test-rgb.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = "test-rgb.png"; sourceTree = "<group>"; };
-		E4968C5AB6E7A1947649C2B7 /* AppDelegate.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		EBFFAE96FF4BACDB5DAE6814 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F16B23D87AA8AAE56218EC24 /* VIPSImage+CGImage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+CGImage.swift"; sourceTree = "<group>"; };
-		F4FC21E9C14AEB8F355C0B48 /* VIPSKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VIPSKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		F84A4F07B5806D6F23BF579A /* VIPSColor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VIPSColor.swift; sourceTree = "<group>"; };
-		FC3C28846C6636A8B83C3734 /* VIPSImage+Embed.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Embed.swift"; sourceTree = "<group>"; };
-		FC4C243CC000E8FA0398497F /* Tests/VIPSImageMetadataTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageMetadataTests.swift; sourceTree = SOURCE_ROOT; };
+		05023B12C95276B6B753DF05 /* test.webp */ = {isa = PBXFileReference; includeInIndex = 1; path = test.webp; sourceTree = "<group>"; };
+		05C4E3BB8A84D09D80FD986D /* VIPSImage+Band.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Band.swift"; sourceTree = "<group>"; };
+		07A6C19623E9BDE3EC3C9D76 /* CVIPS.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CVIPS.c; sourceTree = "<group>"; };
+		0BC00075181F16FC40195953 /* VIPSImageStatistics.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VIPSImageStatistics.swift; sourceTree = "<group>"; };
+		0C3B03542E5CB1438A369807 /* VIPSImage+Embed.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Embed.swift"; sourceTree = "<group>"; };
+		0EDBE1FF94EFFAFB2CE6FC25 /* VIPSImageSavingTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageSavingTests.swift; sourceTree = SOURCE_ROOT; };
+		0F76030C944BEB81EC4DD449 /* VIPSError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VIPSError.swift; sourceTree = "<group>"; };
+		12341F84416A821EC7D3175A /* test.gif */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.gif; path = test.gif; sourceTree = "<group>"; };
+		1408683981037D0F696F24BC /* VIPSImageTestCase.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageTestCase.swift; sourceTree = SOURCE_ROOT; };
+		15D30D5A41C760999833D811 /* VIPSImage+Analysis.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Analysis.swift"; sourceTree = "<group>"; };
+		16A474C50F456032F7706B91 /* test-rgb.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = "test-rgb.png"; sourceTree = "<group>"; };
+		199DAC1767FD9C8471B17BD7 /* VIPSImageDrawTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageDrawTests.swift; sourceTree = SOURCE_ROOT; };
+		1DA05DAB20FB2D1E2DA5FF01 /* VIPSImageTilingTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageTilingTests.swift; sourceTree = SOURCE_ROOT; };
+		1DFCF5970DCEAEC3B9B9CD4E /* VIPSImage+Rotate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Rotate.swift"; sourceTree = "<group>"; };
+		2141A4D8BF9D0751B6E8FD2A /* CVIPS.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CVIPS.h; sourceTree = "<group>"; };
+		26B322C95778D92EFEA2AC0E /* VIPSImage+Metadata.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Metadata.swift"; sourceTree = "<group>"; };
+		289CE697387F96A703B962E3 /* VIPSImageMetadataTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageMetadataTests.swift; sourceTree = SOURCE_ROOT; };
+		30D1B1A436DA20CAD6D65647 /* VIPSImage+Color.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Color.swift"; sourceTree = "<group>"; };
+		335216E09A9FB84409E34F3A /* VIPSImage+Loading.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Loading.swift"; sourceTree = "<group>"; };
+		339EF8ECF4B1F2F8FF0E1B6E /* VIPSImage+Pixel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Pixel.swift"; sourceTree = "<group>"; };
+		365A53BC6417ACEAD3C5E6B3 /* VIPSImage+Draw.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Draw.swift"; sourceTree = "<group>"; };
+		3695D49904EDCB7424FE9439 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		3A81EC47B06061285E8C499D /* module.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = module.modulemap; sourceTree = "<group>"; };
+		3D966B9E63D6672B71C8B9F4 /* VIPSKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VIPSKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3E17FCDF6328AC5538D210E5 /* main.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		407107D75540F0A3E419B559 /* VIPSImage+Tiling.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Tiling.swift"; sourceTree = "<group>"; };
+		4127FD018AD3611E3FBDB521 /* VIPSTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VIPSTestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		437AE68609249EC11A95C16B /* test.jpg */ = {isa = PBXFileReference; includeInIndex = 1; path = test.jpg; sourceTree = "<group>"; };
+		476FFA83BFB6EEA9AD15D993 /* VIPSResizeKernel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VIPSResizeKernel.swift; sourceTree = "<group>"; };
+		4FE08D52CE376D30C12F99C9 /* VIPSImage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VIPSImage.swift; sourceTree = "<group>"; };
+		54BBFC6670B26559999B69AF /* VIPSCompassDirection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VIPSCompassDirection.swift; sourceTree = "<group>"; };
+		54FCBAEF92E6A6AF98D02CEF /* VIPSExtendMode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VIPSExtendMode.swift; sourceTree = "<group>"; };
+		60E4C743603E17CEAB1C6E00 /* VIPSImage+Filter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Filter.swift"; sourceTree = "<group>"; };
+		6206D16EDC59B09368AF46EC /* AppDelegate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		673456562597E52939C7A723 /* rotated-6.jpg */ = {isa = PBXFileReference; includeInIndex = 1; path = "rotated-6.jpg"; sourceTree = "<group>"; };
+		67901F0E78866C0C44EBEE97 /* VIPSKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VIPSKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		68F8EE88EE8F33DF45E6C7C2 /* VIPSImage+Histogram.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Histogram.swift"; sourceTree = "<group>"; };
+		6915C9030BF2BFFEB23EB0E3 /* VIPSBlendMode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VIPSBlendMode.swift; sourceTree = "<group>"; };
+		6916E29D5A36E46C5DC7FCB8 /* test.tiff */ = {isa = PBXFileReference; includeInIndex = 1; path = test.tiff; sourceTree = "<group>"; };
+		6D35C146E8388EA3837F5ACA /* grayscale.jpg */ = {isa = PBXFileReference; includeInIndex = 1; path = grayscale.jpg; sourceTree = "<group>"; };
+		6FD58AD9AD691B699FBB1586 /* VIPSImageCoreTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageCoreTests.swift; sourceTree = SOURCE_ROOT; };
+		74019BBB9B8291C5C74678E0 /* VIPSImageHistogramTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageHistogramTests.swift; sourceTree = SOURCE_ROOT; };
+		809EE48B2264EA7C46302AFC /* VIPSImageAnalysisTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageAnalysisTests.swift; sourceTree = SOURCE_ROOT; };
+		8D8E9152658E704E8B763D82 /* VIPSInteresting.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VIPSInteresting.swift; sourceTree = "<group>"; };
+		8D9AF2E551E1639EA1723161 /* AppDelegate.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		8E6766BFB4C032B9CAA02B70 /* superman.jpg */ = {isa = PBXFileReference; includeInIndex = 1; path = superman.jpg; sourceTree = "<group>"; };
+		90A848E668551E7ADE66DD20 /* VIPSColor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VIPSColor.swift; sourceTree = "<group>"; };
+		941735B9300FD86004A0CC6E /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A1B570C945D593AF1C03DF8C /* rotated-3.jpg */ = {isa = PBXFileReference; includeInIndex = 1; path = "rotated-3.jpg"; sourceTree = "<group>"; };
+		A58E227B5216C57A233E47E3 /* VIPSImageFilterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageFilterTests.swift; sourceTree = SOURCE_ROOT; };
+		ABEA923BC6F6F3A3AE264268 /* VIPSImageTransformTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageTransformTests.swift; sourceTree = SOURCE_ROOT; };
+		AF0F18F53C444F72C185B491 /* VIPSImageCompositeTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageCompositeTests.swift; sourceTree = SOURCE_ROOT; };
+		AFBC83ECCD722E596DAA8DA8 /* VIPSImage+Resize.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Resize.swift"; sourceTree = "<group>"; };
+		B395A8D62FB0B944C37FD8F2 /* VIPSImageBandTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageBandTests.swift; sourceTree = SOURCE_ROOT; };
+		B57EB1FF38B450495EF2A60F /* VIPSImageResizeTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageResizeTests.swift; sourceTree = SOURCE_ROOT; };
+		BB6DFCEE4E7327287B4AB424 /* VIPSImage+Transform.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Transform.swift"; sourceTree = "<group>"; };
+		BB955A19AA2A2680628B71B2 /* VIPSImageFormat.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VIPSImageFormat.swift; sourceTree = "<group>"; };
+		C25AF886F7E5725CA9E791E6 /* tiny.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = tiny.png; sourceTree = "<group>"; };
+		C70015767C31114E714597F2 /* VIPSImageColorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageColorTests.swift; sourceTree = SOURCE_ROOT; };
+		CC086BC98FE6355C5D409A30 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		D2BEBA1AE0FB2AF772F6EEDF /* VIPSImageLoadingTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageLoadingTests.swift; sourceTree = SOURCE_ROOT; };
+		DFBFCCFC3353058262562C9A /* VIPSImage+Composite.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Composite.swift"; sourceTree = "<group>"; };
+		E62556E1E7253B40B8D47603 /* VIPSImageEmbedTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageEmbedTests.swift; sourceTree = SOURCE_ROOT; };
+		EEBE795E7F2FB167F3EA2F51 /* VIPSImageCGImageTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageCGImageTests.swift; sourceTree = SOURCE_ROOT; };
+		F1FBCE01B7E363B46A13ECE1 /* VIPSImage+Saving.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Saving.swift"; sourceTree = "<group>"; };
+		F2AFF054246E904F12E59235 /* VIPSImage+Debug.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+Debug.swift"; sourceTree = "<group>"; };
+		F6EB747EB2C699F854428559 /* VIPSImagePixelTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImagePixelTests.swift; sourceTree = SOURCE_ROOT; };
+		F71EA1C2FD59253A4126CFC1 /* VIPSImage+CGImage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "VIPSImage+CGImage.swift"; sourceTree = "<group>"; };
+		F9E6C4D5D79FF8AAF7ADAAB0 /* test-rgba.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = "test-rgba.png"; sourceTree = "<group>"; };
+		FA32C0F4C3FB9A5AC5F27352 /* VIPSImageRotateTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tests/VIPSImageRotateTests.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		23877AB3E8630332427DACFA /* Frameworks */ = {
+		0DEA7E3C9677B2BD8A2BFA93 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				229967F32F3E1DA600878EF6 /* vips-static in Frameworks */,
-				7868A8AD32480DFF2F28C048 /* Foundation.framework in Frameworks */,
+				5D6BDEF4C5B82F655DA8966E /* Foundation.framework in Frameworks */,
+				3BCF765B9F82C40F44173DB1 /* VIPSKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		657C2844AF58BD7385E3E27C /* Frameworks */ = {
+		4A0EC094FF27BD92DDF7F7CE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				229967F42F3E1DA600878EF6 /* vips-static in Frameworks */,
-				D20AD89A84249789586A42AD /* Foundation.framework in Frameworks */,
-				B30F9652453FA340AC832476 /* VIPSKit.framework in Frameworks */,
+				2C31A4F6A427C175CA413912 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7EFBAF62C179FD111596E58A /* Frameworks */ = {
+		8E2F3954C363E0FE3AB09F5F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DC9F8D3A2A36A5DAA7F68748 /* Foundation.framework in Frameworks */,
-				7EF30727BEECDEAE62A19023 /* VIPSKit.framework in Frameworks */,
+				88A7F67A5E9031612CD86388 /* Foundation.framework in Frameworks */,
+				032EBA46AE06E3BF411E697D /* VIPSKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		098CA42ABCBCEE48BCB460D9 /* Internal */ = {
+		15D8FE4A337F6414F41AA791 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				B6234C30A7D5E7D6C8471CA4 /* include */,
-				1841E1E8B1A0DF9653EC2EFC /* CVIPS.c */,
+				59030867AC61491426B38EE0 /* Internal */,
+				6915C9030BF2BFFEB23EB0E3 /* VIPSBlendMode.swift */,
+				90A848E668551E7ADE66DD20 /* VIPSColor.swift */,
+				54BBFC6670B26559999B69AF /* VIPSCompassDirection.swift */,
+				0F76030C944BEB81EC4DD449 /* VIPSError.swift */,
+				54FCBAEF92E6A6AF98D02CEF /* VIPSExtendMode.swift */,
+				15D30D5A41C760999833D811 /* VIPSImage+Analysis.swift */,
+				05C4E3BB8A84D09D80FD986D /* VIPSImage+Band.swift */,
+				F71EA1C2FD59253A4126CFC1 /* VIPSImage+CGImage.swift */,
+				30D1B1A436DA20CAD6D65647 /* VIPSImage+Color.swift */,
+				DFBFCCFC3353058262562C9A /* VIPSImage+Composite.swift */,
+				F2AFF054246E904F12E59235 /* VIPSImage+Debug.swift */,
+				365A53BC6417ACEAD3C5E6B3 /* VIPSImage+Draw.swift */,
+				0C3B03542E5CB1438A369807 /* VIPSImage+Embed.swift */,
+				60E4C743603E17CEAB1C6E00 /* VIPSImage+Filter.swift */,
+				68F8EE88EE8F33DF45E6C7C2 /* VIPSImage+Histogram.swift */,
+				335216E09A9FB84409E34F3A /* VIPSImage+Loading.swift */,
+				26B322C95778D92EFEA2AC0E /* VIPSImage+Metadata.swift */,
+				339EF8ECF4B1F2F8FF0E1B6E /* VIPSImage+Pixel.swift */,
+				AFBC83ECCD722E596DAA8DA8 /* VIPSImage+Resize.swift */,
+				1DFCF5970DCEAEC3B9B9CD4E /* VIPSImage+Rotate.swift */,
+				F1FBCE01B7E363B46A13ECE1 /* VIPSImage+Saving.swift */,
+				407107D75540F0A3E419B559 /* VIPSImage+Tiling.swift */,
+				BB6DFCEE4E7327287B4AB424 /* VIPSImage+Transform.swift */,
+				4FE08D52CE376D30C12F99C9 /* VIPSImage.swift */,
+				BB955A19AA2A2680628B71B2 /* VIPSImageFormat.swift */,
+				0BC00075181F16FC40195953 /* VIPSImageStatistics.swift */,
+				8D8E9152658E704E8B763D82 /* VIPSInteresting.swift */,
+				476FFA83BFB6EEA9AD15D993 /* VIPSResizeKernel.swift */,
 			);
-			path = Internal;
-			sourceTree = "<group>";
-		};
-		397E7C9395B6A109E4F0C50A /* iOS */ = {
-			isa = PBXGroup;
-			children = (
-				78FF20C2EAB823448EB1C49A /* Foundation.framework */,
-			);
-			name = iOS;
-			sourceTree = "<group>";
-		};
-		425AFECABA237D52DFBD484A /* Sources */ = {
-			isa = PBXGroup;
-			children = (
-				098CA42ABCBCEE48BCB460D9 /* Internal */,
-				5764896E974E993835E1CAD3 /* VIPSBlendMode.swift */,
-				F84A4F07B5806D6F23BF579A /* VIPSColor.swift */,
-				3F47D5CB2489459D05FB1302 /* VIPSCompassDirection.swift */,
-				4A60A1694F40BD9501F19495 /* VIPSError.swift */,
-				8DB0556B8393454B3EA3DCEA /* VIPSExtendMode.swift */,
-				C771BB7EC29F17ADCAB73FBF /* VIPSImage+Analysis.swift */,
-				9C14C9E257B79DEA74B92971 /* VIPSImage+Band.swift */,
-				F16B23D87AA8AAE56218EC24 /* VIPSImage+CGImage.swift */,
-				7C33FD822F1D16128217658A /* VIPSImage+Color.swift */,
-				D9537883C2442DEDD61ABC12 /* VIPSImage+Composite.swift */,
-				50FA72FA90F0139493F3AF3F /* VIPSImage+Debug.swift */,
-				D800F5DAD34B7C83864E59AF /* VIPSImage+Draw.swift */,
-				FC3C28846C6636A8B83C3734 /* VIPSImage+Embed.swift */,
-				B33260D79AFABE29B4B69B67 /* VIPSImage+Filter.swift */,
-				A2530C305B995F020063CA63 /* VIPSImage+Histogram.swift */,
-				C46D15816C5CE6957703DBB3 /* VIPSImage+Loading.swift */,
-				B0E7D9B92D46456AA066377D /* VIPSImage+Metadata.swift */,
-				A63D5C180E2ED282986AF199 /* VIPSImage+Pixel.swift */,
-				03950C573FB96FA9EE9D7212 /* VIPSImage+Resize.swift */,
-				11862BA392A692FC78ECAFA0 /* VIPSImage+Rotate.swift */,
-				750AB21DC358B1287DF8FD35 /* VIPSImage+Saving.swift */,
-				2482F2976631285D050BA1C6 /* VIPSImage+Tiling.swift */,
-				54B81CACC81CD44D38F6214E /* VIPSImage+Transform.swift */,
-				D1EBC5DA78195C45924653DA /* VIPSImage.swift */,
-				8CC9B667A6972FB86775BD3A /* VIPSImageFormat.swift */,
-				7097DBB3AF9E3A4C0BBD9C37 /* VIPSImageStatistics.swift */,
-				46DF0C3DE2023C975EF5632E /* VIPSInteresting.swift */,
-				A1FB826CAD001A2A70FB2139 /* VIPSResizeKernel.swift */,
-			);
+			name = Sources;
 			path = Sources;
 			sourceTree = "<group>";
 		};
-		43EA2EDF2D08C497BE6DCB9D /* TestResources */ = {
+		1D9C11563737A7AED738A1AF /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1698017E40D4159D83ADD478 /* grayscale.jpg */,
-				C01F53552B11815524ED4E07 /* rotated-3.jpg */,
-				5083002281B3A312ABB94DF8 /* rotated-6.jpg */,
-				7797A7A39E08EADC9B056352 /* superman.jpg */,
-				E247B845BC724A6FDA63A57C /* test-rgb.png */,
-				1B9E57C0E400644B24DBFDB0 /* test-rgba.png */,
-				39F45BBCCBCEB6363414BE9D /* test.gif */,
-				80DE8E876AEB01D6A7CA9032 /* test.jpg */,
-				C5FB693C0AFA4AF578BE9091 /* test.tiff */,
-				813B08E15A0D7B6CD17BDC5B /* test.webp */,
-				80733085580414EAEE0AD225 /* tiny.png */,
-			);
-			path = TestResources;
-			sourceTree = "<group>";
-		};
-		4FF797D95A80C4679532E55D = {
-			isa = PBXGroup;
-			children = (
-				B424625C8CECB7C3B4106E00 /* Products */,
-				E9354234A6287553286293D9 /* Frameworks */,
-				425AFECABA237D52DFBD484A /* Sources */,
-				B29F6B8532D31AEB89056A4E /* Tests */,
-			);
-			sourceTree = "<group>";
-		};
-		75DA784692CCEB3FC81726DD /* TestHost */ = {
-			isa = PBXGroup;
-			children = (
-				9778A824CEBF3F0158DD4D7E /* AppDelegate.h */,
-				E4968C5AB6E7A1947649C2B7 /* AppDelegate.m */,
-				A52E01BB21DCE573DF1F8ADE /* main.m */,
-				0A6581895DBF25A1225BF4B9 /* LaunchScreen.storyboard */,
-				EBFFAE96FF4BACDB5DAE6814 /* Info.plist */,
-			);
-			path = TestHost;
-			sourceTree = "<group>";
-		};
-		9665DB378432287913B510C6 /* VIPSKitTests */ = {
-			isa = PBXGroup;
-			children = (
-				B432A01BA4079724016A1635 /* Tests/VIPSImageAnalysisTests.swift */,
-				C44EE3748F4AC559CCA6D13B /* Tests/VIPSImageBandTests.swift */,
-				11DA6D67AF92CD0056776AF5 /* Tests/VIPSImageCGImageTests.swift */,
-				DCB7A2C208BBEAE6A766C1D3 /* Tests/VIPSImageColorTests.swift */,
-				1222CB09F3633C06D88ADF73 /* Tests/VIPSImageCompositeTests.swift */,
-				05197A4C1D403742E2586989 /* Tests/VIPSImageCoreTests.swift */,
-				C4844EC96CEA0ECDDD0207E6 /* Tests/VIPSImageDrawTests.swift */,
-				967EFB1FED21A066CAC86B60 /* Tests/VIPSImageEmbedTests.swift */,
-				24FF00E33A1F96D9986D44C1 /* Tests/VIPSImageFilterTests.swift */,
-				19C784A6A17012674739C325 /* Tests/VIPSImageHistogramTests.swift */,
-				3362CF3DE2A728780864FE76 /* Tests/VIPSImageLoadingTests.swift */,
-				FC4C243CC000E8FA0398497F /* Tests/VIPSImageMetadataTests.swift */,
-				9EC312882221BD28DE688DFF /* Tests/VIPSImagePixelTests.swift */,
-				E02F025B1607D224DF47FFF3 /* Tests/VIPSImageResizeTests.swift */,
-				0609AD3769A4995E566C3B3E /* Tests/VIPSImageRotateTests.swift */,
-				CA0C8060317AC09D8499B4CC /* Tests/VIPSImageSavingTests.swift */,
-				2CCF8E5436EAD5FC65774E69 /* Tests/VIPSImageTestCase.swift */,
-				7B5FFBCABC89C34E523742FD /* Tests/VIPSImageTilingTests.swift */,
-				B0CF1BAC55263343EF4EE00B /* Tests/VIPSImageTransformTests.swift */,
-			);
-			name = VIPSKitTests;
-			sourceTree = "<group>";
-		};
-		B29F6B8532D31AEB89056A4E /* Tests */ = {
-			isa = PBXGroup;
-			children = (
-				75DA784692CCEB3FC81726DD /* TestHost */,
-				9665DB378432287913B510C6 /* VIPSKitTests */,
-				43EA2EDF2D08C497BE6DCB9D /* TestResources */,
-			);
-			path = Tests;
-			sourceTree = "<group>";
-		};
-		B424625C8CECB7C3B4106E00 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				207592D03BC89089A16DD404 /* VIPSKit.framework */,
-				B362170FEF62D40771E630DE /* VIPSTestHost.app */,
-				F4FC21E9C14AEB8F355C0B48 /* VIPSKitTests.xctest */,
+				67901F0E78866C0C44EBEE97 /* VIPSKit.framework */,
+				4127FD018AD3611E3FBDB521 /* VIPSTestHost.app */,
+				3D966B9E63D6672B71C8B9F4 /* VIPSKitTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		B6234C30A7D5E7D6C8471CA4 /* include */ = {
+		3935203D0133FDC31885689F /* iOS */ = {
 			isa = PBXGroup;
 			children = (
-				DC378D08B18BCEC188C2B72F /* CVIPS.h */,
-				30E1711AAEFFDCFEE34FFD67 /* module.modulemap */,
+				CC086BC98FE6355C5D409A30 /* Foundation.framework */,
 			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		547E53ECCC28BAA9C0B82BE5 = {
+			isa = PBXGroup;
+			children = (
+				1D9C11563737A7AED738A1AF /* Products */,
+				5AAA91D1547F3732F5747AC2 /* Frameworks */,
+				15D8FE4A337F6414F41AA791 /* Sources */,
+				BA4D82D96837853656F6D343 /* Tests */,
+			);
+			sourceTree = "<group>";
+		};
+		59030867AC61491426B38EE0 /* Internal */ = {
+			isa = PBXGroup;
+			children = (
+				D7D98F855FA083B880F4CFD7 /* include */,
+				07A6C19623E9BDE3EC3C9D76 /* CVIPS.c */,
+			);
+			name = Internal;
+			path = Internal;
+			sourceTree = "<group>";
+		};
+		5AAA91D1547F3732F5747AC2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3935203D0133FDC31885689F /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B1925AF5FA477C0B4410AE52 /* VIPSKitTests */ = {
+			isa = PBXGroup;
+			children = (
+				809EE48B2264EA7C46302AFC /* VIPSImageAnalysisTests.swift */,
+				B395A8D62FB0B944C37FD8F2 /* VIPSImageBandTests.swift */,
+				EEBE795E7F2FB167F3EA2F51 /* VIPSImageCGImageTests.swift */,
+				C70015767C31114E714597F2 /* VIPSImageColorTests.swift */,
+				AF0F18F53C444F72C185B491 /* VIPSImageCompositeTests.swift */,
+				6FD58AD9AD691B699FBB1586 /* VIPSImageCoreTests.swift */,
+				199DAC1767FD9C8471B17BD7 /* VIPSImageDrawTests.swift */,
+				E62556E1E7253B40B8D47603 /* VIPSImageEmbedTests.swift */,
+				A58E227B5216C57A233E47E3 /* VIPSImageFilterTests.swift */,
+				74019BBB9B8291C5C74678E0 /* VIPSImageHistogramTests.swift */,
+				D2BEBA1AE0FB2AF772F6EEDF /* VIPSImageLoadingTests.swift */,
+				289CE697387F96A703B962E3 /* VIPSImageMetadataTests.swift */,
+				F6EB747EB2C699F854428559 /* VIPSImagePixelTests.swift */,
+				B57EB1FF38B450495EF2A60F /* VIPSImageResizeTests.swift */,
+				FA32C0F4C3FB9A5AC5F27352 /* VIPSImageRotateTests.swift */,
+				0EDBE1FF94EFFAFB2CE6FC25 /* VIPSImageSavingTests.swift */,
+				1408683981037D0F696F24BC /* VIPSImageTestCase.swift */,
+				1DA05DAB20FB2D1E2DA5FF01 /* VIPSImageTilingTests.swift */,
+				ABEA923BC6F6F3A3AE264268 /* VIPSImageTransformTests.swift */,
+			);
+			name = VIPSKitTests;
+			sourceTree = "<group>";
+		};
+		BA4D82D96837853656F6D343 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				C507297931BF49B76EEDCA8E /* TestHost */,
+				B1925AF5FA477C0B4410AE52 /* VIPSKitTests */,
+				F5D69056F6D8F72ABD2042FA /* TestResources */,
+			);
+			name = Tests;
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		C507297931BF49B76EEDCA8E /* TestHost */ = {
+			isa = PBXGroup;
+			children = (
+				6206D16EDC59B09368AF46EC /* AppDelegate.h */,
+				8D9AF2E551E1639EA1723161 /* AppDelegate.m */,
+				3E17FCDF6328AC5538D210E5 /* main.m */,
+				3695D49904EDCB7424FE9439 /* LaunchScreen.storyboard */,
+				941735B9300FD86004A0CC6E /* Info.plist */,
+			);
+			name = TestHost;
+			path = TestHost;
+			sourceTree = "<group>";
+		};
+		D7D98F855FA083B880F4CFD7 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				2141A4D8BF9D0751B6E8FD2A /* CVIPS.h */,
+				3A81EC47B06061285E8C499D /* module.modulemap */,
+			);
+			name = include;
 			path = include;
 			sourceTree = "<group>";
 		};
-		E9354234A6287553286293D9 /* Frameworks */ = {
+		F5D69056F6D8F72ABD2042FA /* TestResources */ = {
 			isa = PBXGroup;
 			children = (
-				397E7C9395B6A109E4F0C50A /* iOS */,
+				6D35C146E8388EA3837F5ACA /* grayscale.jpg */,
+				A1B570C945D593AF1C03DF8C /* rotated-3.jpg */,
+				673456562597E52939C7A723 /* rotated-6.jpg */,
+				8E6766BFB4C032B9CAA02B70 /* superman.jpg */,
+				16A474C50F456032F7706B91 /* test-rgb.png */,
+				F9E6C4D5D79FF8AAF7ADAAB0 /* test-rgba.png */,
+				12341F84416A821EC7D3175A /* test.gif */,
+				437AE68609249EC11A95C16B /* test.jpg */,
+				6916E29D5A36E46C5DC7FCB8 /* test.tiff */,
+				05023B12C95276B6B753DF05 /* test.webp */,
+				C25AF886F7E5725CA9E791E6 /* tiny.png */,
 			);
-			name = Frameworks;
+			name = TestResources;
+			path = TestResources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		B1D00FA3E093FF412B7FE78F /* Headers */ = {
+		240D9C03C0332DC7DC031FF8 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AEB5760AAE4A6324000389FB /* CVIPS.h in Headers */,
+				4A3F6A498941601F0D282084 /* CVIPS.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		2FD537B17DA3627ED6DF4A4C /* VIPSKit */ = {
+		A4C6B7A422812C63744B1637 /* VIPSKitTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3B0D81F666ACB743219BA4B /* Build configuration list for PBXNativeTarget "VIPSKit" */;
+			buildConfigurationList = 1F7D1FA11277A7A95CFE7DD5 /* Build configuration list for PBXNativeTarget "VIPSKitTests" */;
 			buildPhases = (
-				B1D00FA3E093FF412B7FE78F /* Headers */,
-				BB6C95F6B3FA1F452B21A7C5 /* Sources */,
-				23877AB3E8630332427DACFA /* Frameworks */,
-				850A200EDC353223C282D721 /* Resources */,
+				C0EBD181D611A42BEB739F59 /* Sources */,
+				0DEA7E3C9677B2BD8A2BFA93 /* Frameworks */,
+				BFEA5DB47F452EEA240EA5B3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D4B477448FCFAD1C72E4F2C6 /* PBXTargetDependency */,
+			);
+			name = VIPSKitTests;
+			packageProductDependencies = (
+				5B4D9822A0506F9A20DE0784 /* vips-static */,
+			);
+			productName = VIPSKitTests;
+			productReference = 3D966B9E63D6672B71C8B9F4 /* VIPSKitTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		D65A10C7BC0CA7173219E89B /* VIPSTestHost */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9F9D4AA5E2632856DAFB25EA /* Build configuration list for PBXNativeTarget "VIPSTestHost" */;
+			buildPhases = (
+				0A224B7A8DCECEB1670516B2 /* Sources */,
+				8E2F3954C363E0FE3AB09F5F /* Frameworks */,
+				2D119D9DC144AF79A6FAE92C /* Resources */,
+				8728B893EACB84EF67906E3E /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				97E80D880FC2D855A26731A1 /* PBXTargetDependency */,
+			);
+			name = VIPSTestHost;
+			productName = VIPSTestHost;
+			productReference = 4127FD018AD3611E3FBDB521 /* VIPSTestHost.app */;
+			productType = "com.apple.product-type.application";
+		};
+		FC438BE406E719A53D423BFA /* VIPSKit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E7D5A9FD86E8C4A4874C7E3A /* Build configuration list for PBXNativeTarget "VIPSKit" */;
+			buildPhases = (
+				240D9C03C0332DC7DC031FF8 /* Headers */,
+				F2FC925E03135C82D433DD5B /* Sources */,
+				4A0EC094FF27BD92DDF7F7CE /* Frameworks */,
+				5335C72438B3A8A6DFC23DFE /* Resources */,
 			);
 			buildRules = (
 			);
@@ -401,63 +433,22 @@
 			);
 			name = VIPSKit;
 			packageProductDependencies = (
-				DF216C003195F6DBB3B004E4 /* vips-static */,
+				573109D3321F90ED4D9FD6B1 /* vips-static */,
 			);
 			productName = VIPSKit;
-			productReference = 207592D03BC89089A16DD404 /* VIPSKit.framework */;
+			productReference = 67901F0E78866C0C44EBEE97 /* VIPSKit.framework */;
 			productType = "com.apple.product-type.framework";
-		};
-		EFB051852FDE703245F8458C /* VIPSKitTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 29C935F83A308AAD3A467950 /* Build configuration list for PBXNativeTarget "VIPSKitTests" */;
-			buildPhases = (
-				2898DC1C6E0C3DBF419A7427 /* Sources */,
-				657C2844AF58BD7385E3E27C /* Frameworks */,
-				A7DFC224934686924EB69F99 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				1F64B0A479A4B13B5535B0B6 /* PBXTargetDependency */,
-			);
-			name = VIPSKitTests;
-			packageProductDependencies = (
-				63E6E2354288B41DF5C31C34 /* vips-static */,
-			);
-			productName = VIPSKitTests;
-			productReference = F4FC21E9C14AEB8F355C0B48 /* VIPSKitTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		FF750F8DEEBDB388AD3355EC /* VIPSTestHost */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = D390E76797EE6ACA928623C3 /* Build configuration list for PBXNativeTarget "VIPSTestHost" */;
-			buildPhases = (
-				CFF1297415F63ED62A2DF5B8 /* Sources */,
-				7EFBAF62C179FD111596E58A /* Frameworks */,
-				109BC59B840E8E5477D07566 /* Resources */,
-				B69B9BFDC106A7C910A84D4F /* Embed Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				096F08E76759DCD16E348768 /* PBXTargetDependency */,
-			);
-			name = VIPSTestHost;
-			productName = VIPSTestHost;
-			productReference = B362170FEF62D40771E630DE /* VIPSTestHost.app */;
-			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		486065EF188C65E9E9EF3662 /* Project object */ = {
+		2F7702CA9F6816565A6136EC /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1600;
-				LastUpgradeCheck = 2630;
+				LastUpgradeCheck = 1600;
 			};
-			buildConfigurationList = 9FE15B340E57B7399D34EDBE /* Build configuration list for PBXProject "VIPSKit" */;
+			buildConfigurationList = 54FF5C4733EE7747ADF3D51B /* Build configuration list for PBXProject "VIPSKit" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -465,148 +456,140 @@
 				en,
 				Base,
 			);
-			mainGroup = 4FF797D95A80C4679532E55D;
+			mainGroup = 547E53ECCC28BAA9C0B82BE5;
+			minimizedProjectReferenceProxies = 0;
 			packageReferences = (
-				6C5202D8FED031DC32B61E69 /* XCRemoteSwiftPackageReference "vips-cocoa" */,
+				37F6E7557CD6C7283F308664 /* XCRemoteSwiftPackageReference "vips-cocoa" */,
 			);
-			productRefGroup = B424625C8CECB7C3B4106E00 /* Products */;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 1D9C11563737A7AED738A1AF /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				2FD537B17DA3627ED6DF4A4C /* VIPSKit */,
-				FF750F8DEEBDB388AD3355EC /* VIPSTestHost */,
-				EFB051852FDE703245F8458C /* VIPSKitTests */,
+				FC438BE406E719A53D423BFA /* VIPSKit */,
+				D65A10C7BC0CA7173219E89B /* VIPSTestHost */,
+				A4C6B7A422812C63744B1637 /* VIPSKitTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		109BC59B840E8E5477D07566 /* Resources */ = {
+		2D119D9DC144AF79A6FAE92C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC0AAAFEFA555235DD04CB55 /* LaunchScreen.storyboard in Resources */,
+				670CBCCAAAFC2648D96A2E74 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		850A200EDC353223C282D721 /* Resources */ = {
+		5335C72438B3A8A6DFC23DFE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A7DFC224934686924EB69F99 /* Resources */ = {
+		BFEA5DB47F452EEA240EA5B3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B5333DCF082EFB3EA23E3DF5 /* grayscale.jpg in Resources */,
-				F4B6B169A67D7D7BC36ED85F /* rotated-3.jpg in Resources */,
-				7E4062EE5DE0DA892AD618FD /* rotated-6.jpg in Resources */,
-				0ABC0A0B3F466AE5817B39CD /* superman.jpg in Resources */,
-				374EABDD39725BC5ECEE40E2 /* test-rgb.png in Resources */,
-				6132D5B2CEB8C3000F2A6376 /* test-rgba.png in Resources */,
-				89C7DCC72CBABF0EBFA38805 /* test.gif in Resources */,
-				E794CD9985F014CE9F770BE0 /* test.jpg in Resources */,
-				0A77BD7BD13ABD0D07C9629A /* test.tiff in Resources */,
-				E6D8B595E9E23D91CFC9EB8D /* test.webp in Resources */,
-				CDB88F32C258BAFA909ECFCE /* tiny.png in Resources */,
+				E733EBDC15A664C9827016B8 /* superman.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		2898DC1C6E0C3DBF419A7427 /* Sources */ = {
+		0A224B7A8DCECEB1670516B2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9B1A9AB8458FC533EE9A4967 /* Tests/VIPSImageAnalysisTests.swift in Sources */,
-				A8E2346B8376B9ADCEC0D41A /* Tests/VIPSImageBandTests.swift in Sources */,
-				673447A67A72C48ECBA5F00D /* Tests/VIPSImageCGImageTests.swift in Sources */,
-				027C67F918232AA8F569E72E /* Tests/VIPSImageColorTests.swift in Sources */,
-				3196AFFF26D8D5DBAAEC5A64 /* Tests/VIPSImageCompositeTests.swift in Sources */,
-				55027D533B6305EC5C7046D7 /* Tests/VIPSImageCoreTests.swift in Sources */,
-				10C99341DCF9C6CEF991D0A7 /* Tests/VIPSImageDrawTests.swift in Sources */,
-				4EA996B44E086F1057C0CF41 /* Tests/VIPSImageEmbedTests.swift in Sources */,
-				2D947FA9B18502819B2E2090 /* Tests/VIPSImageFilterTests.swift in Sources */,
-				66E230619603B5F2063EED20 /* Tests/VIPSImageHistogramTests.swift in Sources */,
-				9A816856E55BD36BB3374505 /* Tests/VIPSImageLoadingTests.swift in Sources */,
-				CF0DFAF57E3FFFD06A357F10 /* Tests/VIPSImageMetadataTests.swift in Sources */,
-				FE53C10D21E678DE985D77F9 /* Tests/VIPSImagePixelTests.swift in Sources */,
-				986071A122C8FA77C7A5B316 /* Tests/VIPSImageResizeTests.swift in Sources */,
-				047B08E6CAA7DC74D6CD035B /* Tests/VIPSImageRotateTests.swift in Sources */,
-				B07B4660FB0164DFB08E108D /* Tests/VIPSImageSavingTests.swift in Sources */,
-				F8E73B62DDC6DF9912B556E8 /* Tests/VIPSImageTestCase.swift in Sources */,
-				07B2A70DD794356A2246D603 /* Tests/VIPSImageTilingTests.swift in Sources */,
-				A7F3CC780E3ED97DEAFEF199 /* Tests/VIPSImageTransformTests.swift in Sources */,
+				549158C6FAE3FE06D1E50628 /* AppDelegate.m in Sources */,
+				046AB7979CB3FE31EEC3F32E /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BB6C95F6B3FA1F452B21A7C5 /* Sources */ = {
+		C0EBD181D611A42BEB739F59 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5E4C99162CAE5A082B6780C0 /* CVIPS.c in Sources */,
-				C9165106BA64509EC25A5583 /* VIPSBlendMode.swift in Sources */,
-				C9D9AB2007F1416F39AB0CB5 /* VIPSColor.swift in Sources */,
-				7EA1371DC845EC6376691979 /* VIPSCompassDirection.swift in Sources */,
-				90E4FDC2F809720A537BB409 /* VIPSError.swift in Sources */,
-				ADBE52489036F8DED8683E67 /* VIPSExtendMode.swift in Sources */,
-				0AE1E2A7A298DAB216E82057 /* VIPSImage+Analysis.swift in Sources */,
-				97B8713C43B367DC9D406822 /* VIPSImage+Band.swift in Sources */,
-				5EAA6CA54AAD80C64A69EFB4 /* VIPSImage+CGImage.swift in Sources */,
-				CBC795687B54F9FE16302F3F /* VIPSImage+Color.swift in Sources */,
-				7D2C88C2F7FA0CB2D6BC8915 /* VIPSImage+Composite.swift in Sources */,
-				3FC0122123A5193351361D31 /* VIPSImage+Debug.swift in Sources */,
-				AE331EFEE5648380E9E10C2F /* VIPSImage+Draw.swift in Sources */,
-				ECC1119DCBA0EE4F042531CB /* VIPSImage+Embed.swift in Sources */,
-				1B7BD59D62406EFFDA4BBDF1 /* VIPSImage+Filter.swift in Sources */,
-				72EC43043A01A2200652CC1B /* VIPSImage+Histogram.swift in Sources */,
-				48A06982D33D4B600A03832C /* VIPSImage+Loading.swift in Sources */,
-				8A38681665C59F34E49FB1FD /* VIPSImage+Metadata.swift in Sources */,
-				EE5B49B9995200E37339CD0C /* VIPSImage+Pixel.swift in Sources */,
-				87DA0D27CBF4D000A9AEE6A6 /* VIPSImage+Resize.swift in Sources */,
-				1ABE12B078D400BCF22D5CDC /* VIPSImage+Rotate.swift in Sources */,
-				0B585ECFB01B9FBB8BE68923 /* VIPSImage+Saving.swift in Sources */,
-				6B73783BD57DE6C5C5ABBF09 /* VIPSImage+Tiling.swift in Sources */,
-				B5B3BA7B64BA1528F35436EE /* VIPSImage+Transform.swift in Sources */,
-				DFBE86BC95DCDE5BE74369C3 /* VIPSImage.swift in Sources */,
-				5763CD00057C34D5DD45248B /* VIPSImageFormat.swift in Sources */,
-				9BB146CFC7771D528B421173 /* VIPSImageStatistics.swift in Sources */,
-				DA56B6741901403F44914FC8 /* VIPSInteresting.swift in Sources */,
-				D539195A24CB42C5418721B6 /* VIPSResizeKernel.swift in Sources */,
+				89A1C2FC1203D18F2A6D564D /* VIPSImageAnalysisTests.swift in Sources */,
+				24F8941490AF95F2EAC4926C /* VIPSImageBandTests.swift in Sources */,
+				BF6D01DE882D1B01986F4ECA /* VIPSImageCGImageTests.swift in Sources */,
+				EBA86053B18606309E487747 /* VIPSImageColorTests.swift in Sources */,
+				7F1463FF33A93588B2AF1130 /* VIPSImageCompositeTests.swift in Sources */,
+				B0326836DF857BF61362D712 /* VIPSImageCoreTests.swift in Sources */,
+				7840472D7C74607765FDDFE5 /* VIPSImageDrawTests.swift in Sources */,
+				9FF3908008987AD1A3EC0DEA /* VIPSImageEmbedTests.swift in Sources */,
+				81657B137220387CA83AA009 /* VIPSImageFilterTests.swift in Sources */,
+				20CB809E5CEEF4C01F1D0A6E /* VIPSImageHistogramTests.swift in Sources */,
+				D8C8DBAF99179E58293FD1A5 /* VIPSImageLoadingTests.swift in Sources */,
+				9C67D2D59735F3BEE56FFEB8 /* VIPSImageMetadataTests.swift in Sources */,
+				037C4EB88620892C9F403681 /* VIPSImagePixelTests.swift in Sources */,
+				BC3E102FC2A0B66F23E5F0B3 /* VIPSImageResizeTests.swift in Sources */,
+				DEFBF003135F88E16C7D83E4 /* VIPSImageRotateTests.swift in Sources */,
+				AE3042DF5BD81FF9767374B8 /* VIPSImageSavingTests.swift in Sources */,
+				D12870340A463D2D525BF0E2 /* VIPSImageTestCase.swift in Sources */,
+				D887AEA15483F81D910CB490 /* VIPSImageTilingTests.swift in Sources */,
+				95C9259DA0D8742953442372 /* VIPSImageTransformTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CFF1297415F63ED62A2DF5B8 /* Sources */ = {
+		F2FC925E03135C82D433DD5B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1FBF3E3EEDB3ED9C95CC39AE /* AppDelegate.m in Sources */,
-				2CAA6BB597E7DCE9735D066F /* main.m in Sources */,
+				3C97D6D1DE30723137F0BD39 /* CVIPS.c in Sources */,
+				1A1E2B1E434671224DCECA9A /* VIPSBlendMode.swift in Sources */,
+				9082A8999251B053588D9DD2 /* VIPSColor.swift in Sources */,
+				E9DD01787180ADC5BCEDFDD4 /* VIPSCompassDirection.swift in Sources */,
+				C811B7CE4FDDFBD8EE9AEA51 /* VIPSError.swift in Sources */,
+				37561C03118325123A4B6C1A /* VIPSExtendMode.swift in Sources */,
+				685BB53BD16D393372FBC964 /* VIPSImage+Analysis.swift in Sources */,
+				9CC9E3548AFA5292EF2F71EF /* VIPSImage+Band.swift in Sources */,
+				FF3602E90F7AEEDCD6644CC3 /* VIPSImage+CGImage.swift in Sources */,
+				DD2BF208FE20CE320BD0BD9E /* VIPSImage+Color.swift in Sources */,
+				E494CCE2225533832C6D4996 /* VIPSImage+Composite.swift in Sources */,
+				A12EDA0D295DCB4F3FA92224 /* VIPSImage+Debug.swift in Sources */,
+				C11DF05AE07B5DF61DD2B3BF /* VIPSImage+Draw.swift in Sources */,
+				29D8C51F18752DD8A20B1103 /* VIPSImage+Embed.swift in Sources */,
+				644DCA79F9678CCE59CF266C /* VIPSImage+Filter.swift in Sources */,
+				663317755777181059F76785 /* VIPSImage+Histogram.swift in Sources */,
+				AD207C4F190A3475D358F09F /* VIPSImage+Loading.swift in Sources */,
+				F4B2CD7836D24BB3CD9C97CE /* VIPSImage+Metadata.swift in Sources */,
+				2321C61B25E27B95066F3CFD /* VIPSImage+Pixel.swift in Sources */,
+				3387A65967D23A5685769938 /* VIPSImage+Resize.swift in Sources */,
+				472C21395FEB8C0154579676 /* VIPSImage+Rotate.swift in Sources */,
+				B703ABFEBAFF2548F3E6C252 /* VIPSImage+Saving.swift in Sources */,
+				56E2255A1EF3D08BD25612BA /* VIPSImage+Tiling.swift in Sources */,
+				82F6C2932B69835E4D70EE83 /* VIPSImage+Transform.swift in Sources */,
+				1CB93BFA050930DC38B10167 /* VIPSImage.swift in Sources */,
+				A687685A0B52C86205B93872 /* VIPSImageFormat.swift in Sources */,
+				E748916325731E3E2AEA1BFE /* VIPSImageStatistics.swift in Sources */,
+				34F9FD6EDF07AB358EFF5106 /* VIPSInteresting.swift in Sources */,
+				90039903329B030B4836624F /* VIPSResizeKernel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		096F08E76759DCD16E348768 /* PBXTargetDependency */ = {
+		97E80D880FC2D855A26731A1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = VIPSKit;
-			target = 2FD537B17DA3627ED6DF4A4C /* VIPSKit */;
-			targetProxy = 796C6308757B571E6FC9C639 /* PBXContainerItemProxy */;
+			target = FC438BE406E719A53D423BFA /* VIPSKit */;
+			targetProxy = C436FD4243DC1D35782BB81B /* PBXContainerItemProxy */;
 		};
-		1F64B0A479A4B13B5535B0B6 /* PBXTargetDependency */ = {
+		D4B477448FCFAD1C72E4F2C6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = VIPSTestHost;
-			target = FF750F8DEEBDB388AD3355EC /* VIPSTestHost */;
-			targetProxy = 3C83D46C21507C3A3838D331 /* PBXContainerItemProxy */;
+			target = D65A10C7BC0CA7173219E89B /* VIPSTestHost */;
+			targetProxy = 1783ABAC840369A1B153A6EA /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		077C9AB408896D36B2FFE1E0 /* Debug */ = {
+		24E3844608C4BBEA93A41AE9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -616,10 +599,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tests/TestHost/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MERGED_BINARY_TYPE = none;
 				PRODUCT_BUNDLE_IDENTIFIER = org.libvips.VIPSTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -627,113 +607,11 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		31AA7FD917A3BBCE9E55BBB4 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_IDENTITY = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = YES;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"HAVE_CONFIG_H=1",
-				);
-				GENERATE_INFOPLIST_FILE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/Sources/Internal/include",
-				);
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-fmodule-map-file=$(SRCROOT)/Sources/Internal/include/module.modulemap",
-					"-Wno-documentation",
-				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-lz",
-					"-liconv",
-					"-lresolv",
-					"-lc++",
-					"-lexpat",
-					"-force_load",
-					"$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/vips.a",
-				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -Xcc -fmodule-map-file=$(SRCROOT)/Sources/Internal/include/module.modulemap";
-				PRODUCT_BUNDLE_IDENTIFIER = org.libvips.VIPSKit;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
-				SUPPORTS_MACCATALYST = YES;
-				SWIFT_INCLUDE_PATHS = "$(inherited) $(SRCROOT)/Sources/Internal/include";
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		4DDF34FF3A2808E54F55FA59 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				OTHER_SWIFT_FLAGS = "$(inherited) -Xcc -fmodule-map-file=$(SRCROOT)/Sources/Internal/include/module.modulemap";
-				PRODUCT_BUNDLE_IDENTIFIER = org.libvips.VIPSKitTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SWIFT_INCLUDE_PATHS = "$(inherited) $(SRCROOT)/Sources/Internal/include";
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VIPSTestHost.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VIPSTestHost";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
-		683CC4A45CEB44628B2EFADA /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				OTHER_SWIFT_FLAGS = "$(inherited) -Xcc -fmodule-map-file=$(SRCROOT)/Sources/Internal/include/module.modulemap";
-				PRODUCT_BUNDLE_IDENTIFIER = org.libvips.VIPSKitTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SWIFT_INCLUDE_PATHS = "$(inherited) $(SRCROOT)/Sources/Internal/include";
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VIPSTestHost.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VIPSTestHost";
-			};
-			name = Debug;
-		};
-		823DCFF1D74ED79BEDB79C3E /* Release */ = {
+		3E4C9EE4B0B040C5C49C104F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -767,11 +645,9 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -784,14 +660,55 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
-		D788FAB56917402BD1B4FABE /* Debug */ = {
+		46B64D3D10C8AC4DB6C7CAF9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				COMPRESS_PNG_FILES = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				OTHER_SWIFT_FLAGS = "$(inherited) -Xcc -fmodule-map-file=$(SRCROOT)/Sources/Internal/include/module.modulemap";
+				PRODUCT_BUNDLE_IDENTIFIER = org.libvips.VIPSKitTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_INCLUDE_PATHS = "$(inherited) $(SRCROOT)/Sources/Internal/include";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VIPSTestHost.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VIPSTestHost";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		4D294178390FC83B2BE3ADC0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Tests/TestHost/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MERGED_BINARY_TYPE = none;
+				PRODUCT_BUNDLE_IDENTIFIER = org.libvips.VIPSTestHost;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		8774A66A8F78D89ED253EB5C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -825,11 +742,9 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -849,27 +764,24 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
-		DE82F45ED58B7D50B3154649 /* Debug */ = {
+		9B8DB345ED6DB3BDE272BD33 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_IDENTITY = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -882,12 +794,8 @@
 				);
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_PRIVATE_FILE = "";
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-fmodule-map-file=$(SRCROOT)/Sources/Internal/include/module.modulemap",
@@ -919,66 +827,119 @@
 			};
 			name = Debug;
 		};
-		EC37266BF5CF2884B6697B2F /* Release */ = {
+		BC56AC7ED77933F37A0BAEB0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_STYLE = Automatic;
+				COMPRESS_PNG_FILES = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Tests/TestHost/Info.plist;
+				INFOPLIST_FILE = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MERGED_BINARY_TYPE = none;
-				PRODUCT_BUNDLE_IDENTIFIER = org.libvips.VIPSTestHost;
+				OTHER_SWIFT_FLAGS = "$(inherited) -Xcc -fmodule-map-file=$(SRCROOT)/Sources/Internal/include/module.modulemap";
+				PRODUCT_BUNDLE_IDENTIFIER = org.libvips.VIPSKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_INCLUDE_PATHS = "$(inherited) $(SRCROOT)/Sources/Internal/include";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VIPSTestHost.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VIPSTestHost";
+			};
+			name = Debug;
+		};
+		F45758188C7E87360C6D5CD9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"HAVE_CONFIG_H=1",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/Sources/Internal/include",
+				);
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_PRIVATE_FILE = "";
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-fmodule-map-file=$(SRCROOT)/Sources/Internal/include/module.modulemap",
+					"-Wno-documentation",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lz",
+					"-liconv",
+					"-lresolv",
+					"-lc++",
+					"-lexpat",
+					"-force_load",
+					"$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/vips.a",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -Xcc -fmodule-map-file=$(SRCROOT)/Sources/Internal/include/module.modulemap";
+				PRODUCT_BUNDLE_IDENTIFIER = org.libvips.VIPSKit;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_INCLUDE_PATHS = "$(inherited) $(SRCROOT)/Sources/Internal/include";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		29C935F83A308AAD3A467950 /* Build configuration list for PBXNativeTarget "VIPSKitTests" */ = {
+		1F7D1FA11277A7A95CFE7DD5 /* Build configuration list for PBXNativeTarget "VIPSKitTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4DDF34FF3A2808E54F55FA59 /* Release */,
-				683CC4A45CEB44628B2EFADA /* Debug */,
+				46B64D3D10C8AC4DB6C7CAF9 /* Release */,
+				BC56AC7ED77933F37A0BAEB0 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9FE15B340E57B7399D34EDBE /* Build configuration list for PBXProject "VIPSKit" */ = {
+		54FF5C4733EE7747ADF3D51B /* Build configuration list for PBXProject "VIPSKit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D788FAB56917402BD1B4FABE /* Debug */,
-				823DCFF1D74ED79BEDB79C3E /* Release */,
+				8774A66A8F78D89ED253EB5C /* Debug */,
+				3E4C9EE4B0B040C5C49C104F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3B0D81F666ACB743219BA4B /* Build configuration list for PBXNativeTarget "VIPSKit" */ = {
+		9F9D4AA5E2632856DAFB25EA /* Build configuration list for PBXNativeTarget "VIPSTestHost" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				31AA7FD917A3BBCE9E55BBB4 /* Release */,
-				DE82F45ED58B7D50B3154649 /* Debug */,
+				24E3844608C4BBEA93A41AE9 /* Release */,
+				4D294178390FC83B2BE3ADC0 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D390E76797EE6ACA928623C3 /* Build configuration list for PBXNativeTarget "VIPSTestHost" */ = {
+		E7D5A9FD86E8C4A4874C7E3A /* Build configuration list for PBXNativeTarget "VIPSKit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EC37266BF5CF2884B6697B2F /* Release */,
-				077C9AB408896D36B2FFE1E0 /* Debug */,
+				F45758188C7E87360C6D5CD9 /* Release */,
+				9B8DB345ED6DB3BDE272BD33 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -986,7 +947,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		6C5202D8FED031DC32B61E69 /* XCRemoteSwiftPackageReference "vips-cocoa" */ = {
+		37F6E7557CD6C7283F308664 /* XCRemoteSwiftPackageReference "vips-cocoa" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/TimOliver/vips-cocoa.git";
 			requirement = {
@@ -997,17 +958,17 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		63E6E2354288B41DF5C31C34 /* vips-static */ = {
+		573109D3321F90ED4D9FD6B1 /* vips-static */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6C5202D8FED031DC32B61E69 /* XCRemoteSwiftPackageReference "vips-cocoa" */;
+			package = 37F6E7557CD6C7283F308664 /* XCRemoteSwiftPackageReference "vips-cocoa" */;
 			productName = "vips-static";
 		};
-		DF216C003195F6DBB3B004E4 /* vips-static */ = {
+		5B4D9822A0506F9A20DE0784 /* vips-static */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6C5202D8FED031DC32B61E69 /* XCRemoteSwiftPackageReference "vips-cocoa" */;
+			package = 37F6E7557CD6C7283F308664 /* XCRemoteSwiftPackageReference "vips-cocoa" */;
 			productName = "vips-static";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
-	rootObject = 486065EF188C65E9E9EF3662 /* Project object */;
+	rootObject = 2F7702CA9F6816565A6136EC /* Project object */;
 }

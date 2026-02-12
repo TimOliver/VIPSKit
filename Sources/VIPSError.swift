@@ -20,10 +20,15 @@ public struct VIPSError: Error, LocalizedError, @unchecked Sendable {
     }
 
     /// Create a VIPSError from the current libvips error buffer, then clear it.
+    /// If the buffer is empty, includes a note that no error detail was available.
     /// - Returns: A new error containing the libvips error message
     internal static func fromVips() -> VIPSError {
-        let msg = String(cString: vips_error_buffer())
+        let raw = vips_error_buffer()
+        let msg = raw != nil ? String(cString: raw!) : ""
         vips_error_clear()
+        if msg.isEmpty {
+            return VIPSError("vips operation failed (no error detail from libvips)")
+        }
         return VIPSError(msg)
     }
 }
