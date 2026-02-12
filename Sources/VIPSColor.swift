@@ -120,6 +120,15 @@ extension VIPSColor {
 }
 #endif
 
+// MARK: - Debug Description
+
+extension VIPSColor: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        let components = values.map { String(format: "%.1f", $0) }.joined(separator: ", ")
+        return "<VIPSColor: (\(components))>"
+    }
+}
+
 // MARK: - RandomAccessCollection
 
 extension VIPSColor: RandomAccessCollection {
