@@ -109,7 +109,7 @@ fw.source_build_phase.add_file_reference(cvips_c)
 # CVIPS.h as Private header (visible to Swift in same target, not public)
 headers_phase = fw.headers_build_phase
 build_file = headers_phase.add_file_reference(cvips_h)
-build_file.settings = { 'ATTRIBUTES' => ['Private'] }
+build_file.settings = { 'ATTRIBUTES' => ['Project'] }
 
 # Swift source files (at Sources/ root)
 swift_files = Dir.glob(File.join(ROOT, 'Sources/*.swift')).sort
