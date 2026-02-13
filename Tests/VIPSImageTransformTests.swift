@@ -170,6 +170,24 @@ final class VIPSImageTransformTests: VIPSImageTestCase {
         XCTAssertEqual(cropped.height, 100)
     }
 
+    // MARK: - Join
+
+    func testJoinHorizontally() throws {
+        let left = createTestImage(width: 100, height: 80)
+        let right = createTestImage(width: 60, height: 80)
+        let joined = try left.joinedHorizontally(with: right)
+        XCTAssertEqual(joined.width, 160)
+        XCTAssertEqual(joined.height, 80)
+    }
+
+    func testJoinVertically() throws {
+        let top = createTestImage(width: 100, height: 80)
+        let bottom = createTestImage(width: 100, height: 50)
+        let joined = try top.joinedVertically(with: bottom)
+        XCTAssertEqual(joined.width, 100)
+        XCTAssertEqual(joined.height, 130)
+    }
+
     // MARK: - Async
 
     func testAsyncCropped() async throws {

@@ -22,13 +22,25 @@ extension VIPSImage {
     ///   - path: The destination file path
     ///   - format: The image format to encode as
     ///   - quality: The encoding quality (1-100). Ignored for PNG, GIF, and TIFF formats. (Default is 85)
-    public func write(toFile path: String, format: VIPSImageFormat, quality: Int = 85) throws {
+    ///   - lossless: If true, encode losslessly. Only meaningful for WebP and JPEG-XL;
+    ///     silently ignored for other formats. (Default is false)
+    public func write(toFile path: String, format: VIPSImageFormat, quality: Int = 85, lossless: Bool = false) throws {
         let result: Int32
         switch format {
         case .jpeg:    result = cvips_jpegsave(pointer, path, Int32(quality))
         case .png:     result = cvips_pngsave(pointer, path)
-        case .webP:    result = cvips_webpsave(pointer, path, Int32(quality))
-        case .jxl:     result = cvips_jxlsave(pointer, path, Int32(quality))
+        case .webP:
+            if lossless {
+                result = cvips_webpsave_lossless(pointer, path)
+            } else {
+                result = cvips_webpsave(pointer, path, Int32(quality))
+            }
+        case .jxl:
+            if lossless {
+                result = cvips_jxlsave_lossless(pointer, path)
+            } else {
+                result = cvips_jxlsave(pointer, path, Int32(quality))
+            }
         case .tiff:    result = cvips_tiffsave(pointer, path)
         case .heif:    throw VIPSError("HEIF encoding is not supported (decode-only)")
         case .avif:    throw VIPSError("AVIF encoding is not supported (decode-only)")
@@ -46,8 +58,10 @@ extension VIPSImage {
     /// - Parameters:
     ///   - format: The image format to encode as
     ///   - quality: The encoding quality (1-100). Ignored for PNG, GIF, and TIFF formats. (Default is 85)
+    ///   - lossless: If true, encode losslessly. Only meaningful for WebP and JPEG-XL;
+    ///     silently ignored for other formats. (Default is false)
     /// - Returns: The encoded image data
-    public func data(format: VIPSImageFormat, quality: Int = 85) throws -> Data {
+    public func data(format: VIPSImageFormat, quality: Int = 85, lossless: Bool = false) throws -> Data {
         var buffer: UnsafeMutableRawPointer?
         var length: Int = 0
         let result: Int32
@@ -55,8 +69,18 @@ extension VIPSImage {
         switch format {
         case .jpeg:    result = cvips_jpegsave_buffer(pointer, &buffer, &length, Int32(quality))
         case .png:     result = cvips_pngsave_buffer(pointer, &buffer, &length)
-        case .webP:    result = cvips_webpsave_buffer(pointer, &buffer, &length, Int32(quality))
-        case .jxl:     result = cvips_jxlsave_buffer(pointer, &buffer, &length, Int32(quality))
+        case .webP:
+            if lossless {
+                result = cvips_webpsave_buffer_lossless(pointer, &buffer, &length)
+            } else {
+                result = cvips_webpsave_buffer(pointer, &buffer, &length, Int32(quality))
+            }
+        case .jxl:
+            if lossless {
+                result = cvips_jxlsave_buffer_lossless(pointer, &buffer, &length)
+            } else {
+                result = cvips_jxlsave_buffer(pointer, &buffer, &length, Int32(quality))
+            }
         case .tiff:    result = cvips_tiffsave_buffer(pointer, &buffer, &length)
         case .heif:    throw VIPSError("HEIF encoding is not supported (decode-only)")
         case .avif:    throw VIPSError("AVIF encoding is not supported (decode-only)")
@@ -87,9 +111,11 @@ extension VIPSImage {
     ///   - path: The destination file path
     ///   - format: The image format to encode as
     ///   - quality: The encoding quality (1-100). Ignored for PNG and GIF formats. (Default is 85)
-    public func write(toFile path: String, format: VIPSImageFormat, quality: Int = 85) async throws {
+    ///   - lossless: If true, encode losslessly. Only meaningful for WebP and JPEG-XL;
+    ///     silently ignored for other formats. (Default is false)
+    public func write(toFile path: String, format: VIPSImageFormat, quality: Int = 85, lossless: Bool = false) async throws {
         try await Task.detached {
-            try self.write(toFile: path, format: format, quality: quality)
+            try self.write(toFile: path, format: format, quality: quality, lossless: lossless)
         }.value
     }
 
@@ -98,10 +124,12 @@ extension VIPSImage {
     /// - Parameters:
     ///   - format: The image format to encode as
     ///   - quality: The encoding quality (1-100). Ignored for PNG and GIF formats. (Default is 85)
+    ///   - lossless: If true, encode losslessly. Only meaningful for WebP and JPEG-XL;
+    ///     silently ignored for other formats. (Default is false)
     /// - Returns: The encoded image data
-    public func encoded(format: VIPSImageFormat, quality: Int = 85) async throws -> Data {
+    public func encoded(format: VIPSImageFormat, quality: Int = 85, lossless: Bool = false) async throws -> Data {
         try await Task.detached {
-            try self.data(format: format, quality: quality)
+            try self.data(format: format, quality: quality, lossless: lossless)
         }.value
     }
 }

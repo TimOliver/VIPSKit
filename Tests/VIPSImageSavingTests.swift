@@ -485,6 +485,52 @@ final class VIPSImageSavingTests: VIPSImageTestCase {
         XCTAssertGreaterThan(webpData.count, 0)
     }
 
+    // MARK: - Lossless Encoding
+
+    func testExportLosslessWebP() throws {
+        let image = createTestImage(width: 100, height: 100)
+        let data = try image.data(format: .webP, lossless: true)
+        XCTAssertGreaterThan(data.count, 0)
+        let loaded = try VIPSImage(data: data)
+        XCTAssertEqual(loaded.width, 100)
+        XCTAssertEqual(loaded.height, 100)
+        XCTAssertEqual(loaded.sourceFormat, .webP)
+    }
+
+    func testExportLosslessJXL() throws {
+        let image = createTestImage(width: 100, height: 100)
+        let data = try image.data(format: .jxl, lossless: true)
+        XCTAssertGreaterThan(data.count, 0)
+        let loaded = try VIPSImage(data: data)
+        XCTAssertEqual(loaded.width, 100)
+        XCTAssertEqual(loaded.height, 100)
+        XCTAssertEqual(loaded.sourceFormat, .jxl)
+    }
+
+    func testSaveLosslessWebP() throws {
+        let image = createTestImage(width: 100, height: 100)
+        let path = NSTemporaryDirectory() + "vipskit_test_lossless.webp"
+        defer { try? FileManager.default.removeItem(atPath: path) }
+        try image.write(toFile: path, format: .webP, lossless: true)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: path))
+        let loaded = try VIPSImage(contentsOfFile: path)
+        XCTAssertEqual(loaded.width, 100)
+        XCTAssertEqual(loaded.height, 100)
+        XCTAssertEqual(loaded.sourceFormat, .webP)
+    }
+
+    func testSaveLosslessJXL() throws {
+        let image = createTestImage(width: 100, height: 100)
+        let path = NSTemporaryDirectory() + "vipskit_test_lossless.jxl"
+        defer { try? FileManager.default.removeItem(atPath: path) }
+        try image.write(toFile: path, format: .jxl, lossless: true)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: path))
+        let loaded = try VIPSImage(contentsOfFile: path)
+        XCTAssertEqual(loaded.width, 100)
+        XCTAssertEqual(loaded.height, 100)
+        XCTAssertEqual(loaded.sourceFormat, .jxl)
+    }
+
     // MARK: - Async
 
     func testAsyncWriteToFile() async throws {

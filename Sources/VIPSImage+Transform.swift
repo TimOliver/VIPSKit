@@ -104,6 +104,32 @@ extension VIPSImage {
         try smartCrop(toWidth: Int(size.width), height: Int(size.height), interesting: interesting)
     }
 
+    // MARK: - Join
+
+    /// Join this image with another side by side horizontally.
+    /// The two images are placed left-to-right; the result width is the sum of both
+    /// widths and the result height is the maximum of both heights.
+    /// - Parameter other: The image to place to the right
+    /// - Returns: A new image with the two images joined horizontally
+    public func joinedHorizontally(with other: VIPSImage) throws -> VIPSImage {
+        var out: UnsafeMutablePointer<VipsImage>?
+        guard cvips_join(pointer, other.pointer, &out, VIPS_DIRECTION_HORIZONTAL) == 0,
+              let out else { throw VIPSError.fromVips() }
+        return VIPSImage(pointer: out)
+    }
+
+    /// Join this image with another stacked vertically.
+    /// The two images are placed top-to-bottom; the result height is the sum of both
+    /// heights and the result width is the maximum of both widths.
+    /// - Parameter other: The image to place below
+    /// - Returns: A new image with the two images joined vertically
+    public func joinedVertically(with other: VIPSImage) throws -> VIPSImage {
+        var out: UnsafeMutablePointer<VipsImage>?
+        guard cvips_join(pointer, other.pointer, &out, VIPS_DIRECTION_VERTICAL) == 0,
+              let out else { throw VIPSError.fromVips() }
+        return VIPSImage(pointer: out)
+    }
+
     // MARK: - Async
 
     /// Crop a rectangular region from the image.
@@ -156,6 +182,26 @@ extension VIPSImage {
     public func smartCropped(to size: CGSize, interesting: VIPSInteresting = .attention) async throws -> VIPSImage {
         try await Task.detached {
             try self.smartCrop(to: size, interesting: interesting)
+        }.value
+    }
+
+    /// Join this image with another side by side horizontally.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameter other: The image to place to the right
+    /// - Returns: A new image with the two images joined horizontally
+    public func joinedHorizontally(with other: VIPSImage) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.joinedHorizontally(with: other)
+        }.value
+    }
+
+    /// Join this image with another stacked vertically.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameter other: The image to place below
+    /// - Returns: A new image with the two images joined vertically
+    public func joinedVertically(with other: VIPSImage) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.joinedVertically(with: other)
         }.value
     }
 }

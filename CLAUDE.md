@@ -225,10 +225,12 @@ let exact = try image.resize(toWidth: 400, height: 300)
 // Transform
 let cropped = try image.crop(x: 10, y: 10, width: 100, height: 100)
 let cropped2 = try image.crop(CGRect(x: 10, y: 10, width: 100, height: 100))
-let rotated = try image.rotate(byDegrees: 90)
+let rotated = try image.rotate(degrees: 90)
 let flipped = try image.flippedHorizontally()
 let oriented = try image.autoRotated()
 let smart = try image.smartCrop(toWidth: 400, height: 400, interesting: .attention)
+let side = try image.joinedHorizontally(with: other)
+let stacked = try image.joinedVertically(with: other)
 
 // Color
 let gray = try image.grayscaled()
@@ -270,6 +272,7 @@ let thumbUI = UIImage(cgImage: thumbCG)
 // Export
 let jpegData = try image.data(format: .jpeg, quality: 85)
 let webpData = try image.data(format: .webP, quality: 80)
+let losslessWebP = try image.data(format: .webP, lossless: true)
 try image.write(toFile: "/path/to/output.jpg")
 
 // Tiling
@@ -372,8 +375,8 @@ let bgColor = try await image.detectedBackgroundColor()
 | `thumbnailCGImage(fromFile:width:height:)` | Thumbnail direct to CGImage |
 | `thumbnailCGImage(fromFile:size:)` | Thumbnail direct to CGImage (CGSize) |
 | `write(toFile:)` | Save to file (format from extension). Supported: JPEG, PNG, WebP, JXL, TIFF |
-| `write(toFile:format:quality:)` | Save to file with explicit format. HEIF/AVIF/GIF not supported (decode-only) |
-| `data(format:quality:)` | Export to Data. HEIF/AVIF/GIF not supported (decode-only) |
+| `write(toFile:format:quality:lossless:)` | Save to file with explicit format. Lossless option for WebP/JXL. HEIF/AVIF/GIF not supported (decode-only) |
+| `data(format:quality:lossless:)` | Export to Data. Lossless option for WebP/JXL. HEIF/AVIF/GIF not supported (decode-only) |
 | `cgImage` | Throwing computed property → CGImage |
 | `resizeToFit(width:height:)` | Resize maintaining aspect ratio |
 | `resizeToFit(size:)` | Resize maintaining aspect ratio (CGSize) |
@@ -382,12 +385,14 @@ let bgColor = try await image.detectedBackgroundColor()
 | `resize(to:)` | Resize to exact dimensions (CGSize) |
 | `crop(x:y:width:height:)` | Crop region |
 | `crop(_ rect:)` | Crop region (CGRect) |
-| `rotate(byDegrees:)` | Rotate 90/180/270 degrees |
+| `rotate(degrees:)` | Rotate by a multiple of 90 degrees |
 | `flippedHorizontally()` | Mirror horizontally |
 | `flippedVertically()` | Mirror vertically |
 | `autoRotated()` | Apply EXIF orientation |
 | `smartCrop(toWidth:height:interesting:)` | Content-aware crop |
 | `smartCrop(to:interesting:)` | Content-aware crop (CGSize) |
+| `joinedHorizontally(with:)` | Join two images side by side horizontally |
+| `joinedVertically(with:)` | Join two images stacked vertically |
 | `composite(withOverlay:mode:x:y:)` | Composite with blend mode |
 | `composite(withOverlay:mode:at:)` | Composite with blend mode (CGPoint) |
 | `grayscaled()` | Convert to grayscale |
@@ -470,8 +475,8 @@ Most I/O-bound and CPU-heavy methods have `async throws` overloads using `Task.d
 | `thumbnail(fromData:size:)` | Shrink-on-load thumbnail from Data (CGSize) |
 | `imageInfo(atPath:)` | Get image dimensions and format without full decode |
 | `write(toFile:)` | Save to file (format inferred from extension). Supported: JPEG, PNG, WebP, JXL, TIFF |
-| `write(toFile:format:quality:)` | Save to file with explicit format and quality. HEIF/AVIF/GIF not supported (decode-only) |
-| `encoded(format:quality:)` | Export to Data (async name for `data(format:quality:)`). HEIF/AVIF/GIF not supported (decode-only) |
+| `write(toFile:format:quality:lossless:)` | Save to file with explicit format. Lossless option for WebP/JXL. HEIF/AVIF/GIF not supported (decode-only) |
+| `encoded(format:quality:lossless:)` | Export to Data (async name for `data(format:quality:lossless:)`). Lossless option for WebP/JXL. HEIF/AVIF/GIF not supported (decode-only) |
 | `makeCGImage()` | Create CGImage via direct pixel transfer (async name for `cgImage` property) |
 | `thumbnailCGImage(fromFile:width:height:)` | Shrink-on-load thumbnail direct to CGImage |
 | `thumbnailCGImage(fromFile:size:)` | Shrink-on-load thumbnail direct to CGImage (CGSize) |
@@ -484,6 +489,8 @@ Most I/O-bound and CPU-heavy methods have `async throws` overloads using `Task.d
 | `cropped(_:)` | Crop rectangular region (CGRect) |
 | `smartCropped(toWidth:height:interesting:)` | Content-aware crop keeping most important region |
 | `smartCropped(to:interesting:)` | Content-aware crop (CGSize) |
+| `joinedHorizontally(with:)` | Join two images side by side horizontally |
+| `joinedVertically(with:)` | Join two images stacked vertically |
 | `rotated(byAngle:)` | Rotate by arbitrary angle with black corner fill |
 | `grayscaled()` | Convert to grayscale (single-band luminance) |
 | `flattened(background:)` | Flatten alpha channel against a VIPSColor background |
@@ -565,7 +572,7 @@ Most I/O-bound and CPU-heavy methods have `async throws` overloads using `Task.d
 |------|--------|
 | `VIPSImageFormat` | `.unknown`, `.jpeg`, `.png`, `.webP`, `.heif`, `.avif`, `.jxl`, `.gif`, `.tiff` (also has `fileExtension` property) |
 | `VIPSResizeKernel` | `.nearest`, `.linear`, `.cubic`, `.lanczos2`, `.lanczos3` |
-| `VIPSBlendMode` | `.over`, `.multiply`, `.screen`, `.overlay`, `.add`, `.darken`, `.lighten`, `.softLight`, `.hardLight`, `.difference`, `.exclusion` |
+| `VIPSBlendMode` | `.clear`, `.source`, `.over`, `.in`, `.out`, `.atop`, `.dest`, `.destOver`, `.destIn`, `.destOut`, `.destAtop`, `.xor`, `.add`, `.saturate`, `.multiply`, `.screen`, `.overlay`, `.darken`, `.lighten`, `.colourDodge`, `.colourBurn`, `.hardLight`, `.softLight`, `.difference`, `.exclusion` |
 | `VIPSInteresting` | `.none`, `.centre`, `.entropy`, `.attention`, `.low`, `.high` |
 | `VIPSExtendMode` | `.black`, `.copy`, `.repeat`, `.mirror`, `.white`, `.background` |
 | `VIPSCompassDirection` | `.centre`, `.north`, `.east`, `.south`, `.west`, `.northEast`, `.southEast`, `.southWest`, `.northWest` |
