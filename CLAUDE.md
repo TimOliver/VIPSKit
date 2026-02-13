@@ -386,6 +386,7 @@ let bgColor = try await image.detectedBackgroundColor()
 | `crop(x:y:width:height:)` | Crop region |
 | `crop(_ rect:)` | Crop region (CGRect) |
 | `rotate(degrees:)` | Rotate by a multiple of 90 degrees |
+| `rotate(byAngle:)` | Rotate by an arbitrary angle with black corner fill |
 | `flippedHorizontally()` | Mirror horizontally |
 | `flippedVertically()` | Mirror vertically |
 | `autoRotated()` | Apply EXIF orientation |
@@ -435,6 +436,8 @@ let bgColor = try await image.detectedBackgroundColor()
 | `drawCircle(center:radius:color:fill:)` | Draw circle CGPoint (mutates in-place, chainable) |
 | `floodFill(x:y:color:)` | Flood fill connected region (mutates in-place, chainable) |
 | `floodFill(at:color:)` | Flood fill CGPoint (mutates in-place, chainable) |
+| `embed(x:y:width:height:extend:)` | Embed image in a larger canvas at given position |
+| `pad(top:left:bottom:right:extend:)` | Add padding around the image |
 | `gravity(direction:width:height:extend:)` | Embed with gravity |
 | `gravity(direction:size:extend:)` | Embed with gravity (CGSize) |
 | `pixelValues(atX:y:)` | Read pixel values at coordinates → VIPSColor |
