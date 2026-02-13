@@ -11,7 +11,7 @@ libvips is known for being exceptionally fast and memory-efficient, using a stre
 * Image format support for JPEG, PNG, WebP, JPEG-XL, TIFF, HEIF, AVIF, and GIF.
 * Memory-efficient shrink-on-load thumbnailing for JPEG, WebP, and HEIF images.
 * Smart content-aware cropping using attention detection.
-* Image compositing with 22 blend modes for watermarks and overlays.
+* Image compositing with 25 blend modes for watermarks and overlays.
 * Color adjustments (brightness, contrast, saturation, gamma).
 * Gaussian blur, sharpening, and edge detection (Sobel, Canny).
 * Drawing primitives (rectangles, lines, circles, flood fill).
