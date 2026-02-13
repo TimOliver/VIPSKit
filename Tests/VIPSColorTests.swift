@@ -204,4 +204,110 @@ final class VIPSColorTests: XCTestCase {
         XCTAssertEqual(restored!.blue, 200.0, accuracy: 1.0)
     }
     #endif
+
+    // MARK: - Ink Conversion
+
+    func testInkFor1Band() {
+        let color = VIPSColor(red: 100, green: 200, blue: 50)
+        let ink = color.ink(forBands: 1)
+        XCTAssertEqual(ink.count, 1)
+        // Luminance: 0.2126*100 + 0.7152*200 + 0.0722*50
+        let expected = 0.2126 * 100.0 + 0.7152 * 200.0 + 0.0722 * 50.0
+        XCTAssertEqual(ink[0], expected, accuracy: 0.01)
+    }
+
+    func testInkFor3Bands() {
+        let color = VIPSColor(red: 10, green: 20, blue: 30)
+        let ink = color.ink(forBands: 3)
+        XCTAssertEqual(ink, [10.0, 20.0, 30.0])
+    }
+
+    func testInkFor4Bands() {
+        let color = VIPSColor(red: 10, green: 20, blue: 30)
+        let ink = color.ink(forBands: 4)
+        XCTAssertEqual(ink, [10.0, 20.0, 30.0, 255.0])
+    }
+
+    // MARK: - Debug Description
+
+    func testDebugDescription() {
+        let color = VIPSColor(red: 255, green: 128, blue: 0)
+        let desc = color.debugDescription
+        XCTAssertTrue(desc.contains("255.0"))
+        XCTAssertTrue(desc.contains("128.0"))
+        XCTAssertTrue(desc.contains("0.0"))
+        XCTAssertTrue(desc.hasPrefix("<VIPSColor:"))
+    }
+
+    func testDebugDescriptionWithAlpha() {
+        let color = VIPSColor(values: [100.0, 200.0, 50.0, 128.0])
+        let desc = color.debugDescription
+        XCTAssertTrue(desc.contains("128.0"))
+    }
+
+    // MARK: - Edge Cases
+
+    func testEmptyValues() {
+        let color = VIPSColor(values: [])
+        XCTAssertEqual(color.count, 0)
+    }
+
+    func testTwoBandColor() {
+        let color = VIPSColor(values: [100.0, 200.0])
+        XCTAssertEqual(color.count, 2)
+        XCTAssertEqual(color.red, 100.0)
+        // With < 3 bands, green and blue return first band
+        XCTAssertEqual(color.green, 100.0)
+        XCTAssertNil(color.alpha)
+    }
+
+    func testBoundaryValues() {
+        let color = VIPSColor(red: 0, green: 0, blue: 0)
+        XCTAssertEqual(color.red, 0.0)
+        let color2 = VIPSColor(red: 255, green: 255, blue: 255)
+        XCTAssertEqual(color2.red, 255.0)
+    }
+
+    // MARK: - CGColor Edge Cases
+
+    func testCGColorFromBlack() {
+        let color = VIPSColor.black
+        let cg = color.cgColor
+        let components = cg.components!
+        XCTAssertEqual(components[0], 0.0, accuracy: 0.01)
+        XCTAssertEqual(components[1], 0.0, accuracy: 0.01)
+        XCTAssertEqual(components[2], 0.0, accuracy: 0.01)
+        XCTAssertEqual(components[3], 1.0, accuracy: 0.01)
+    }
+
+    func testCGColorFromWhite() {
+        let color = VIPSColor.white
+        let cg = color.cgColor
+        let components = cg.components!
+        XCTAssertEqual(components[0], 1.0, accuracy: 0.01)
+        XCTAssertEqual(components[1], 1.0, accuracy: 0.01)
+        XCTAssertEqual(components[2], 1.0, accuracy: 0.01)
+    }
+
+    func testCGColorRoundTripWithAlpha() {
+        let original = VIPSColor(values: [128.0, 64.0, 32.0, 127.5])
+        let cg = original.cgColor
+        let restored = VIPSColor(cgColor: cg)
+        XCTAssertNotNil(restored)
+        XCTAssertEqual(restored!.red, 128.0, accuracy: 1.0)
+        XCTAssertEqual(restored!.green, 64.0, accuracy: 1.0)
+        XCTAssertEqual(restored!.blue, 32.0, accuracy: 1.0)
+        XCTAssertNotNil(restored!.alpha)
+        XCTAssertEqual(restored!.alpha!, 127.5, accuracy: 1.0)
+    }
+
+    // MARK: - Sendable
+
+    func testSendable() async {
+        let color = VIPSColor(red: 42, green: 128, blue: 200)
+        let result = await Task.detached {
+            return color.red
+        }.value
+        XCTAssertEqual(result, 42.0)
+    }
 }

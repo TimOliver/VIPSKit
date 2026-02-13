@@ -131,4 +131,97 @@ final class VIPSImageFormatTests: VIPSImageTestCase {
             }
         }
     }
+
+    // MARK: - Debug Labels
+
+    func testDebugLabels() {
+        XCTAssertEqual(VIPSImageFormat.unknown.debugLabel, "Unknown")
+        XCTAssertEqual(VIPSImageFormat.jpeg.debugLabel, "JPEG")
+        XCTAssertEqual(VIPSImageFormat.png.debugLabel, "PNG")
+        XCTAssertEqual(VIPSImageFormat.webP.debugLabel, "WebP")
+        XCTAssertEqual(VIPSImageFormat.heif.debugLabel, "HEIF")
+        XCTAssertEqual(VIPSImageFormat.avif.debugLabel, "AVIF")
+        XCTAssertEqual(VIPSImageFormat.jxl.debugLabel, "JPEG XL")
+        XCTAssertEqual(VIPSImageFormat.gif.debugLabel, "GIF")
+        XCTAssertEqual(VIPSImageFormat.tiff.debugLabel, "TIFF")
+    }
+
+    func testDebugLabelsNonEmpty() {
+        let allFormats: [VIPSImageFormat] = [
+            .unknown, .jpeg, .png, .webP, .heif, .avif, .jxl, .gif, .tiff
+        ]
+        for format in allFormats {
+            XCTAssertFalse(format.debugLabel.isEmpty)
+        }
+    }
+
+    // MARK: - Source Format Detection (Additional Formats)
+
+    func testSourceFormatWebP() throws {
+        guard let path = pathForTestResource("test.webp") else {
+            XCTFail("Test resource not found")
+            return
+        }
+        let image = try VIPSImage(contentsOfFile: path)
+        XCTAssertEqual(image.sourceFormat, .webP)
+    }
+
+    func testSourceFormatGIF() throws {
+        guard let path = pathForTestResource("test.gif") else {
+            XCTFail("Test resource not found")
+            return
+        }
+        let image = try VIPSImage(contentsOfFile: path)
+        XCTAssertEqual(image.sourceFormat, .gif)
+    }
+
+    func testSourceFormatFromEncodedData() throws {
+        let image = createTestImage(width: 50, height: 50)
+        let webpData = try image.data(format: .webP, quality: 80)
+        let loaded = try VIPSImage(data: webpData)
+        XCTAssertEqual(loaded.sourceFormat, .webP)
+    }
+
+    func testSourceFormatTIFF() throws {
+        let image = createTestImage(width: 50, height: 50)
+        let tiffData = try image.data(format: .tiff)
+        let loaded = try VIPSImage(data: tiffData)
+        XCTAssertEqual(loaded.sourceFormat, .tiff)
+    }
+
+    func testSourceFormatJXL() throws {
+        let image = createTestImage(width: 50, height: 50)
+        let jxlData = try image.data(format: .jxl, quality: 80)
+        let loaded = try VIPSImage(data: jxlData)
+        XCTAssertEqual(loaded.sourceFormat, .jxl)
+    }
+
+    // MARK: - Equatable
+
+    func testFormatEquality() {
+        XCTAssertEqual(VIPSImageFormat.jpeg, VIPSImageFormat.jpeg)
+        XCTAssertNotEqual(VIPSImageFormat.jpeg, VIPSImageFormat.png)
+    }
+
+    // MARK: - Loader Name
+
+    func testLoaderNamePNG() throws {
+        guard let path = pathForTestResource("test-rgb.png") else {
+            XCTFail("Test resource not found")
+            return
+        }
+        let image = try VIPSImage(contentsOfFile: path)
+        XCTAssertNotNil(image.loaderName)
+        XCTAssertTrue(image.loaderName!.hasPrefix("png"))
+    }
+
+    func testLoaderNameWebP() throws {
+        guard let path = pathForTestResource("test.webp") else {
+            XCTFail("Test resource not found")
+            return
+        }
+        let image = try VIPSImage(contentsOfFile: path)
+        XCTAssertNotNil(image.loaderName)
+        XCTAssertTrue(image.loaderName!.hasPrefix("webp"))
+    }
 }
