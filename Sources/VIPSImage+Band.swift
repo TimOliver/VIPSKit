@@ -63,4 +63,28 @@ extension VIPSImage {
         }
         return VIPSImage(pointer: out)
     }
+
+    // MARK: - Async
+
+    /// Premultiply the RGB channels by the alpha channel.
+    /// This is required before certain operations (like resizing) to avoid
+    /// dark fringes around semi-transparent edges.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Returns: A new image with premultiplied alpha
+    public func premultiplied() async throws -> VIPSImage {
+        try await Task.detached {
+            try self.premultiplied()
+        }.value
+    }
+
+    /// Undo premultiplication, dividing RGB channels by the alpha channel.
+    /// Call this after performing operations on premultiplied images to restore
+    /// normal (straight) alpha.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Returns: A new image with straight (unpremultiplied) alpha
+    public func unpremultiplied() async throws -> VIPSImage {
+        try await Task.detached {
+            try self.unpremultiplied()
+        }.value
+    }
 }

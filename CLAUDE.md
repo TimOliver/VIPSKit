@@ -84,6 +84,7 @@ VIPSKit/
 │   ├── VIPSImage+Draw.swift           # Drawing primitives (rect, line, circle, flood fill)
 │   ├── VIPSImage+Analysis.swift       # Statistics, trim, average color, background detection
 │   ├── VIPSImage+Metadata.swift       # EXIF/metadata access, MetadataProxy subscript
+│   ├── VIPSImage+Debug.swift          # CustomDebugStringConvertible for rich debug output
 │   ├── VIPSColor.swift                # RGB color type, ink(forBands:), CGColor/UIColor/NSColor interop
 │   ├── VIPSError.swift                # Error type
 │   ├── VIPSImageFormat.swift          # Format enum
@@ -488,6 +489,7 @@ Most I/O-bound and CPU-heavy methods have `async throws` overloads using `Task.d
 | `resized(scale:kernel:)` | Scale by factor with interpolation kernel |
 | `resized(toWidth:height:)` | Resize to exact dimensions |
 | `resized(to:)` | Resize to exact dimensions (CGSize) |
+| `rotated(degrees:)` | Rotate by a multiple of 90 degrees |
 | `cropped(x:y:width:height:)` | Crop rectangular region |
 | `cropped(_:)` | Crop rectangular region (CGRect) |
 | `smartCropped(toWidth:height:interesting:)` | Content-aware crop keeping most important region |
@@ -514,6 +516,12 @@ Most I/O-bound and CPU-heavy methods have `async throws` overloads using `Task.d
 | `statistics()` | Image statistics (min, max, mean, stddev) |
 | `averageColor()` | Per-band mean values → VIPSColor |
 | `detectedBackgroundColor(stripWidth:)` | Detect background via trim margins or prominent edge color → VIPSColor |
+| `premultiplied()` | Premultiply RGB by alpha channel |
+| `unpremultiplied()` | Undo premultiplication (straight alpha) |
+| `embedded(x:y:width:height:extend:)` | Embed image in a larger canvas at given position |
+| `padded(top:left:bottom:right:extend:)` | Add padding around the image |
+| `gravity(direction:width:height:extend:)` | Embed with gravity |
+| `gravity(direction:size:extend:)` | Embed with gravity (CGSize) |
 | `histogramEqualized()` | Equalize histogram for improved contrast |
 | `extractedRegion(fromFile:x:y:width:height:)` | Extract region from file without full decode |
 | `extractedRegion(fromData:x:y:width:height:)` | Extract region from Data without full decode |

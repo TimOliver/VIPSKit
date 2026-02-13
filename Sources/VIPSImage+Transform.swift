@@ -132,6 +132,16 @@ extension VIPSImage {
 
     // MARK: - Async
 
+    /// Rotate the image by a multiple of 90 degrees.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameter degrees: The rotation angle (90, 180, or 270)
+    /// - Returns: A new rotated image
+    public func rotated(degrees: Int) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.rotate(degrees: degrees)
+        }.value
+    }
+
     /// Crop a rectangular region from the image.
     /// The work is performed off the calling actor via `Task.detached`.
     /// - Parameters:
