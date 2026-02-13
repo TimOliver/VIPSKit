@@ -138,4 +138,42 @@ extension VIPSImage {
         g_object_unref(gpointer(source))
         return VIPSImage(pointer: copied)
     }
+
+    // MARK: - Async
+
+    /// Extract a rectangular region from an image file without loading the entire
+    /// image into memory. This is the most memory-efficient way to read a portion
+    /// of a large image.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameters:
+    ///   - path: The file path of the source image
+    ///   - x: The left edge of the region in pixels
+    ///   - y: The top edge of the region in pixels
+    ///   - width: The width of the region in pixels
+    ///   - height: The height of the region in pixels
+    /// - Returns: A new image containing only the specified region
+    public static func extractedRegion(fromFile path: String,
+                                       x: Int, y: Int, width: Int, height: Int) async throws -> VIPSImage {
+        try await Task.detached {
+            try Self.extractRegion(fromFile: path, x: x, y: y, width: width, height: height)
+        }.value
+    }
+
+    /// Extract a rectangular region from in-memory image data without fully
+    /// decoding the entire image. This is the most memory-efficient way to
+    /// read a portion of a large image from a data buffer.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameters:
+    ///   - data: The encoded image data
+    ///   - x: The left edge of the region in pixels
+    ///   - y: The top edge of the region in pixels
+    ///   - width: The width of the region in pixels
+    ///   - height: The height of the region in pixels
+    /// - Returns: A new image containing only the specified region
+    public static func extractedRegion(fromData data: Data,
+                                       x: Int, y: Int, width: Int, height: Int) async throws -> VIPSImage {
+        try await Task.detached {
+            try Self.extractRegion(fromData: data, x: x, y: y, width: width, height: height)
+        }.value
+    }
 }

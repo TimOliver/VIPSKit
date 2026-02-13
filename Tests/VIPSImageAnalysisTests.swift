@@ -230,4 +230,43 @@ final class VIPSImageAnalysisTests: VIPSImageTestCase {
         XCTAssertEqual(stats.mean, 5.0, accuracy: 1.0)
         XCTAssertEqual(stats.max, 10.0, accuracy: 2.0)
     }
+
+    // MARK: - Async
+
+    func testAsyncFindTrim() async throws {
+        let image = createImageWithMargins(width: 100, height: 100, margin: 20,
+                                           contentR: 255, contentG: 0, contentB: 0,
+                                           bgR: 255, bgG: 255, bgB: 255)
+        let bounds = try await image.findTrim()
+        XCTAssertFalse(bounds.isEmpty)
+        XCTAssertEqual(bounds.origin.x, 20, accuracy: 3)
+        XCTAssertEqual(bounds.origin.y, 20, accuracy: 3)
+    }
+
+    func testAsyncStatistics() async throws {
+        let image = createSolidColorImage(width: 50, height: 50, r: 128, g: 128, b: 128)
+        let stats = try await image.statistics()
+        XCTAssertEqual(stats.min, 128.0, accuracy: 1.0)
+        XCTAssertEqual(stats.max, 128.0, accuracy: 1.0)
+        XCTAssertEqual(stats.mean, 128.0, accuracy: 1.0)
+    }
+
+    func testAsyncAverageColor() async throws {
+        let image = createSolidColorImage(width: 50, height: 50, r: 128, g: 128, b: 128)
+        let avg = try await image.averageColor()
+        XCTAssertEqual(avg.count, 3)
+        for val in avg {
+            XCTAssertEqual(val, 128.0)
+        }
+    }
+
+    func testAsyncDetectedBackgroundColor() async throws {
+        let image = createImageWithMargins(width: 100, height: 100, margin: 20,
+                                           contentR: 255, contentG: 0, contentB: 0,
+                                           bgR: 255, bgG: 255, bgB: 255)
+        let bg = try await image.detectedBackgroundColor()
+        XCTAssertEqual(bg.red, 255.0, accuracy: 5.0)
+        XCTAssertEqual(bg.green, 255.0, accuracy: 5.0)
+        XCTAssertEqual(bg.blue, 255.0, accuracy: 5.0)
+    }
 }

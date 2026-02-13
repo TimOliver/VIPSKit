@@ -217,24 +217,12 @@ int cvips_webpsave_lossless(VipsImage *in, const char *filename) {
     return vips_webpsave(in, filename, "lossless", TRUE, NULL);
 }
 
-int cvips_heifsave(VipsImage *in, const char *filename, int quality) {
-    return vips_heifsave(in, filename, "Q", quality, NULL);
-}
-
-int cvips_avifsave(VipsImage *in, const char *filename, int quality) {
-    return vips_heifsave(in, filename, "Q", quality, "compression", VIPS_FOREIGN_HEIF_COMPRESSION_AV1, NULL);
-}
-
 int cvips_jxlsave(VipsImage *in, const char *filename, int quality) {
     return vips_jxlsave(in, filename, "Q", quality, NULL);
 }
 
 int cvips_jxlsave_lossless(VipsImage *in, const char *filename) {
     return vips_jxlsave(in, filename, "lossless", TRUE, NULL);
-}
-
-int cvips_gifsave(VipsImage *in, const char *filename) {
-    return vips_gifsave(in, filename, NULL);
 }
 
 // =============================================================================
@@ -318,7 +306,7 @@ int cvips_draw_circle(VipsImage *image, double *ink, int n, int cx, int cy, int 
 }
 
 int cvips_draw_flood(VipsImage *image, double *ink, int n, int x, int y) {
-    return vips_draw_flood(image, ink, n, x, y, NULL);
+    return vips_draw_flood(image, ink, n, x, y, "equal", TRUE, NULL);
 }
 
 // =============================================================================
@@ -361,14 +349,6 @@ int cvips_webpsave_buffer_lossless(VipsImage *in, void **buf, size_t *len) {
     return vips_webpsave_buffer(in, buf, len, "lossless", TRUE, NULL);
 }
 
-int cvips_heifsave_buffer(VipsImage *in, void **buf, size_t *len, int quality) {
-    return vips_heifsave_buffer(in, buf, len, "Q", quality, NULL);
-}
-
-int cvips_avifsave_buffer(VipsImage *in, void **buf, size_t *len, int quality) {
-    return vips_heifsave_buffer(in, buf, len, "Q", quality, "compression", VIPS_FOREIGN_HEIF_COMPRESSION_AV1, NULL);
-}
-
 int cvips_jxlsave_buffer(VipsImage *in, void **buf, size_t *len, int quality) {
     return vips_jxlsave_buffer(in, buf, len, "Q", quality, NULL);
 }
@@ -377,6 +357,3 @@ int cvips_jxlsave_buffer_lossless(VipsImage *in, void **buf, size_t *len) {
     return vips_jxlsave_buffer(in, buf, len, "lossless", TRUE, NULL);
 }
 
-int cvips_gifsave_buffer(VipsImage *in, void **buf, size_t *len) {
-    return vips_gifsave_buffer(in, buf, len, NULL);
-}

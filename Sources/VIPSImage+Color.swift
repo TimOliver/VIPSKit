@@ -153,4 +153,91 @@ extension VIPSImage {
         g_object_unref(gpointer(satAdjusted))
         return VIPSImage(pointer: out)
     }
+
+    // MARK: - Async
+
+    /// Convert the image to grayscale (single-band luminance).
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Returns: A new grayscale image
+    public func grayscaled() async throws -> VIPSImage {
+        try await Task.detached {
+            try self.grayscaled()
+        }.value
+    }
+
+    /// Flatten the alpha channel against a solid background color.
+    /// Fully transparent pixels become the background color, and semi-transparent
+    /// pixels are blended accordingly.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameter background: The background color to flatten against
+    /// - Returns: A new image with the alpha channel removed
+    public func flattened(background: VIPSColor) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.flatten(background: background)
+        }.value
+    }
+
+    /// Invert the colors of the image, producing a photographic negative effect.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Returns: A new image with inverted colors
+    public func inverted() async throws -> VIPSImage {
+        try await Task.detached {
+            try self.inverted()
+        }.value
+    }
+
+    /// Adjust the brightness of the image by applying a uniform offset to all color channels.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameter brightness: The brightness adjustment value (-1.0 to 1.0, where 0 is unchanged)
+    /// - Returns: A new image with adjusted brightness
+    public func adjustedBrightness(_ brightness: Double) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.adjustBrightness(brightness)
+        }.value
+    }
+
+    /// Adjust the contrast of the image by scaling pixel values around the midpoint.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameter contrast: The contrast multiplier (0.5 to 2.0, where 1.0 is unchanged)
+    /// - Returns: A new image with adjusted contrast
+    public func adjustedContrast(_ contrast: Double) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.adjustContrast(contrast)
+        }.value
+    }
+
+    /// Adjust the color saturation by converting to LCH color space and scaling the chroma channel.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameter saturation: The saturation multiplier (0 = grayscale, 1.0 = unchanged, >1.0 = more saturated)
+    /// - Returns: A new image with adjusted saturation
+    public func adjustedSaturation(_ saturation: Double) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.adjustSaturation(saturation)
+        }.value
+    }
+
+    /// Adjust the gamma curve of the image. Values less than 1.0 lighten
+    /// the image, while values greater than 1.0 darken it.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameter gamma: The gamma exponent value
+    /// - Returns: A new image with the adjusted gamma curve
+    public func adjustedGamma(_ gamma: Double) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.adjustGamma(gamma)
+        }.value
+    }
+
+    /// Apply brightness, contrast, and saturation adjustments in a single
+    /// efficient operation. This is faster than applying each adjustment separately.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameters:
+    ///   - brightness: The brightness adjustment (-1.0 to 1.0, where 0 is unchanged)
+    ///   - contrast: The contrast multiplier (0.5 to 2.0, where 1.0 is unchanged)
+    ///   - saturation: The saturation multiplier (0 = grayscale, 1.0 = unchanged, >1.0 = more saturated)
+    /// - Returns: A new image with all three adjustments applied
+    public func adjusted(brightness: Double = 0, contrast: Double = 1.0, saturation: Double = 1.0) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.adjust(brightness: brightness, contrast: contrast, saturation: saturation)
+        }.value
+    }
 }

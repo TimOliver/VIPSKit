@@ -26,7 +26,10 @@ import AppKit
 public final class VIPSImage: @unchecked Sendable {
 
     /// The underlying libvips image pointer.
-    internal let pointer: UnsafeMutablePointer<VipsImage>
+    internal private(set) var pointer: UnsafeMutablePointer<VipsImage>
+
+    /// Whether this image's pixels are in a writable memory buffer.
+    private var isWritable = false
 
     // MARK: - Lifecycle
 
@@ -47,6 +50,18 @@ public final class VIPSImage: @unchecked Sendable {
 
     deinit {
         g_object_unref(gpointer(pointer))
+    }
+
+    /// Ensure the image pixels are in a writable memory buffer.
+    /// Called automatically before draw operations.
+    internal func ensureWritable() throws {
+        guard !isWritable else { return }
+        guard let copy = vips_image_copy_memory(pointer) else {
+            throw VIPSError.fromVips()
+        }
+        g_object_unref(gpointer(pointer))
+        pointer = copy
+        isWritable = true
     }
 
     // MARK: - Initialization
@@ -184,6 +199,17 @@ public final class VIPSImage: @unchecked Sendable {
             throw VIPSError.fromVips()
         }
         return VIPSImage(pointer: out)
+    }
+
+    /// Copy the image pixels into a new contiguous memory block, breaking
+    /// any lazy evaluation chain. This allows source images to be freed
+    /// even if downstream images still exist.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Returns: A new image with all pixels evaluated and stored in memory
+    public func copiedToMemory() async throws -> VIPSImage {
+        try await Task.detached {
+            try self.copiedToMemory()
+        }.value
     }
 
     // MARK: - Pixel Access

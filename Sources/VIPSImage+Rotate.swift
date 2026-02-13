@@ -17,4 +17,19 @@ extension VIPSImage {
         }
         return VIPSImage(pointer: out)
     }
+
+    // MARK: - Async
+
+    /// Rotate the image by an arbitrary angle in degrees.
+    /// Unlike ``rotate(degrees:)`` which only supports 90-degree multiples,
+    /// this method can rotate by any angle. The output image is enlarged
+    /// to contain the entire rotated result, with black fill in the corners.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameter degrees: The rotation angle in degrees (positive is counter-clockwise)
+    /// - Returns: A new rotated image
+    public func rotated(byAngle degrees: Double) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.rotate(byAngle: degrees)
+        }.value
+    }
 }

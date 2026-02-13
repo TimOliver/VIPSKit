@@ -41,4 +41,46 @@ extension VIPSImage {
         let y = (height - overlay.height) / 2
         return try composite(withOverlay: overlay, mode: mode, x: x, y: y)
     }
+
+    // MARK: - Async
+
+    /// Composite an overlay image on top of this image at the specified position
+    /// using the given blend mode.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameters:
+    ///   - overlay: The image to composite on top
+    ///   - mode: The blend mode to use for compositing
+    ///   - x: The horizontal offset for placing the overlay (in pixels from the left)
+    ///   - y: The vertical offset for placing the overlay (in pixels from the top)
+    /// - Returns: A new composited image
+    public func composited(withOverlay overlay: VIPSImage, mode: VIPSBlendMode, x: Int, y: Int) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.composite(withOverlay: overlay, mode: mode, x: x, y: y)
+        }.value
+    }
+
+    /// Composite an overlay image on top of this image at the specified point.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameters:
+    ///   - overlay: The image to composite on top
+    ///   - mode: The blend mode to use for compositing
+    ///   - point: The position for placing the overlay
+    /// - Returns: A new composited image
+    public func composited(withOverlay overlay: VIPSImage, mode: VIPSBlendMode, at point: CGPoint) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.composite(withOverlay: overlay, mode: mode, at: point)
+        }.value
+    }
+
+    /// Composite an overlay image centered on top of this image using the given blend mode.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameters:
+    ///   - overlay: The image to composite on top
+    ///   - mode: The blend mode to use for compositing
+    /// - Returns: A new composited image with the overlay centered
+    public func composited(withOverlay overlay: VIPSImage, mode: VIPSBlendMode) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.composite(withOverlay: overlay, mode: mode)
+        }.value
+    }
 }

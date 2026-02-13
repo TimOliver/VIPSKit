@@ -50,4 +50,33 @@ final class VIPSImageCGImageTests: VIPSImageTestCase {
         let cgImage = try edges.cgImage
         XCTAssertEqual(cgImage.width, 100)
     }
+
+    // MARK: - Async
+
+    func testAsyncMakeCGImage() async throws {
+        let image = createTestImage(width: 100, height: 100)
+        let cgImage = try await image.makeCGImage()
+        XCTAssertEqual(cgImage.width, 100)
+        XCTAssertEqual(cgImage.height, 100)
+    }
+
+    func testAsyncThumbnailCGImage() async throws {
+        guard let path = pathForTestResource("superman.jpg") else {
+            XCTFail("Test resource not found")
+            return
+        }
+        let cgImage = try await VIPSImage.thumbnailCGImage(fromFile: path, width: 100, height: 100)
+        XCTAssertLessThanOrEqual(cgImage.width, 100)
+        XCTAssertLessThanOrEqual(cgImage.height, 100)
+    }
+
+    func testAsyncThumbnailCGImageCGSize() async throws {
+        guard let path = pathForTestResource("superman.jpg") else {
+            XCTFail("Test resource not found")
+            return
+        }
+        let cgImage = try await VIPSImage.thumbnailCGImage(fromFile: path, size: CGSize(width: 80, height: 80))
+        XCTAssertLessThanOrEqual(cgImage.width, 80)
+        XCTAssertLessThanOrEqual(cgImage.height, 80)
+    }
 }

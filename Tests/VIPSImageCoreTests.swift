@@ -103,4 +103,14 @@ final class VIPSImageCoreTests: VIPSImageTestCase {
             XCTAssertNotNil(r)
         }
     }
+
+    // MARK: - Async
+
+    func testAsyncCopiedToMemory() async throws {
+        let source = createTestImage(width: 100, height: 100)
+        let copied = try await source.copiedToMemory()
+        XCTAssertEqual(copied.width, source.width)
+        XCTAssertEqual(copied.height, source.height)
+        XCTAssertEqual(copied.bands, source.bands)
+    }
 }

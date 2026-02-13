@@ -40,4 +40,14 @@ final class VIPSImageRotateTests: VIPSImageTestCase {
         XCTAssertGreaterThanOrEqual(rotated.width, 59)
         XCTAssertGreaterThanOrEqual(rotated.height, 39)
     }
+
+    // MARK: - Async
+
+    func testAsyncRotated() async throws {
+        let image = createTestImage(width: 100, height: 100)
+        let rotated = try await image.rotated(byAngle: 45.0)
+        // Rotated image should be larger to contain the full rotated content
+        XCTAssertGreaterThan(rotated.width, 100)
+        XCTAssertGreaterThan(rotated.height, 100)
+    }
 }

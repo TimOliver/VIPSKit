@@ -23,9 +23,10 @@ VIPSKit is a pure Swift framework that wraps libvips for Apple platforms. The he
 - PNG (libpng)
 - WebP (libwebp)
 - JPEG-XL (libjxl)
-- AVIF (decode-only via dav1d + libheif)
-- HEIF (libheif)
-- GIF (built-in)
+- AVIF (decode-only via dav1d + libheif — no encoder)
+- HEIF (decode-only via libheif — no encoder)
+- GIF (decode-only, built-in — no encoder)
+- TIFF (built-in)
 
 ## Architecture
 
@@ -40,7 +41,7 @@ vips-cocoa (separate repo)              VIPSKit (this repo)
                                        │           ├── CVIPS.h
                                        │           ├── module.modulemap
                                        │           └── vips.h (umbrella header)
-                                       ├── Tests/*.swift (19 test files)
+                                       ├── Tests/*.swift (22 test files)
                                        ├── Scripts/configure-project.rb (Xcode project generator)
                                        └── build.sh (xcframework builder)
 ```
@@ -83,8 +84,7 @@ VIPSKit/
 │   ├── VIPSImage+Draw.swift           # Drawing primitives (rect, line, circle, flood fill)
 │   ├── VIPSImage+Analysis.swift       # Statistics, trim, average color, background detection
 │   ├── VIPSImage+Metadata.swift       # EXIF/metadata access, MetadataProxy subscript
-│   ├── VIPSColor.swift                # RGB color type with ink(forBands:) helper
-│   ├── VIPSColor+Platform.swift       # CGColor/UIColor/NSColor interop
+│   ├── VIPSColor.swift                # RGB color type, ink(forBands:), CGColor/UIColor/NSColor interop
 │   ├── VIPSError.swift                # Error type
 │   ├── VIPSImageFormat.swift          # Format enum
 │   ├── VIPSImageStatistics.swift      # Statistics struct
@@ -119,10 +119,16 @@ VIPSKit/
 │   ├── VIPSImageDrawTests.swift
 │   ├── VIPSImageAnalysisTests.swift
 │   ├── VIPSImageMetadataTests.swift
+│   ├── VIPSColorTests.swift
+│   ├── VIPSErrorTests.swift
+│   ├── VIPSImageFormatTests.swift
 │   ├── TestHost/                      # Minimal iOS app for Xcode test runner
-│   └── TestResources/superman.jpg
+│   └── TestResources/                 # Test images (superman.jpg, test.jpg, grayscale.jpg,
+│                                      #   rotated-3.jpg, rotated-6.jpg, test-rgb.png,
+│                                      #   test-rgba.png, tiny.png)
 ├── Scripts/
-│   └── configure-project.rb           # Generates VIPSKit.xcodeproj
+│   ├── configure-project.rb           # Generates VIPSKit.xcodeproj
+│   └── generate-test-images.swift     # Test image generator using CoreGraphics/ImageIO
 ├── Frameworks/
 │   └── vips.xcframework/              # Pre-built static lib (gitignored)
 └── VIPSKit.xcodeproj/                 # Generated Xcode project
@@ -241,13 +247,14 @@ let cannyEdges = try image.canny(sigma: 1.4)
 // Composite (CGPoint overload available)
 let watermarked = try base.composite(withOverlay: overlay, mode: .over, x: 10, y: 10)
 
-// Drawing
+// Drawing (mutates in-place, chainable)
 let canvas = try VIPSImage.blank(width: 200, height: 200)
-let withRect = try canvas.drawRect(x: 10, y: 10, width: 50, height: 50,
-                                    color: VIPSColor(red: 255, green: 0, blue: 0), fill: true)
-let withLine = try canvas.drawLine(from: CGPoint(x: 0, y: 0), to: CGPoint(x: 99, y: 99),
-                                    color: .white)
-let withCircle = try canvas.drawCircle(cx: 50, cy: 50, radius: 30, color: .black, fill: true)
+try canvas
+    .drawRect(x: 10, y: 10, width: 50, height: 50,
+              color: VIPSColor(red: 255, green: 0, blue: 0), fill: true)
+    .drawLine(from: CGPoint(x: 0, y: 0), to: CGPoint(x: 99, y: 99),
+              color: .white)
+    .drawCircle(cx: 50, cy: 50, radius: 30, color: .black, fill: true)
 
 // Thumbnail (shrink-on-load, most memory efficient)
 let thumb = try VIPSImage.thumbnail(fromFile: path, width: 200, height: 200)
@@ -257,9 +264,8 @@ let cgImage = try image.cgImage
 let uiImage = UIImage(cgImage: cgImage)
 
 // Direct thumbnail to CGImage (minimal peak memory)
-if let cgImage = try VIPSImage.thumbnailCGImage(fromFile: path, width: 200, height: 200) {
-    let uiImage = UIImage(cgImage: cgImage)
-}
+let thumbCG = try VIPSImage.thumbnailCGImage(fromFile: path, width: 200, height: 200)
+let thumbUI = UIImage(cgImage: thumbCG)
 
 // Export
 let jpegData = try image.data(format: .jpeg, quality: 85)
@@ -282,8 +288,11 @@ let bgColor = try image.detectBackgroundColor()
 let diff = try image1.subtract(image2)
 
 // Metadata
-let orientation = image.getString(named: "exif-ifd0-Orientation")
-image.metadata["my-custom-key"] = "value"  // Subscript access via MetadataProxy
+let orient = image.orientation                       // EXIF orientation (1-8)
+let make = image.exifField("Make")                   // e.g., "Canon"
+let pages = image.pageCount                          // Multi-page count
+let icc = image.iccProfile                           // Raw ICC data
+image.metadata["my-custom-key"] = "value"            // Subscript access via MetadataProxy
 
 // Raw pixel access (via PixelBuffer struct)
 try image.withPixelData { buffer in
@@ -304,6 +313,43 @@ VIPSImage.concurrency = 0  // Use all cores
 VIPSImage.shutdown()
 ```
 
+### Async Usage
+
+All I/O-bound and CPU-heavy operations have `async throws` variants that use `Task.detached` to move work off the calling actor. This is safe because `VIPSImage` is `@unchecked Sendable`.
+
+```swift
+// Async loading (static factories — Swift doesn't support async init)
+let image = try await VIPSImage.loaded(fromFile: path)
+let image = try await VIPSImage.loaded(data: imageData)
+let thumb = try await VIPSImage.thumbnail(fromFile: path, width: 200, height: 200)
+
+// Async resize (past-tense naming)
+let fitted = try await image.resizedToFit(width: 200, height: 200)
+let scaled = try await image.resized(scale: 0.5)
+let exact = try await image.resized(toWidth: 400, height: 300)
+
+// Async transform
+let cropped = try await image.cropped(x: 10, y: 10, width: 100, height: 100)
+let smart = try await image.smartCropped(toWidth: 400, height: 400)
+
+// Async color/filter
+let gray = try await image.grayscaled()
+let blurred = try await image.blurred(sigma: 2.0)
+let adjusted = try await image.adjusted(brightness: 0.1, contrast: 1.2, saturation: 1.1)
+
+// Async CGImage
+let cgImage = try await image.makeCGImage()
+let thumbCG = try await VIPSImage.thumbnailCGImage(fromFile: path, width: 200, height: 200)
+
+// Async export
+let jpegData = try await image.encoded(format: .jpeg, quality: 85)
+try await image.write(toFile: "/path/to/output.jpg")
+
+// Async analysis
+let bounds = try await image.findTrim()
+let bgColor = try await image.detectedBackgroundColor()
+```
+
 ## API Reference
 
 ### VIPSImage
@@ -313,15 +359,21 @@ VIPSImage.shutdown()
 | `initialize()` | Initialize libvips (call once at app start) |
 | `shutdown()` | Cleanup libvips (optional, at app termination) |
 | `width`, `height`, `bands`, `hasAlpha` | Image dimensions and channels |
+| `loaderName` | Internal vips loader name (e.g., `"jpegload"`) |
+| `sourceFormat` | Detected source format enum |
 | `init(contentsOfFile:)` | Load image from file path |
+| `init(contentsOfFileSequential:)` | Load with sequential (streaming) access |
 | `init(data:)` | Load image from Data |
 | `init(buffer:width:height:bands:)` | Create from raw pixel buffer |
-| `thumbnail(fromFile:width:height:)` | Shrink-on-load thumbnail |
-| `thumbnail(fromFile:size:)` | Shrink-on-load thumbnail (CGSize) |
+| `thumbnail(fromFile:width:height:)` | Shrink-on-load thumbnail from file |
+| `thumbnail(fromFile:size:)` | Shrink-on-load thumbnail from file (CGSize) |
+| `thumbnail(fromData:width:height:)` | Shrink-on-load thumbnail from Data |
+| `thumbnail(fromData:size:)` | Shrink-on-load thumbnail from Data (CGSize) |
 | `thumbnailCGImage(fromFile:width:height:)` | Thumbnail direct to CGImage |
 | `thumbnailCGImage(fromFile:size:)` | Thumbnail direct to CGImage (CGSize) |
-| `write(toFile:)` | Save to file (format from extension) |
-| `data(format:quality:)` | Export to Data |
+| `write(toFile:)` | Save to file (format from extension). Supported: JPEG, PNG, WebP, JXL, TIFF |
+| `write(toFile:format:quality:)` | Save to file with explicit format. HEIF/AVIF/GIF not supported (decode-only) |
+| `data(format:quality:)` | Export to Data. HEIF/AVIF/GIF not supported (decode-only) |
 | `cgImage` | Throwing computed property → CGImage |
 | `resizeToFit(width:height:)` | Resize maintaining aspect ratio |
 | `resizeToFit(size:)` | Resize maintaining aspect ratio (CGSize) |
@@ -362,26 +414,100 @@ VIPSImage.shutdown()
 | `detectBackgroundColor(stripWidth:)` | Detect background via trim margins or prominent edge color → VIPSColor |
 | `subtract(_:)` | Pixel-wise subtraction |
 | `absolute()` | Absolute value of pixels |
+| `tileRects(tileWidth:tileHeight:)` | Calculate tile grid rectangles |
 | `numberOfStrips(withHeight:)` | Count horizontal strips |
 | `strip(atIndex:height:)` | Extract horizontal strip |
 | `extractRegion(fromFile:x:y:width:height:)` | Extract region from file |
-| `cacheData(format:quality:lossless:)` | Export for caching |
-| `writeToCache(file:format:quality:lossless:)` | Write cache file |
-| `memoryUsage()` | Current tracked memory |
+| `extractRegion(fromData:x:y:width:height:)` | Extract region from Data |
+| `memoryUsage` | Current tracked memory (static property) |
+| `memoryHighWater` | Peak tracked memory (static property) |
+| `resetMemoryHighWater()` | Reset peak memory counter |
 | `blank(width:height:bands:)` | Create blank (black) image |
 | `blank(size:bands:)` | Create blank image (CGSize) |
-| `drawRect(x:y:width:height:color:fill:)` | Draw rectangle |
-| `drawLine(from:to:color:)` | Draw line (CGPoint) |
-| `drawCircle(cx:cy:radius:color:fill:)` | Draw circle |
-| `drawCircle(center:radius:color:fill:)` | Draw circle (CGPoint) |
-| `floodFill(x:y:color:)` | Flood fill region |
-| `floodFill(at:color:)` | Flood fill region (CGPoint) |
+| `drawRect(x:y:width:height:color:fill:)` | Draw rectangle (mutates in-place, chainable) |
+| `drawLine(from:to:color:)` | Draw line (mutates in-place, chainable) |
+| `drawCircle(cx:cy:radius:color:fill:)` | Draw circle (mutates in-place, chainable) |
+| `drawCircle(center:radius:color:fill:)` | Draw circle CGPoint (mutates in-place, chainable) |
+| `floodFill(x:y:color:)` | Flood fill connected region (mutates in-place, chainable) |
+| `floodFill(at:color:)` | Flood fill CGPoint (mutates in-place, chainable) |
 | `gravity(direction:width:height:extend:)` | Embed with gravity |
 | `gravity(direction:size:extend:)` | Embed with gravity (CGSize) |
 | `pixelValues(atX:y:)` | Read pixel values at coordinates → VIPSColor |
 | `pixelValues(at:)` | Read pixel values (CGPoint) → VIPSColor |
 | `imageInfo(atPath:)` | Get image info without full decode |
 | `metadata` | MetadataProxy for subscript access |
+| `metadataFields` | All metadata field names |
+| `hasMetadata(named:)` | Check if field exists |
+| `getString(named:)` | Get string metadata |
+| `getInt(named:)` | Get integer metadata |
+| `getDouble(named:)` | Get double metadata |
+| `getBlob(named:)` | Get binary blob metadata (EXIF, XMP, ICC) |
+| `setString(named:value:)` | Set string metadata |
+| `setInt(named:value:)` | Set integer metadata |
+| `setDouble(named:value:)` | Set double metadata |
+| `removeMetadata(named:)` | Remove a metadata field |
+| `orientation` | EXIF orientation tag (1-8) |
+| `xResolution`, `yResolution` | Resolution in pixels/mm |
+| `pageCount` | Number of pages (multi-page images) |
+| `pageHeight` | Single page height (multi-page images) |
+| `exifData` | Raw EXIF data blob |
+| `xmpData` | Raw XMP metadata blob |
+| `iccProfile` | ICC color profile data |
+| `exifField(_:)` | Read parsed EXIF tag by name |
+
+#### Async Variants
+
+Most I/O-bound and CPU-heavy methods have `async throws` overloads using `Task.detached` to move work off the calling actor. Naming convention: past tense for renamed variants, same name for already past-tense methods.
+
+| Method/Property | Description |
+|--------|-------------|
+| `loaded(fromFile:)` | Load image from file path (static factory for `init(contentsOfFile:)`) |
+| `loaded(fromFileSequential:)` | Load with sequential (streaming) access (static factory for `init(contentsOfFileSequential:)`) |
+| `loaded(data:)` | Load image from Data (static factory for `init(data:)`) |
+| `thumbnail(fromFile:width:height:)` | Shrink-on-load thumbnail from file |
+| `thumbnail(fromFile:size:)` | Shrink-on-load thumbnail from file (CGSize) |
+| `thumbnail(fromData:width:height:)` | Shrink-on-load thumbnail from Data |
+| `thumbnail(fromData:size:)` | Shrink-on-load thumbnail from Data (CGSize) |
+| `imageInfo(atPath:)` | Get image dimensions and format without full decode |
+| `write(toFile:)` | Save to file (format inferred from extension). Supported: JPEG, PNG, WebP, JXL, TIFF |
+| `write(toFile:format:quality:)` | Save to file with explicit format and quality. HEIF/AVIF/GIF not supported (decode-only) |
+| `encoded(format:quality:)` | Export to Data (async name for `data(format:quality:)`). HEIF/AVIF/GIF not supported (decode-only) |
+| `makeCGImage()` | Create CGImage via direct pixel transfer (async name for `cgImage` property) |
+| `thumbnailCGImage(fromFile:width:height:)` | Shrink-on-load thumbnail direct to CGImage |
+| `thumbnailCGImage(fromFile:size:)` | Shrink-on-load thumbnail direct to CGImage (CGSize) |
+| `resizedToFit(width:height:)` | Resize maintaining aspect ratio |
+| `resizedToFit(size:)` | Resize maintaining aspect ratio (CGSize) |
+| `resized(scale:kernel:)` | Scale by factor with interpolation kernel |
+| `resized(toWidth:height:)` | Resize to exact dimensions |
+| `resized(to:)` | Resize to exact dimensions (CGSize) |
+| `cropped(x:y:width:height:)` | Crop rectangular region |
+| `cropped(_:)` | Crop rectangular region (CGRect) |
+| `smartCropped(toWidth:height:interesting:)` | Content-aware crop keeping most important region |
+| `smartCropped(to:interesting:)` | Content-aware crop (CGSize) |
+| `rotated(byAngle:)` | Rotate by arbitrary angle with black corner fill |
+| `grayscaled()` | Convert to grayscale (single-band luminance) |
+| `flattened(background:)` | Flatten alpha channel against a VIPSColor background |
+| `inverted()` | Invert colors (photographic negative) |
+| `adjustedBrightness(_:)` | Adjust brightness (-1.0 to 1.0) |
+| `adjustedContrast(_:)` | Adjust contrast (0.5 to 2.0) |
+| `adjustedSaturation(_:)` | Adjust saturation via LCH chroma scaling (0 to 2.0) |
+| `adjustedGamma(_:)` | Adjust gamma curve |
+| `adjusted(brightness:contrast:saturation:)` | Combined brightness/contrast/saturation in one pass |
+| `blurred(sigma:)` | Gaussian blur |
+| `sharpened(sigma:)` | Sharpen via unsharp mask |
+| `sobel()` | Sobel edge detection |
+| `canny(sigma:)` | Canny edge detection (8-bit output) |
+| `composited(withOverlay:mode:x:y:)` | Composite with blend mode at position |
+| `composited(withOverlay:mode:at:)` | Composite with blend mode at CGPoint |
+| `composited(withOverlay:mode:)` | Composite with blend mode, overlay centered |
+| `findTrim(threshold:background:)` | Find content bounding box by detecting margins |
+| `statistics()` | Image statistics (min, max, mean, stddev) |
+| `averageColor()` | Per-band mean values → VIPSColor |
+| `detectedBackgroundColor(stripWidth:)` | Detect background via trim margins or prominent edge color → VIPSColor |
+| `histogramEqualized()` | Equalize histogram for improved contrast |
+| `extractedRegion(fromFile:x:y:width:height:)` | Extract region from file without full decode |
+| `extractedRegion(fromData:x:y:width:height:)` | Extract region from Data without full decode |
+| `copiedToMemory()` | Break lazy evaluation chain, copy pixels to contiguous memory |
 
 ### VIPSImage.Cache
 
@@ -437,7 +563,7 @@ VIPSImage.shutdown()
 
 | Type | Values |
 |------|--------|
-| `VIPSImageFormat` | `.unknown`, `.jpeg`, `.png`, `.webP`, `.heif`, `.avif`, `.jxl`, `.gif` |
+| `VIPSImageFormat` | `.unknown`, `.jpeg`, `.png`, `.webP`, `.heif`, `.avif`, `.jxl`, `.gif`, `.tiff` (also has `fileExtension` property) |
 | `VIPSResizeKernel` | `.nearest`, `.linear`, `.cubic`, `.lanczos2`, `.lanczos3` |
 | `VIPSBlendMode` | `.over`, `.multiply`, `.screen`, `.overlay`, `.add`, `.darken`, `.lighten`, `.softLight`, `.hardLight`, `.difference`, `.exclusion` |
 | `VIPSInteresting` | `.none`, `.centre`, `.entropy`, `.attention`, `.low`, `.high` |
@@ -452,6 +578,28 @@ VIPSImage.shutdown()
 | `max` | Maximum pixel value |
 | `mean` | Mean pixel value |
 | `standardDeviation` | Standard deviation |
+
+## Coding Conventions
+
+### Documentation Comments
+
+Every public method and property must have a comprehensive Swift doc comment including:
+- A description of what the operation does (not just the method name restated)
+- `- Parameter` entries for every parameter, with type/range info where relevant
+- `- Returns:` describing what is returned
+- Any important behavioral notes (e.g., memory implications, format limitations)
+
+Example of the expected style:
+```swift
+/// Resize the image to fit within the given dimensions while maintaining aspect ratio.
+/// Uses high-quality shrink-on-load when possible for optimal performance.
+/// - Parameters:
+///   - width: The maximum width of the result
+///   - height: The maximum height of the result
+/// - Returns: A new image that fits within the specified dimensions
+```
+
+When adding new methods to CLAUDE.md's API Reference tables, each entry's Description column should be a concise but informative summary (not just "see sync version" or a bare method name restatement).
 
 ## Architecture Notes
 
@@ -485,6 +633,12 @@ Default: VIPS concurrency = 1 (single-threaded per operation). Parallelize at th
 ### Thread Safety
 
 VIPSImage is `@unchecked Sendable`. Safe to use from multiple threads with each thread processing different images. The vips operation cache uses mutexes internally.
+
+### Async Pattern
+
+All async wrappers use the same `Task.detached` pattern to move work off the calling actor (critical for `@MainActor` callers). `VIPSImage` being `@unchecked Sendable` enables clean crossing of task boundaries. Naming uses past tense (`resize` → `resized`, `crop` → `cropped`). Methods already in past tense (`blurred`, `inverted`) get same-name async overloads differentiated by the `async` keyword. `init` → static factories (`loaded(fromFile:)`) since Swift doesn't support `async init`.
+
+Each async method carries the same comprehensive doc comment as its sync counterpart (description, parameter docs, return docs), plus a standard note: "The work is performed off the calling actor via `Task.detached`."
 
 ### Background Color Detection
 

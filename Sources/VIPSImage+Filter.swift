@@ -59,4 +59,50 @@ extension VIPSImage {
         g_object_unref(gpointer(cannyOut))
         return VIPSImage(pointer: out)
     }
+
+    // MARK: - Async
+
+    /// Apply a Gaussian blur to the image.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameter sigma: The standard deviation of the Gaussian kernel.
+    ///   Larger values produce a stronger blur.
+    /// - Returns: A new blurred image
+    public func blurred(sigma: Double) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.blurred(sigma: sigma)
+        }.value
+    }
+
+    /// Sharpen the image using an unsharp mask.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameter sigma: The standard deviation of the sharpening kernel.
+    ///   Larger values sharpen a wider area.
+    /// - Returns: A new sharpened image
+    public func sharpened(sigma: Double) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.sharpened(sigma: sigma)
+        }.value
+    }
+
+    /// Apply Sobel edge detection to produce a grayscale image
+    /// where edges appear as bright lines on a dark background.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Returns: A new image highlighting detected edges
+    public func sobel() async throws -> VIPSImage {
+        try await Task.detached {
+            try self.sobel()
+        }.value
+    }
+
+    /// Apply Canny edge detection, a more sophisticated edge detector that
+    /// produces thin, well-localized edges.
+    /// The work is performed off the calling actor via `Task.detached`.
+    /// - Parameter sigma: The standard deviation of the Gaussian smoothing
+    ///   applied before edge detection (default is 1.4)
+    /// - Returns: A new 8-bit image highlighting detected edges
+    public func canny(sigma: Double = 1.4) async throws -> VIPSImage {
+        try await Task.detached {
+            try self.canny(sigma: sigma)
+        }.value
+    }
 }

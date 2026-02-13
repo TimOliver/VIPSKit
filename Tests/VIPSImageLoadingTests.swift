@@ -279,4 +279,77 @@ final class VIPSImageLoadingTests: VIPSImageTestCase {
         XCTAssertTrue(thumb.hasAlpha)
         XCTAssertEqual(thumb.bands, 4)
     }
+
+    // MARK: - Async
+
+    func testAsyncLoadedFromFile() async throws {
+        guard let path = pathForTestResource("superman.jpg") else {
+            XCTFail("Test resource not found")
+            return
+        }
+        let image = try await VIPSImage.loaded(fromFile: path)
+        XCTAssertGreaterThan(image.width, 0)
+        XCTAssertGreaterThan(image.height, 0)
+    }
+
+    func testAsyncLoadedFromFileSequential() async throws {
+        guard let path = pathForTestResource("superman.jpg") else {
+            XCTFail("Test resource not found")
+            return
+        }
+        let image = try await VIPSImage.loaded(fromFileSequential: path)
+        XCTAssertGreaterThan(image.width, 0)
+    }
+
+    func testAsyncLoadedFromData() async throws {
+        let source = createTestImage(width: 100, height: 100)
+        let jpegData = try source.data(format: .jpeg, quality: 85)
+        let loaded = try await VIPSImage.loaded(data: jpegData)
+        XCTAssertGreaterThan(loaded.width, 0)
+    }
+
+    func testAsyncImageInfo() async throws {
+        guard let path = pathForTestResource("superman.jpg") else {
+            XCTFail("Test resource not found")
+            return
+        }
+        let info = try await VIPSImage.imageInfo(atPath: path)
+        XCTAssertGreaterThan(info.width, 0)
+        XCTAssertGreaterThan(info.height, 0)
+        XCTAssertEqual(info.format, .jpeg)
+    }
+
+    func testAsyncThumbnailFromFile() async throws {
+        guard let path = pathForTestResource("superman.jpg") else {
+            XCTFail("Test resource not found")
+            return
+        }
+        let thumb = try await VIPSImage.thumbnail(fromFile: path, width: 100, height: 100)
+        XCTAssertLessThanOrEqual(thumb.width, 100)
+        XCTAssertLessThanOrEqual(thumb.height, 100)
+    }
+
+    func testAsyncThumbnailFromFileCGSize() async throws {
+        guard let path = pathForTestResource("superman.jpg") else {
+            XCTFail("Test resource not found")
+            return
+        }
+        let thumb = try await VIPSImage.thumbnail(fromFile: path, size: CGSize(width: 80, height: 80))
+        XCTAssertLessThanOrEqual(thumb.width, 80)
+        XCTAssertLessThanOrEqual(thumb.height, 80)
+    }
+
+    func testAsyncThumbnailFromData() async throws {
+        let source = createTestImage(width: 200, height: 200)
+        let jpegData = try source.data(format: .jpeg, quality: 85)
+        let thumb = try await VIPSImage.thumbnail(fromData: jpegData, width: 50, height: 50)
+        XCTAssertLessThanOrEqual(thumb.width, 50)
+    }
+
+    func testAsyncThumbnailFromDataCGSize() async throws {
+        let source = createTestImage(width: 200, height: 200)
+        let jpegData = try source.data(format: .jpeg, quality: 85)
+        let thumb = try await VIPSImage.thumbnail(fromData: jpegData, size: CGSize(width: 50, height: 50))
+        XCTAssertLessThanOrEqual(thumb.width, 50)
+    }
 }
