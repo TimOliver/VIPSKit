@@ -109,7 +109,7 @@ VIPSKit automatically pulls in the pre-built `vips.xcframework` from vips-cocoa 
 
 ### Prerequisites
 
-- Xcode with command-line tools
+- Xcode 16+ (Swift 6.0+)
 - Ruby with `xcodeproj` gem: `gem install xcodeproj`
 - Static `vips.xcframework` in `Frameworks/` (from [vips-cocoa](https://github.com/TimOliver/vips-cocoa))
 
