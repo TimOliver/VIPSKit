@@ -5,7 +5,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/TimOliver/vips-cocoa.git",
       "state" : {
-        "revision" : "a1951780a47bb09f22ab761f95afe716d3768b83",
+        "revision" : "987c467028a20f4813523f6c821a037adc1f8ae0",
         "version" : "8.18.0"
       }
     }

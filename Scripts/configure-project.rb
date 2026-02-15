@@ -205,7 +205,10 @@ tests.build_configurations.each do |config|
     # which is not readable by standard PNG decoders (including libpng/vips)
     'COMPRESS_PNG_FILES' => 'NO',
 
-    # Tests need module map paths to resolve @testable import of internal imports
+    # VIPSKit.swiftmodule records internal import dependencies on vips/CVIPS modules.
+    # The test target compiler must resolve these modules even though tests only
+    # `import VIPSKit`. The vips-static package dependency provides the xcframework
+    # headers; these flags provide the module map and CVIPS shim location.
     'SWIFT_INCLUDE_PATHS' => [
       '$(inherited)',
       '$(SRCROOT)/Sources/Internal/include',
@@ -213,6 +216,16 @@ tests.build_configurations.each do |config|
     'OTHER_SWIFT_FLAGS' => [
       '$(inherited)',
       '-Xcc', '-fmodule-map-file=$(SRCROOT)/Sources/Internal/include/module.modulemap',
+    ],
+
+    # vips-static is added below for module resolution, which also causes vips.a
+    # to be linked into the test bundle. These system libraries are required by vips.
+    'OTHER_LDFLAGS' => [
+      '$(inherited)',
+      '-lz',
+      '-liconv',
+      '-lresolv',
+      '-lc++',
     ],
   })
 end
@@ -222,20 +235,19 @@ tests.add_dependency(host)
 # Link VIPSKit framework to tests
 tests.frameworks_build_phase.add_file_reference(fw.product_reference, true)
 
-# Add vips-static package dependency to test target (for module resolution)
+# Add vips-static package dependency to test target (for module resolution).
+# This also links vips.a into the test bundle — OTHER_LDFLAGS above provides
+# the system libraries it requires.
 test_pkg_dep = project.new(Xcodeproj::Project::Object::XCSwiftPackageProductDependency)
 test_pkg_dep.package = pkg_ref
 test_pkg_dep.product_name = 'vips-static'
 tests.package_product_dependencies << test_pkg_dep
 
-# Add test source files
-test_group = tests_group.new_group('VIPSKitTests')
+# Add test source files directly under Tests group
 test_files = Dir.glob(File.join(ROOT, 'Tests/*.swift')).sort
 
 test_files.each do |path|
-  ref = test_group.new_reference(File.basename(path))
-  ref.source_tree = 'SOURCE_ROOT'
-  ref.path = "Tests/#{File.basename(path)}"
+  ref = tests_group.new_reference(File.basename(path))
   tests.source_build_phase.add_file_reference(ref)
 end
 
