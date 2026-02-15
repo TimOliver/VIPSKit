@@ -9,7 +9,7 @@ let package = Package(
         .visionOS(.v1),
     ],
     products: [
-        .library(name: "VIPSKit", targets: ["VIPSKit"]),
+        .library(name: "VIPSKit", type: .dynamic, targets: ["VIPSKit"]),
     ],
     dependencies: [
         .package(url: "https://github.com/TimOliver/vips-cocoa.git", from: "8.18.0"),
