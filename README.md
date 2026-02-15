@@ -1,6 +1,6 @@
 # VIPSKit
 
-`VIPSKit` is a pure Swift wrapper for [libvips](https://github.com/libvips/libvips), the fast image processing library, for Apple platforms. The heavy lifting (compiling libvips + 17 dependencies) is handled by the separate [vips-cocoa](https://github.com/TimOliver/vips-cocoa) project, which produces a static `vips.xcframework`. VIPSKit imports that xcframework and provides a clean, type-safe Swift API. VIPSKit is then vended as a dynamic framework in order to still fulfill the obligations of the LGPL-2.1 license.
+`VIPSKit` is a pure Swift wrapper for [libvips](https://github.com/libvips/libvips), the fast image processing library, for Apple platforms. The heavy lifting (compiling libvips + 17 dependencies) is handled by the separate [vips-cocoa](https://github.com/TimOliver/vips-cocoa) project, which produces a static `vips.xcframework`. VIPSKit statically links that xcframework to provide a clean, type-safe Swift API. VIPSKit itself is then vended as a dynamic framework in order to still fulfill the obligations of the LGPL-2.1 license.
 
 libvips is known for being exceptionally fast and memory-efficient, using a streaming architecture that processes images incrementally rather than loading entire images into memory. This makes it ideal for processing large images or batch thumbnail generation on mobile devices.
 
