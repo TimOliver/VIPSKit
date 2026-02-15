@@ -1,6 +1,6 @@
 # VIPSKit
 
-`VIPSKit` is a pure Swift wrapper for [libvips](https://github.com/libvips/libvips), the fast image processing library, for Apple platforms. The heavy lifting (compiling libvips + 17 dependencies) is handled by the separate [vips-cocoa](https://github.com/TimOliver/vips-cocoa) project, which produces a static `vips.xcframework`. VIPSKit imports that xcframework and provides a clean, type-safe Swift API.
+`VIPSKit` is a pure Swift wrapper for [libvips](https://github.com/libvips/libvips), the fast image processing library, for Apple platforms. The heavy lifting (compiling libvips + 17 dependencies) is handled by the separate [vips-cocoa](https://github.com/TimOliver/vips-cocoa) project, which produces a static `vips.xcframework`. VIPSKit imports that xcframework and provides a clean, type-safe Swift API. VIPSKit is then vended as a dynamic framework in order to still fulfill the obligations of the LGPL-2.1 license.
 
 libvips is known for being exceptionally fast and memory-efficient, using a streaming architecture that processes images incrementally rather than loading entire images into memory. This makes it ideal for processing large images or batch thumbnail generation on mobile devices.
 
@@ -171,12 +171,18 @@ libvips uses a different approach: it streams pixels through a pipeline, process
 
 # Credits
 
-`VIPSKit` was created by [Tim Oliver](http://twitter.com/TimOliverAU) as a component of [iComics](http://icomics.net).
-
-libvips is developed by [John Cupitt](https://github.com/jcupitt) and contributors.
+`VIPSKit` was created by [Tim Oliver](http://twitter.com/TimOliverAU). libvips is developed by [John Cupitt](https://github.com/jcupitt) and contributors.
 
 # License
 
-`VIPSKit` wrapper code is available under the MIT license.
+Both libvips and VIPSKit are licensed under the LGPL-2.1. 
 
-libvips is licensed under the LGPL-2.1. VIPSKit statically links libvips into the framework binary; see [LICENSE](LICENSE) for details.
+VIPSKit statically links libvips into the framework binary, which is then vended as a dynamic framework in order to continue fulfilling the LGPL obligations.
+
+See [LICENSE](LICENSE) for details.
+
+## Disclaimer
+
+This project was built extensively with the help of [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (Opus 4.6). Given the complexity and breadth of features enabled by `libvips`, manually implementing every wrapper feature would have been a tremendously  time-consuming undertaking otherwise.
+
+All code and build output has been reviewed and tested, but as with any project of this complexity, AI-assisted or not, bugs may exist. If you encounter incorrect behaviour, please [open an issue](https://github.com/TimOliver/VIPSKit/issues).
